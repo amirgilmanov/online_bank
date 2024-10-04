@@ -1,0 +1,16 @@
+default-bank:
+  bank:
+    name: "LLC DefaultBank"
+    partner:
+      url: "http://localhost:8080"
+server:
+  port: 8080
+
+currency-integration:
+  base-url: "https://api.freecurrencyapi.com/v1/latest"
+  token: "fca_live_8qzrsJhABJpuRPKSIFlajcDS0djycVdmU4BHbiGw"
+  header-token-name: "apiKey"
+
+
+
+
