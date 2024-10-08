@@ -34,9 +34,6 @@ public class AccountControllerV2 {
     private final AccountServiceV2 accountServiceV2;
     private final UserRegistrationService userRegistrationService;
 
-    //TODO: переделать метод getAllAccounts логика должна быть в сервисе
-    //TODO: исправить вывод при статусе 400
-
     /**
      * @param token токен пользователя
      * @return возвращает список всех счетов пользователя
@@ -58,6 +55,7 @@ public class AccountControllerV2 {
         User user = userRegistrationService.findByToken(token);
         return ResponseEntity.status(HttpStatus.OK).body(accountServiceV2.getAllAccounts(user));
     }
+
     /**
      * @param accountId номер счета
      * @return возвращает баланс пользователя по номеру счёта
@@ -74,6 +72,7 @@ public class AccountControllerV2 {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(accountServiceV2.getBalance(accountId));
     }
+
     /**
      * @param token токен пользователя
      * @return создаёт счёт для пользователя

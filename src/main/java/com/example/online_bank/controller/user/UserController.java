@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/signup")
     @Operation(summary = "Регистрация пользователя")
     @ApiResponse(responseCode = "201",
-    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
+            content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
     public ResponseEntity<String> signUP(@RequestBody UserDtoRequest userDtoRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -54,7 +54,7 @@ public class UserController {
     @PostMapping("/auth")
     @Operation(summary = "Аутентификация")
     @ApiResponse(responseCode = "201",
-    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
+            content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
     public ResponseEntity<String> authentication(
             @Parameter(description = "Номер телефона", example = "+79608052797")
@@ -73,7 +73,7 @@ public class UserController {
     @GetMapping("/getAll")
     @Operation(summary = "Получить список всех пользователей")
     @ApiResponse(responseCode = "200",
-    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))
     )
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userRegistrationService.getAll());

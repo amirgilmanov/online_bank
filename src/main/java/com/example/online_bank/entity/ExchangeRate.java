@@ -8,9 +8,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- *  BaseCurrency - Валюта, от которой происходит обмен
- *  TargetCurrency - Валюта, к которой происходит обмен
- *  ExchangeRate - Курс обмена
+ * BaseCurrency - Валюта, от которой происходит обмен
+ * TargetCurrency - Валюта, к которой происходит обмен
+ * ExchangeRate - Курс обмена
  */
 @Builder
 @Data

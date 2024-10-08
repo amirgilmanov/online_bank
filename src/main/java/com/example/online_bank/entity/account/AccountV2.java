@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+
 /**
  * Номер счета (уникален), владелец (класс Пользователь этап1 пункт3), остаток на счете (с копейками).
  */
