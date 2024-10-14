@@ -57,7 +57,7 @@ public class UserController {
             content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
     public ResponseEntity<String> authentication(
-            @Parameter(description = "Номер телефона", example = "+79608052797")
+            @Parameter(description = "Номер телефона", example = "+7992281488")
             @RequestParam String phoneNumber,
             @Parameter(description = "Пин-код", example = "1488")
             @RequestParam String pinCode) {

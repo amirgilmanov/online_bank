@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class AccountRepositoryV2 implements CustomRepository<AccountV2> {
+public class AccountRepository implements CustomRepository<AccountV2> {
     private final Map<String, AccountV2> accountV2Map = new HashMap<>();
 
     @Override

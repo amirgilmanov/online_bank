@@ -25,7 +25,7 @@ public record TransactionDtoRequest(
         String name,
         @Schema(description = "Фамилия отправителя", example = "Гильманов")
         String surname,
-        @Schema(description = "Отчество отправителя", example = "Азатович")
+        @Schema(description = "Отчество отправителя", example = "Отчествович")
         String patronymic,
         @Schema(description = "Код валюты", example = "USD, EUR")
         CurrencyCode paymentCurrencyCode,

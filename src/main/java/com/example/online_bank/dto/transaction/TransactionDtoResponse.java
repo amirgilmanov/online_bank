@@ -14,7 +14,7 @@ public record TransactionDtoResponse(
         String senderName,
         @NonNull @Schema(description = "Фамилия отправителя", example = "Гильманов")
         String senderSurname,
-        @NonNull @Schema(description = "Отчество отправителя", example = "Азатович")
+        @NonNull @Schema(description = "Отчество отправителя", example = "Отчествович")
         String senderPatronymic,
         @NonNull @Schema(description = "Номер счёта отправителя", example = "123456")
         String senderAccountId,
