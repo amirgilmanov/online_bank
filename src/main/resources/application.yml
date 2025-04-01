@@ -6,10 +6,40 @@ default-bank:
 server:
   port: 8080
 
-currency-integration:
-  base-url: "https://api.freecurrencyapi.com/v1/latest"
-  token: "fca_live_8qzrsJhABJpuRPKSIFlajcDS0djycVdmU4BHbiGw"
-  header-token-name: "apiKey"
+spring:
+  liquibase:
+    enabled: true
+
+  jpa:
+    hibernate:
+      show-sql: true
+      ddl-auto: validate
+  datasource:
+    url: jdbc:postgresql://localhost:5432/online_bank
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        orm:
+          jdbc:
+            bind: TRACE
 
 
 

@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/20250308_2028_create_table_user.xml
+  - include:
+      file: db/changelog/20250308_2026_create_table_account.xml
+  - include:
+      file: db/changelog/20250308_2027_create_table_operation.xml
+  - include:
+      file: db/changelog/20250310_1828_alter_table_account.xml
+  - include:
+      file: db/changelog/20250310_1833_alter_table_account.xml
+  - include:
+      file: db/changelog/20250310_2335_alter_table_account.xml
+  - include:
+      file: db/changelog/20250315_0231_add_column_account.xml
+  - include:
+      file: db/changelog/20250316_1224_create_table_exchange_rate.xml
+  - include:
+      file: db/changelog/20250330_1620_alter_table_account.xml
+  - include:
+      file: db/changelog/20250330_1624_create_table_auth_users.xml
+  - include:
+      file: db/changelog/20250330_1640_alter_table_exchange_rate.xml
+  - include:
+      file: db/changelog/20250330_1648_alter_table_operation.xml
+  - include:
+      file: db/changelog/20250330_1719_alter_table_operation.xml

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250330_1648_alter_table_operation.xml" author="gilmi19">
+    <modifyDataType tableName="operation" columnName="account_id" newDataType="bigint"/>
+        <renameColumn tableName="operation" oldColumnName="amount_money" newColumnName="amount"/>
+        <modifyDataType tableName="operation" columnName="operation_type" newDataType="smallint"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250308_2026_create_table_account.xml" author="gilmi19">
+    <sql>
+        create table if not exists account(
+            id bigserial primary key,
+            balance numeric(9,2),
+            currency_code integer,
+            holder_id bigserial references user_bank(id)
+        )
+    </sql>
+    </changeSet>
+</databaseChangeLog>
