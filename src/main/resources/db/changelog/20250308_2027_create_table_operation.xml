@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20250308_2027_create_table_operation.xml" author="admin">
+    <sql>
+        create table if not exists operation(
+            id bigserial primary key,
+            created_at timestamp,
+            account_id bigserial references account(id),
+            operation_type varchar(100),
+            amount_money numeric(9,2),
+            description varchar(100),
+            currency_code integer
+        )
+    </sql>
+    </changeSet>
+</databaseChangeLog>

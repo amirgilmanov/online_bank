@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface CustomRepository<T> {
     void save(T t);
+
     List<T> findAll();
 }
 
