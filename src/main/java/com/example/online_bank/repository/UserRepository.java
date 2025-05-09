@@ -3,7 +3,6 @@ package com.example.online_bank.repository;
 import com.example.online_bank.entity.User;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,6 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsUserByPhoneNumber(@NonNull String phoneNumber);
 
-    @Modifying
-    void deleteByPhoneNumber(@NonNull String phoneNumber);
+    void deleteByPhoneNumber(String phoneNumber);
+
+    Optional<User> findByPhoneNumber(String number);
 }

@@ -25,3 +25,11 @@ databaseChangeLog:
       file: db/changelog/20250330_1648_alter_table_operation.xml
   - include:
       file: db/changelog/20250330_1719_alter_table_operation.xml
+  - include:
+      file: db/changelog/20250415_2129_drop_constraint_from_user.xml
+  - include:
+      file: db/changelog/20250415_2135_drop_constraint_from_user.xml
+  - include:
+      file: db/changelog/20250420_2032_alter_table_account.xml
+  - include:
+      file: db/changelog/20250509_2145_alter_table_operation.xml

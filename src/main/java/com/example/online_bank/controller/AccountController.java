@@ -4,7 +4,6 @@ import com.example.online_bank.dto.AccountDtoResponse;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.service.AccountService;
 import com.example.online_bank.service.BankService;
-import com.example.online_bank.service.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 @Tag(name = "Account", description = "Методы по работе со счетами пользователя")
 public class AccountController {
     private final BankService bankService;
-    private final RegistrationService registrationService;
     private final AccountService accountService;
 
     /**
@@ -49,7 +48,7 @@ public class AccountController {
 
             @Parameter(description = "Код валюты", example = "USD")
             @RequestParam CurrencyCode currencyCode
-    ) {
+    ) throws BadRequestException {
         return ResponseEntity.status(HttpStatus.CREATED).body(bankService.createAccount(token, currencyCode));
     }
 
@@ -69,7 +68,7 @@ public class AccountController {
             )
     )
     public BigDecimal getBalance(
-            @Parameter(description = "Номер счёта с валютным кодом", example = "840011067")
+            @Parameter(description = "Номер счёта с валютным кодом", example = "810097622")
             @PathVariable(value = "accountNumber") String accountNumber) {
         return accountService.getBalance(accountNumber);
     }

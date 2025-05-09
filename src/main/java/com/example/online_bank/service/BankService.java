@@ -4,8 +4,8 @@ import com.example.online_bank.dto.*;
 import com.example.online_bank.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.mapper.AccountMapper;
-import com.example.online_bank.mapper.OperationMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +17,11 @@ public class BankService {
     private final AccountService accountService;
     private final BankIntegrationService bankIntegrationService;
     private final FinanceService financeService;
-    private final OperationService operationService;
     private final UserService userService;
-    private final OperationMapper operationMapper;
     private final AccountMapper accountMapper;
 
     @Transactional
-    public AccountDtoResponse createAccount(String token, CurrencyCode currencyCode) {
+    public AccountDtoResponse createAccount(String token, CurrencyCode currencyCode) throws BadRequestException {
         User user = userService.findByToken(token);
         return accountMapper.toDtoResponse(accountService.createAccountForUser(user, currencyCode));
     }

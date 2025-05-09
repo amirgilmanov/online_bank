@@ -5,6 +5,6 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20250330_1620_alter_table_account.xml" author="gilmi19">
-    <modifyDataType tableName="account" columnName="currency_code" newDataType="smallint"/>
+        <modifyDataType tableName="account" columnName="currency_code" newDataType="smallint"/>
     </changeSet>
 </databaseChangeLog>

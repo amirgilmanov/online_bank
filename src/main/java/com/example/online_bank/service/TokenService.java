@@ -1,6 +1,7 @@
 package com.example.online_bank.service;
 
 import com.example.online_bank.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class TokenService {
     private final UserService userService;
 
+    @Transactional
     public String createAndSaveToken(User user) {
         log.info("Creating new token for user: {}", user);
         String token = "online%stoken".formatted(UUID.randomUUID());

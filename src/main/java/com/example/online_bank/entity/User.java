@@ -7,7 +7,6 @@ import lombok.*;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
@@ -46,9 +45,9 @@ public class User {
     @Column
     private String pinCode;
 
-    @OneToMany(mappedBy = "holder", cascade = ALL)
+    @OneToMany(mappedBy = "holder", cascade = ALL, orphanRemoval = true)
     private List<Account> accounts;
 
-    @OneToOne(mappedBy = "user",cascade = ALL)
+    @OneToOne(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     private AuthUsers authUsers;
 }

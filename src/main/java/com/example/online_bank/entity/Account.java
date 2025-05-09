@@ -7,7 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static jakarta.persistence.EnumType.ORDINAL;
+import static jakarta.persistence.EnumType.STRING;
 
 /**
  * Номер счета (уникален), владелец (класс Пользователь этап1 пункт3), остаток на счете (с копейками).
@@ -29,7 +29,7 @@ public class Account {
     private String accountNumber;
 
     @Column
-    @Enumerated(ORDINAL)
+    @Enumerated(STRING)
     private CurrencyCode currencyCode;
 
     @OneToMany(mappedBy = "account")

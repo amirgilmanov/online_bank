@@ -71,7 +71,6 @@ public class CurrencyService {
         return calcInvertedRateHelper(invertedExchangeRate);
     }
 
-
     private ExchangeRate findInvertedRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
         return currencyRepository.findCurrencyRate(targetCurrency, baseCurrency)
                 .orElseThrow(() -> new CurrencyPairsNotFoundException("Перевернутый курс не найден"));
@@ -97,5 +96,4 @@ public class CurrencyService {
         validateSum(convertedCurrency);
         return convertedCurrency;
     }
-
 }

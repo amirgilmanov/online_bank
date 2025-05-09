@@ -33,9 +33,11 @@ public class AuthService {
     @Transactional
     public String signIn(String phoneNumber, String pinCode) {
         String encryptedPhoneNumber = encryptPhoneNumber(phoneNumber);
+
         log.info("Входящий номер телефона - {}", encryptedPhoneNumber);
         AuthUsers authUsers = authenticationRepository.findByUser_PhoneNumber(phoneNumber)
                 .orElseThrow(() -> new AuthException(AUTH_ERROR_MESSAGE));
+
         validatePinCode(pinCode, authUsers.getPinCode());
         return tokenService.createAndSaveToken(authUsers.getUser());
     }

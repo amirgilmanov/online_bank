@@ -43,6 +43,6 @@ public class Operation {
     private String description;
 
     @Column
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private CurrencyCode currencyCode;
 }

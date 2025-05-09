@@ -30,7 +30,7 @@ public class AuthController {
      */
     @PostMapping()
     @Operation(summary = "Аутентификация")
-    @ApiResponse(responseCode = "201",
+    @ApiResponse(responseCode = "200",
             content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
     public String authentication(

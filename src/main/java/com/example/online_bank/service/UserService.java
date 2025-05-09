@@ -4,15 +4,17 @@ import com.example.online_bank.entity.User;
 import com.example.online_bank.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public User findByToken(String token) {
         return userRepository.findByToken(token)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким токеном не найден"));
@@ -26,8 +28,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional()
     public void deleteByPhoneNumber(String number) {
         userRepository.deleteByPhoneNumber(number);
+    }
+
+    public String findPinCodeByPhoneNumber(String number) {
+        log.info("Достаем пин-код по номеру телефона");
+        return userRepository.findByPhoneNumber(number)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с таким номером не найден")).getPinCode();
     }
 }

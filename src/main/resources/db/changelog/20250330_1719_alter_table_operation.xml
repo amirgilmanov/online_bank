@@ -5,7 +5,7 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20250330_1719_alter_table_operation.xml" author="gilmi19">
-    <modifyDataType tableName="operation" columnName="operation_type" newDataType="varchar(100)"/>
+        <modifyDataType tableName="operation" columnName="operation_type" newDataType="varchar(100)"/>
         <modifyDataType tableName="operation" columnName="currency_code" newDataType="smallint"/>
     </changeSet>
 </databaseChangeLog>
