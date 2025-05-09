@@ -1,10 +1,12 @@
 package com.example.online_bank.controller;
 
+
 import com.example.online_bank.dto.AccountDtoResponse;
 import com.example.online_bank.dto.OperationDtoResponse;
-import com.example.online_bank.dto.OperationInfoDtoResponse;
+import com.example.online_bank.dto.OperationInfoDto;
 import com.example.online_bank.entity.Account;
-import com.example.online_bank.service.HistoryService;
+import com.example.online_bank.service.AccountService;
+import com.example.online_bank.service.OperationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,10 +22,11 @@ import java.util.List;
 @RequestMapping("/api/history")
 @RequiredArgsConstructor
 public class HistoryController {
-    private final HistoryService historyService;
+    private final AccountService accountService;
+    private final OperationService operationService;
 
     /**
-     * найти все операции по счету
+     * Найти все операции по счету
      */
     @Operation(summary = "Найти все операции по номеру счета")
     @ApiResponse(
@@ -33,12 +36,12 @@ public class HistoryController {
                     schema = @Schema(implementation = OperationDtoResponse.class)
             )
     )
-    @GetMapping("/find-by-account-number")
-    public List<OperationInfoDtoResponse> findByAccountNumber(
+    @GetMapping("/find-all-by-account-number")
+    public List<OperationInfoDto> findByAccountNumber(
             @RequestParam String accountNumber,
-            @RequestParam long page,
-            @RequestParam long size) {
-        return historyService.findOperationByAccountNumberPortion(accountNumber, page, size);
+            @RequestParam int page,
+            @RequestParam int size) {
+        return operationService.findAllByAccount(accountNumber, page, size);
     }
 
     /**
@@ -55,7 +58,7 @@ public class HistoryController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = Operation.class))
     )
-    public List<OperationInfoDtoResponse> getAllUserOperations(
+    public List<OperationInfoDto> getAllUserOperations(
             @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
             @RequestHeader String token,
 
@@ -67,7 +70,7 @@ public class HistoryController {
             @Parameter(description = "Размер страницы", example = "10")
             int size
     ) {
-        return historyService.showAllUserOperationHistory(token, page, size);
+        return operationService.findAllByUserPaged(token, page, size);
     }
 
     /**
@@ -95,6 +98,6 @@ public class HistoryController {
                     description = "Токен пользователя",
                     example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
             @RequestHeader String token) {
-        return historyService.findAllAccountsByUser(token);
+        return accountService.findAllByHolder(token);
     }
 }

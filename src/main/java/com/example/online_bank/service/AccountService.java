@@ -1,16 +1,21 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.dto.AccountDtoResponse;
 import com.example.online_bank.entity.Account;
 import com.example.online_bank.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
+import com.example.online_bank.exception.EmptyDataException;
+import com.example.online_bank.mapper.AccountMapper;
 import com.example.online_bank.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumber;
@@ -25,6 +30,8 @@ import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumb
 public class AccountService {
     private final AccountRepository accountRepository;
     private final ValidateAccountService validateAccountService;
+    private final UserService userService;
+    private final AccountMapper accountMapper;
 
     /**
      * Создать счет для пользователя
@@ -33,12 +40,17 @@ public class AccountService {
      * @param currencyCode Код валюты
      */
     @Transactional()
-    public Account createAccountForUser(User user, CurrencyCode currencyCode) {
+    public Account createAccountForUser(User user, CurrencyCode currencyCode) throws BadRequestException {
+        Arrays.stream(CurrencyCode.values())
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("Переданный код валюты не найден"));
+
         Account account = Account
                 .builder()
                 .balance(BigDecimal.ZERO)
                 .holder(user)
                 .accountNumber(generateAccountNumber(currencyCode))
+                .currencyCode(currencyCode)
                 .build();
         accountRepository.save(account);
         return account;
@@ -83,12 +95,18 @@ public class AccountService {
     /**
      * Найти все счета пользователя
      *
-     * @param holder Пользователь
+     * @param token Токен пользователя
      * @return Список всех счетов пользователя
      */
     @Transactional(readOnly = true)
-    public List<Account> findAllAccountsByHolder(User holder) {
+    public List<AccountDtoResponse> findAllByHolder(String token) {
+        User holder = userService.findByToken(token);
+        if (holder.getAccounts().isEmpty()) {
+            log.warn("Нет счетов у пользователя {}", holder.getId());
+            throw new EmptyDataException("Нет счетов у данного пользователя");
+        }
         return accountRepository.findAllByHolder(holder).stream()
+                .map(accountMapper::toDtoResponse)
                 .toList();
     }
 
@@ -103,7 +121,6 @@ public class AccountService {
         return findByAccountNumber(accountNumber).getBalance();
     }
 
-
     /**
      * Найти по номеру счета
      *
@@ -114,5 +131,9 @@ public class AccountService {
     public Account findByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new EntityNotFoundException("Счета с таким номером не найдено"));
+    }
+
+    public boolean existsByAccountNumber(String accountNumber) {
+        return accountRepository.existsByAccountNumber(accountNumber);
     }
 }

@@ -5,9 +5,9 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20250310_2335_alter_table_account.xml" author="gilmi19">
-    <sql>
-        ALTER TABLE account
-            ALTER COLUMN balance SET DEFAULT 0;
-    </sql>
+        <sql>
+            ALTER TABLE account
+                ALTER COLUMN balance SET DEFAULT 0;
+        </sql>
     </changeSet>
 </databaseChangeLog>

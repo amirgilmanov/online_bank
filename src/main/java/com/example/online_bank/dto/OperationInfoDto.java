@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * @param description   Описание
  * @param currencyCode  Код валюты
  */
-public record OperationInfoDtoResponse(
+public record OperationInfoDto(
         Long id,
         LocalDateTime createdAt,
         String accountNumber,

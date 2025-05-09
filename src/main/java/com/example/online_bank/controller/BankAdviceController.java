@@ -1,8 +1,7 @@
 package com.example.online_bank.controller;
 
+
 import com.example.online_bank.exception.*;
-import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,8 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
-public class AdviceController {
-
+public class BankAdviceController {
     /**
      * @param e Обработка ошибки если счет не принадлежит пользователю
      * @return 403 HTTP статус
@@ -41,7 +39,7 @@ public class AdviceController {
 
     @ExceptionHandler(EmptyDataException.class)
     public ResponseEntity<String> handleEmptyOperationsException(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), NO_CONTENT);
+        return new ResponseEntity<>(e.getMessage(), NOT_FOUND);
     }
 
     /**
@@ -70,24 +68,4 @@ public class AdviceController {
     public ResponseEntity<String> handleTransferException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), INTERNAL_SERVER_ERROR);
     }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleEntityNotFoundException(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), NOT_FOUND);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<String> handleBadRequestException(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
-    }
-
-    /**
-     //     * @param e обработка ошибки когда произошла неизвестная ошибка
-     //     * @return 503 HTTP статус
-     //     */
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<String> handleApiException(Exception e) {
-//        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-//                .body("Сервис временно не работает, но мы работаем над этим");
-//    }
 }

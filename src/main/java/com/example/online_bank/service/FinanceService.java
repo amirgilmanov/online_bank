@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static com.example.online_bank.enums.OperationType.*;
@@ -58,17 +59,20 @@ public class FinanceService {
     public OperationDtoResponse depositMoney(String token, FinanceOperationDto dto, boolean isDeposit) {
         validateFinanceService.
                 validateParameters(token, dto.accountNumber(), dto.currencyCode(), dto.amount());
-        accountService.depositMoney(dto.accountNumber(), dto.amount());
 
+        //TODO: упростиь логику
         Account account = accountService.findByAccountNumber(dto.accountNumber());
+        BigDecimal balanceBefore = accountService.getBalance(dto.accountNumber());
+
+        accountService.depositMoney(dto.accountNumber(), dto.amount());
         return operationMapper.toDepositOperationDto(operationService.createOperation(
                 LocalDateTime.now(),
-                setOperationType(isDeposit, TRANSACTION, BUY_CURRENCY),
+                setOperationType(isDeposit, DEPOSIT, BUY_CURRENCY),
                 dto.amount(),
                 dto.description(),
                 account,
                 dto.currencyCode()
-        ));
+        ), balanceBefore);
     }
 
     private OperationType setOperationType(boolean condition, OperationType trueType, OperationType falseType) {

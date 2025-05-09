@@ -4,9 +4,11 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="20250330_1648_alter_table_operation.xml" author="gilmi19">
-        <modifyDataType tableName="operation" columnName="account_id" newDataType="bigint"/>
-        <renameColumn tableName="operation" oldColumnName="amount_money" newColumnName="amount"/>
-        <modifyDataType tableName="operation" columnName="operation_type" newDataType="smallint"/>
+    <changeSet id="20250415_2135_drop_constraint_from_user.xml" author="gilmi19">
+        <sql>
+            alter table user_bank
+            drop
+            constraint user_bank_surname_key
+        </sql>
     </changeSet>
 </databaseChangeLog>

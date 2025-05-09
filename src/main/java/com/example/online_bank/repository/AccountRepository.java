@@ -16,4 +16,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findAllByHolder(User holder);
 
     boolean existsByHolder_Token(String token);
+
+    boolean existsByAccountNumber(String accountNumber);
 }

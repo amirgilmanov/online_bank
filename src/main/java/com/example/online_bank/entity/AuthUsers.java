@@ -18,8 +18,8 @@ public class AuthUsers {
     @Column(unique = true)
     private String pinCode;
 
-    @JoinColumn(unique = true, nullable = false, name = "user_id", referencedColumnName = "id")
-    @OneToOne()
+    @JoinColumn(unique = true, name = "user_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private User user;
 }
