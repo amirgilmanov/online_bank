@@ -3,6 +3,7 @@ package com.example.online_bank.service;
 import com.example.online_bank.entity.ExchangeRate;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.exception.CurrencyPairsNotFoundException;
+import com.example.online_bank.exception.InvalidRateException;
 import com.example.online_bank.repository.ExchangeCurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class CurrencyService {
 
     private void validateSum(BigDecimal rate) {
         if (rate.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ZERO) == 0) {
-            throw new NumberFormatException("Курс не может быть равен нулю или отрицательным");
+            throw new InvalidRateException("Курс не может быть равен нулю или отрицательным");
         }
     }
 

@@ -33,3 +33,5 @@ databaseChangeLog:
       file: db/changelog/20250420_2032_alter_table_account.xml
   - include:
       file: db/changelog/20250509_2145_alter_table_operation.xml
+  - include:
+      file: db/changelog/20250513_0041_alter_table_exchange_rate.xml

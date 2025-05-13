@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @Tag(name = "Валютный Сервис", description = "Методы по работе с курсами валют")
 @RestController
-@RequestMapping("/currency-transfer")
+@RequestMapping("/api/currency-transfer")
 @RequiredArgsConstructor
 public class CurrencyController {
     private final CurrencyService currencyService;

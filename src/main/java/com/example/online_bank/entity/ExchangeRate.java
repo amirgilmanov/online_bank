@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 import static jakarta.persistence.EnumType.ORDINAL;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
@@ -28,10 +29,10 @@ public class ExchangeRate {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Column
-    @Enumerated(ORDINAL)
+    @Enumerated(STRING)
     private CurrencyCode baseCurrency;     // Валюта, от которой происходит обмен(USD)
     @Column
-    @Enumerated(ORDINAL)
+    @Enumerated(STRING)
     private CurrencyCode targetCurrency;   // Валюта, к которой происходит обмен(RUB)
     @Column
     private BigDecimal rate; // цена котируемой валюты по отношению к базовой
