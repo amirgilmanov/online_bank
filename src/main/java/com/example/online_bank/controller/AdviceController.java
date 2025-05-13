@@ -81,6 +81,11 @@ public class AdviceController {
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidRateException.class)
+    public ResponseEntity<String> handleInvalidRateException(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
+    }
+
     /**
      //     * @param e обработка ошибки когда произошла неизвестная ошибка
      //     * @return 503 HTTP статус
