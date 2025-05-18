@@ -1,7 +1,9 @@
 package com.example.online_bank;
 
+import com.example.online_bank.testsupport.fixture.UserTestData;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 
+import static com.example.online_bank.testsupport.fixture.UserTestData.TOKEN;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -26,7 +29,7 @@ public class AccountTest {
     void successAccountCreateParametrized(String currencyName) {
         log.info("Код валюты {}", currencyName);
         RestAssured.given()
-                .header(new Header("token", "online358cc527-5805-43de-811d-a9f6e2aa5cbctoken"))
+                .header(new Header("token", TOKEN))
                 .queryParam("currencyCode", currencyName)
                 .log().all()
                 .post("api/account")
@@ -39,7 +42,7 @@ public class AccountTest {
     @DisplayName("Неудачное создание счета(передан не существующий код валюты)")
     void failureAccountCreation() {
         RestAssured.given()
-                .header(new Header("token", "online358cc527-5805-43de-811d-a9f6e2aa5cbctoken"))
+                .header(new Header("token", TOKEN))
                 .queryParam("currencyCode", "USB")
                 .log().all()
                 .post("api/account")

@@ -1,7 +1,7 @@
 package com.example.online_bank.controller;
 
 import com.example.online_bank.dto.SignUpDto;
-import com.example.online_bank.service.SignInService;
+import com.example.online_bank.service.SignUpService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Контроллер регистрации")
 public class SignUpController {
-    private final SignInService signInService;
+    private final SignUpService signUpService;
 
     /**
      * Регистрация пользователя
@@ -33,9 +33,9 @@ public class SignUpController {
     @ApiResponse(responseCode = "201",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
     )
-    public ResponseEntity<String> signUP(@RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<String> signUp(@RequestBody SignUpDto signUpDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(signInService.signUp(signUpDto));
+                .body(signUpService.signUp(signUpDto));
 
     }
 }

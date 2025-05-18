@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/integration")
 @RequiredArgsConstructor
-@Tag(name = "Интеграция банковV2", description = "Методы по рабе интеграции между банками")
+@Tag(name = "Интеграция банков", description = "Методы по рабе интеграции между банками")
 public class BankIntegrationController {
     private final BankService bankService;
 

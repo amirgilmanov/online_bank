@@ -128,5 +128,4 @@ public class HistoryTest {
                 .log().all()
                 .statusCode(204);
     }
-
 }

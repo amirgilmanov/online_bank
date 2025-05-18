@@ -16,14 +16,19 @@ spring:
       ddl-auto: validate
   datasource:
     url: jdbc:postgresql://localhost:5432/online_bank
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    username: postgres
+    password: 1234
+#    username: ${DB_USER}
+#    password: ${DB_PASSWORD}
+
     driverClassName: org.postgresql.Driver
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ernestpetrov19@gmail.com
+    password: gssn xqog mxfu ynez
+    #    username: ${MAIL_USERNAME}
+#    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -31,6 +36,7 @@ spring:
           starttls:
             enable: true
             required: true
+
 
 logging:
   level:

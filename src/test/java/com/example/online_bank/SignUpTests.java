@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @AutoConfigureMockMvc
 @Commit
 @Slf4j
-class SignInTests {
+class SignUpTests {
 
     @Autowired
     private UserService userService;

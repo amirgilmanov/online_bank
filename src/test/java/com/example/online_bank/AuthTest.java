@@ -1,10 +1,8 @@
 package com.example.online_bank;
 
 import com.example.online_bank.dto.SignUpDto;
-import com.example.online_bank.repository.UserRepository;
-import com.example.online_bank.service.AuthService;
-import com.example.online_bank.service.SignInService;
 import com.example.online_bank.service.UserService;
+import com.example.online_bank.testsupport.fixture.UserFixtureTest;
 import io.restassured.RestAssured;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,19 +25,8 @@ public class AuthTest {
     private UserTestHelper userTestHelper;
 
     @Autowired
-    private AuthService authService;
+    UserFixtureTest userFixtureTest;
 
-    @Autowired
-    private SignInService signInService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    private SignUpDto signUpDto = new SignUpDto(
-            "12345678910",
-            "testName",
-            "testsurname",
-            "test");
 
     @Autowired
     private UserService userService;
