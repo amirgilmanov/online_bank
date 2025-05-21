@@ -12,7 +12,7 @@ import static com.example.online_bank.util.CodeGeneratorUtil.generatePinCode;
 
 @Service
 @RequiredArgsConstructor
-public class SignInService {
+public class SignUpService {
     private final UserService userService;
     private final AuthService authenticationService;
     private final UserMapper userMapper;
