@@ -1,6 +1,6 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.dto.AccountDtoResponse;
+import com.example.online_bank.domain.dto.AccountDtoResponse;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.service.AccountService;
 import com.example.online_bank.service.BankService;
@@ -26,31 +26,31 @@ public class AccountController {
     private final BankService bankService;
     private final AccountService accountService;
 
-    /**
-     * Создать счет для пользователя
-     *
-     * @param token        Токен пользователя
-     * @param currencyCode Код валюты
-     * @return Информацию об счете
-     */
-    @PostMapping()
-    @Operation(summary = "Создать счёт для пользователя")
-    @ApiResponse(
-            responseCode = "201",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = String.class)
-            )
-    )
-    public ResponseEntity<AccountDtoResponse> createUserAccount(
-            @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
-            @RequestHeader String token,
-
-            @Parameter(description = "Код валюты", example = "USD")
-            @RequestParam CurrencyCode currencyCode
-    ) throws BadRequestException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bankService.createAccount(token, currencyCode));
-    }
+//    /**
+//     * Создать счет для пользователя
+//     *
+//     * @param token        Токен пользователя
+//     * @param currencyCode Код валюты
+//     * @return Информацию об счете
+//     */
+//    @PostMapping()
+//    @Operation(summary = "Создать счёт для пользователя")
+//    @ApiResponse(
+//            responseCode = "201",
+//            content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = String.class)
+//            )
+//    )
+//    public ResponseEntity<AccountDtoResponse> createUserAccount(
+//            @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
+//            @RequestHeader String token,
+//
+//            @Parameter(description = "Код валюты", example = "USD")
+//            @RequestParam CurrencyCode currencyCode
+//    ) throws BadRequestException {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(bankService.createAccount(token, currencyCode));
+//    }
 
     /**
      * Просмотреть баланс по счету

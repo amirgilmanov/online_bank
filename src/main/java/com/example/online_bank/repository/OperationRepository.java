@@ -1,8 +1,8 @@
 package com.example.online_bank.repository;
 
-import com.example.online_bank.entity.Account;
-import com.example.online_bank.entity.Operation;
-import com.example.online_bank.entity.User;
+import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.entity.Operation;
+import com.example.online_bank.domain.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

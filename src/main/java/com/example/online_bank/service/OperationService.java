@@ -1,10 +1,11 @@
 package com.example.online_bank.service;
 
 
-import com.example.online_bank.dto.OperationInfoDto;
-import com.example.online_bank.entity.Account;
-import com.example.online_bank.entity.Operation;
-import com.example.online_bank.entity.User;
+import com.example.online_bank.domain.dto.OperationInfoDto;
+
+import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.entity.Operation;
+import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.OperationType;
 import com.example.online_bank.exception.EmptyDataException;
@@ -90,21 +91,21 @@ public class OperationService {
                 .toList();
     }
 
-    /**
-     * @param token Токен пользователя
-     * @param page  индекс отображения
-     * @param size  размер
-     * @return список отфильтрованных операций(порционно)
-     */
-    @Transactional(readOnly = true)
-    public List<OperationInfoDto> findAllByUserPaged(String token, int page, int size) {
-        User holder = userService.findByToken(token);
-        log.info("Поиск операций по пользователю {}. Начало с индекса {}, размер {}", holder.getId(), page, size);
-
-        return operationRepository.findAllByAccount_Holder(holder, createPageRequest(page, size)).stream()
-                .map(operationMapper::toOperationInfoDto)
-                .toList();
-    }
+//    /**
+//     * @param token Токен пользователя
+//     * @param page  индекс отображения
+//     * @param size  размер
+//     * @return список отфильтрованных операций(порционно)
+//     */
+//    @Transactional(readOnly = true)
+//    public List<OperationInfoDto> findAllByUserPaged(String token, int page, int size) {
+//        User holder = userService.findByToken(token);
+//        log.info("Поиск операций по пользователю {}. Начало с индекса {}, размер {}", holder.getId(), page, size);
+//
+//        return operationRepository.findAllByAccount_Holder(holder, createPageRequest(page, size)).stream()
+//                .map(operationMapper::toOperationInfoDto)
+//                .toList();
+//    }
 
     private PageRequest createPageRequest(int page, int size) {
         return PageRequest.of(page, size, Sort.by(DESC, "createdAt"));

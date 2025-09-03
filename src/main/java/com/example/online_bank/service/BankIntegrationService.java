@@ -1,11 +1,11 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.dto.BuyCurrencyDto;
-import com.example.online_bank.dto.FinanceOperationDto;
-import com.example.online_bank.dto.OperationDtoResponse;
-import com.example.online_bank.dto.TransactionDto;
-import com.example.online_bank.entity.AbstractBank;
-import com.example.online_bank.entity.Account;
+import com.example.online_bank.domain.dto.BuyCurrencyDto;
+import com.example.online_bank.domain.dto.FinanceOperationDto;
+import com.example.online_bank.domain.dto.OperationDtoResponse;
+import com.example.online_bank.domain.dto.TransactionDto;
+import com.example.online_bank.domain.model.AbstractBank;
+import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.exception.TransferException;
 import lombok.RequiredArgsConstructor;
@@ -39,66 +39,66 @@ public class BankIntegrationService {
         return bank.getName();
     }
 
-    /**
-     * Перевод в партнерский банк(на другом порту или по одному)
-     * <p>
-     * На вход - имя банка, сумма, описание, фио от кого пришло.
-     *
-     * @param dto Cодержит информацию об отправителе и получателе,
-     *            количестве отправленных денег, описание и время операции.
-     *            <p>
-     *            Если названия банков отправителя и получателя одинаковы - то выполняется пополнение.
-     *            <p>
-     *            Если нет - метод отправит POST запрос по адресу - bank.partner.url + /operations/receive.
-     *            Делает списание со счета отправителя и начисление на счет получателя и создает две операции(операция
-     *            списания и начисления)
-     */
-    @Transactional
-    public List<OperationDtoResponse> transferMoney(TransactionDto dto) {
-        Account senderAccount = accountService.findByAccountNumber(dto.senderInfoDto().accountNumber());
-        Account recipientAccount = accountService.findByAccountNumber(dto.recipientInfoDto().accountNumber());
+//    /**
+//     * Перевод в партнерский банк(на другом порту или по одному)
+//     * <p>
+//     * На вход - имя банка, сумма, описание, фио от кого пришло.
+//     *
+//     * @param dto Cодержит информацию об отправителе и получателе,
+//     *            количестве отправленных денег, описание и время операции.
+//     *            <p>
+//     *            Если названия банков отправителя и получателя одинаковы - то выполняется пополнение.
+//     *            <p>
+//     *            Если нет - метод отправит POST запрос по адресу - bank.partner.url + /operations/receive.
+//     *            Делает списание со счета отправителя и начисление на счет получателя и создает две операции(операция
+//     *            списания и начисления)
+//     */
+//    @Transactional
+//    public List<OperationDtoResponse> transferMoney(TransactionDto dto) {
+//        Account senderAccount = accountService.findByAccountNumber(dto.senderInfoDto().accountNumber());
+//        Account recipientAccount = accountService.findByAccountNumber(dto.recipientInfoDto().accountNumber());
+//
+//        BigDecimal comparedAmount = compareAmount(recipientAccount, senderAccount, dto.amount());
+//        List<FinanceOperationDto> financeDtos = createFinanceDtos(
+//                senderAccount,
+//                recipientAccount,
+//                dto.description(),
+//                dto.description(),
+//                dto.amount(),
+//                comparedAmount
+//        );
+//
+//        return List.of(
+//                financeService.withdrawMoney(getHolderToken(senderAccount), financeDtos.getFirst(), true),
+//                executeRequestByBankNameMatch(dto, getHolderToken(recipientAccount), financeDtos.get(RECIPIENT_INDEX))
+//        );
+//    }
 
-        BigDecimal comparedAmount = compareAmount(recipientAccount, senderAccount, dto.amount());
-        List<FinanceOperationDto> financeDtos = createFinanceDtos(
-                senderAccount,
-                recipientAccount,
-                dto.description(),
-                dto.description(),
-                dto.amount(),
-                comparedAmount
-        );
-
-        return List.of(
-                financeService.withdrawMoney(getHolderToken(senderAccount), financeDtos.getFirst(), true),
-                executeRequestByBankNameMatch(dto, getHolderToken(recipientAccount), financeDtos.get(RECIPIENT_INDEX))
-        );
-    }
-
-    //TODO 26.03.2025: сделать рефакторинг списания и пополнения
-    @Transactional
-    public List<OperationDtoResponse> buyCurrency(BuyCurrencyDto dto, String token) {
-        validateAccountService.validateAccountExistsByUserToken(token);
-
-        Account baseAccount = accountService.findByAccountNumber(dto.baseAccountNumber());
-        Account targetAccount = accountService.findByAccountNumber(dto.targetAccountNumber());
-
-        BigDecimal comparedAmount = compareAmount(baseAccount, targetAccount, dto.amount());
-        List<String> descriptions = createBuyCurrencyDescriptions(dto);
-
-        List<FinanceOperationDto> financeDtos = createFinanceDtos(
-                baseAccount,
-                targetAccount,
-                descriptions.getFirst(),
-                descriptions.get(RECIPIENT_INDEX),
-                dto.amount(),
-                comparedAmount
-        );
-
-        return List.of(
-                financeService.withdrawMoney(getHolderToken(baseAccount), financeDtos.getFirst(), true),
-                financeService.depositMoney(token, financeDtos.get(RECIPIENT_INDEX), false)
-        );
-    }
+//    //TODO 26.03.2025: сделать рефакторинг списания и пополнения
+//    @Transactional
+//    public List<OperationDtoResponse> buyCurrency(BuyCurrencyDto dto, String token) {
+//        validateAccountService.validateAccountExistsByUserToken(token);
+//
+//        Account baseAccount = accountService.findByAccountNumber(dto.baseAccountNumber());
+//        Account targetAccount = accountService.findByAccountNumber(dto.targetAccountNumber());
+//
+//        BigDecimal comparedAmount = compareAmount(baseAccount, targetAccount, dto.amount());
+//        List<String> descriptions = createBuyCurrencyDescriptions(dto);
+//
+//        List<FinanceOperationDto> financeDtos = createFinanceDtos(
+//                baseAccount,
+//                targetAccount,
+//                descriptions.getFirst(),
+//                descriptions.get(RECIPIENT_INDEX),
+//                dto.amount(),
+//                comparedAmount
+//        );
+//
+//        return List.of(
+//                financeService.withdrawMoney(getHolderToken(baseAccount), financeDtos.getFirst(), true),
+//                financeService.depositMoney(token, financeDtos.get(RECIPIENT_INDEX), false)
+//        );
+//    }
 
     private List<String> createBuyCurrencyDescriptions(BuyCurrencyDto dto) {
         String baseAccountPostfix = "валюты со счета %s".formatted(dto.baseAccountNumber());
@@ -140,7 +140,8 @@ public class BankIntegrationService {
      * @return Токен пользователя
      */
     private String getHolderToken(Account entity) {
-        return entity.getHolder().getToken();
+        return "token";
+                //entity.getHolder().getToken();
     }
 
     /**
@@ -223,17 +224,17 @@ public class BankIntegrationService {
         }
     }
 
-    /**
-     * Этот метод по результату сравнения имен банка делает простое зачисление - если имена совпали,
-     * создает и отправляет запрос партнерскому банку если имена банков разнятся
-     *
-     * @param dto            DTO транзакции
-     * @param recipientToken Токен получателя
-     * @param recipientDto   Финансовое dto получателя
-     * @return DTO после завершения операции
-     */
-    private OperationDtoResponse executeRequestByBankNameMatch(TransactionDto dto, String recipientToken, FinanceOperationDto recipientDto) {
-        return compareBankName(dto) ? financeService.depositMoney(recipientToken, recipientDto, true)
-                : createAndSendRequest(recipientDto, recipientToken);
-    }
+//    /**
+//     * Этот метод по результату сравнения имен банка делает простое зачисление - если имена совпали,
+//     * создает и отправляет запрос партнерскому банку если имена банков разнятся
+//     *
+//     * @param dto            DTO транзакции
+//     * @param recipientToken Токен получателя
+//     * @param recipientDto   Финансовое dto получателя
+//     * @return DTO после завершения операции
+//     */
+//    private OperationDtoResponse executeRequestByBankNameMatch(TransactionDto dto, String recipientToken, FinanceOperationDto recipientDto) {
+//        return compareBankName(dto) ? financeService.depositMoney(recipientToken, recipientDto, true)
+//                : createAndSendRequest(recipientDto, recipientToken);
+//    }
 }

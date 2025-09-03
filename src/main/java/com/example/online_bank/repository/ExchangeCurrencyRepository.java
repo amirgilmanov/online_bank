@@ -1,6 +1,6 @@
 package com.example.online_bank.repository;
 
-import com.example.online_bank.entity.ExchangeRate;
+import com.example.online_bank.domain.entity.ExchangeRate;
 import com.example.online_bank.enums.CurrencyCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,20 +12,15 @@ import java.util.Optional;
 @Repository
 public interface ExchangeCurrencyRepository extends JpaRepository<ExchangeRate, Long> {
 
-    @Query(
-            nativeQuery = true,
-            value = """
-                    seleсt id, base_currency, target_currency, rate
-                    from exchange_rate
-                    where base_currency = :baseCurrency
-                    and target_currency = :targetCurrency
-                    """)
-    Optional<ExchangeRate> findCurrencyRate(
-            @Param("baseCurrency")
-            CurrencyCode baseCurrency,
-            @Param("targetCurrency")
-            CurrencyCode targetCurrency
-    );
+        @Query(nativeQuery = true, value = """
+                        select id, base_currency, target_currency, rate
+                        from exchange_rate
+                        where base_currency = :baseCurrency
+                        and target_currency = :targetCurrency
+                        """)
+        Optional<ExchangeRate> findCurrencyRate(
+                        @Param("baseCurrency") CurrencyCode baseCurrency,
+                        @Param("targetCurrency") CurrencyCode targetCurrency);
 
-    boolean existsByBaseCurrencyAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
+        boolean existsByBaseCurrencyAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
 }

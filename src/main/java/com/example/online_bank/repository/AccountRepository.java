@@ -1,7 +1,7 @@
 package com.example.online_bank.repository;
 
-import com.example.online_bank.entity.Account;
-import com.example.online_bank.entity.User;
+import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     List<Account> findAllByHolder(User holder);
 
-    boolean existsByHolder_Token(String token);
+    //boolean existsByHolder_Token(String token);
 
     boolean existsByAccountNumber(String accountNumber);
 }

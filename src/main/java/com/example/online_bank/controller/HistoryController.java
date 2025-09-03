@@ -1,10 +1,10 @@
 package com.example.online_bank.controller;
 
 
-import com.example.online_bank.dto.AccountDtoResponse;
-import com.example.online_bank.dto.OperationDtoResponse;
-import com.example.online_bank.dto.OperationInfoDto;
-import com.example.online_bank.entity.Account;
+import com.example.online_bank.domain.dto.AccountDtoResponse;
+import com.example.online_bank.domain.dto.OperationDtoResponse;
+import com.example.online_bank.domain.dto.OperationInfoDto;
+import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.service.AccountService;
 import com.example.online_bank.service.OperationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,60 +44,60 @@ public class HistoryController {
         return operationService.findAllByAccount(accountNumber, page, size);
     }
 
-    /**
-     * Найти все операции пользователя(порционно)
-     * </p>
-     *
-     * @param token токен пользователя
-     * @return вернёт список всех операций для пользователя
-     */
-    @GetMapping("/find-all-operation-by-user")
-    @Operation(summary = "Просмотреть список всех операций")
-    @ApiResponse(responseCode = "200",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Operation.class))
-    )
-    public List<OperationInfoDto> getAllUserOperations(
-            @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
-            @RequestHeader String token,
+//    /**
+//     * Найти все операции пользователя(порционно)
+//     * </p>
+//     *
+//     * @param token токен пользователя
+//     * @return вернёт список всех операций для пользователя
+//     */
+//    @GetMapping("/find-all-operation-by-user")
+//    @Operation(summary = "Просмотреть список всех операций")
+//    @ApiResponse(responseCode = "200",
+//            content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = Operation.class))
+//    )
+//    public List<OperationInfoDto> getAllUserOperations(
+//            @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
+//            @RequestHeader String token,
+//
+//            @RequestParam
+//            @Parameter(description = "Страница начала показа операций", example = "5")
+//            int page,
+//
+//            @RequestParam
+//            @Parameter(description = "Размер страницы", example = "10")
+//            int size
+//    ) {
+//        return operationService.findAllByUserPaged(token, page, size);
+//    }
 
-            @RequestParam
-            @Parameter(description = "Страница начала показа операций", example = "5")
-            int page,
-
-            @RequestParam
-            @Parameter(description = "Размер страницы", example = "10")
-            int size
-    ) {
-        return operationService.findAllByUserPaged(token, page, size);
-    }
-
-    /**
-     * Найти все счета пользователя
-     *
-     * @param token токен пользователя
-     * @return возвращает список всех счетов пользователя
-     */
-    @GetMapping("/find-all-account-by-user")
-    @Operation(summary = "Поиск всех счетов пользователя, по его токену")
-    @ApiResponse(
-            responseCode = "200",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Account.class)
-            )
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешно получен счёт пользователя"),
-            //TODO 26.03.2025 проверить правильность http запроса
-            @ApiResponse(responseCode = "400", description = "Пользователь по данному токену не найден")
-    })
-    public List<AccountDtoResponse> findAllAccountsByUser(
-            @Parameter(
-                    description = "Токен пользователя",
-                    example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
-            @RequestHeader String token) {
-        return accountService.findAllByHolder(token);
-    }
+//    /**
+//     * Найти все счета пользователя
+//     *
+//     * @param token токен пользователя
+//     * @return возвращает список всех счетов пользователя
+//     */
+//    @GetMapping("/find-all-account-by-user")
+//    @Operation(summary = "Поиск всех счетов пользователя, по его токену")
+//    @ApiResponse(
+//            responseCode = "200",
+//            content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = Account.class)
+//            )
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Успешно получен счёт пользователя"),
+//            //TODO 26.03.2025 проверить правильность http запроса
+//            @ApiResponse(responseCode = "400", description = "Пользователь по данному токену не найден")
+//    })
+//    public List<AccountDtoResponse> findAllAccountsByUser(
+//            @Parameter(
+//                    description = "Токен пользователя",
+//                    example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
+//            @RequestHeader String token) {
+//        return accountService.findAllByHolder(token);
+//    }
 }

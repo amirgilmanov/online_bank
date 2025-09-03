@@ -21,18 +21,18 @@ public class ValidateFinanceService {
      * @param incomeCurrencyCode входящий код валюты
      * @param amount             количество денег
      */
-    public void validateParameters(
-            String token,
-            String accountNumber,
-            CurrencyCode incomeCurrencyCode,
-            BigDecimal amount
-    ) {
-        validateAccountService.validateAccountExistsByUserToken(token);
-        //допустим счет в рублях а мы хотим снять зимбабвийский доллар в зимбабве через зимбабский банкомат  с нашей
-        // с нашей русской карты вводим какую валюты мы хотим снять и сравниваем с валютой счета если разная - то конвертируем
-        //пополняем 100000 песо и эти песо конвертируем в 100 рублей
-        validateCurrencyCode(incomeCurrencyCode, amount, accountNumber);
-    }
+//    public void validateParameters(
+//            String token,
+//            String accountNumber,
+//            CurrencyCode incomeCurrencyCode,
+//            BigDecimal amount
+//    ) {
+//        validateAccountService.validateAccountExistsByUserToken(token);
+//        //допустим счет в рублях а мы хотим снять зимбабвийский доллар в зимбабве через зимбабский банкомат  с нашей
+//        // с нашей русской карты вводим какую валюты мы хотим снять и сравниваем с валютой счета если разная - то конвертируем
+//        //пополняем 100000 песо и эти песо конвертируем в 100 рублей
+//        validateCurrencyCode(incomeCurrencyCode, amount, accountNumber);
+//    }
 
     /**
      * Проверяет входящий код валюты с номером кода валюты, который получаем по номеру счета.
