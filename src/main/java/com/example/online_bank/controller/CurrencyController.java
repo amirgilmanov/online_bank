@@ -1,6 +1,6 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.dto.CreateExchangeRateDto;
+import com.example.online_bank.domain.dto.CreateExchangeRateDto;
 import com.example.online_bank.service.CurrencyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

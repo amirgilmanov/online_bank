@@ -1,8 +1,8 @@
 package com.example.online_bank.mapper;
 
-import com.example.online_bank.dto.OperationDtoResponse;
-import com.example.online_bank.dto.OperationInfoDto;
-import com.example.online_bank.entity.Operation;
+import com.example.online_bank.domain.dto.OperationDtoResponse;
+import com.example.online_bank.domain.dto.OperationInfoDto;
+import com.example.online_bank.domain.entity.Operation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -35,9 +35,4 @@ public interface OperationMapper {
     default BigDecimal calcAmountAfterWithdraw(Operation operation) {
         return (operation.getAccount().getBalance().subtract(operation.getAmount()));
     }
-
-//    @Named("calcAmountAfterDeposit")
-//    default BigDecimal calcAmountAfterDeposit(Operation operation) {
-//        return (operation.getAccount().getBalance().add(operation.getAmount()));
-//    }
 }

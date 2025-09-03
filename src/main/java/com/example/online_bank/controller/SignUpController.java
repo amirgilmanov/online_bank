@@ -1,7 +1,7 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.dto.SignUpDto;
-import com.example.online_bank.service.SignUpService;
+import com.example.online_bank.domain.dto.RegistrationDto;
+import com.example.online_bank.service.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Контроллер регистрации")
 public class SignUpController {
-    private final SignUpService signUpService;
+    private final RegistrationService registrationService;
 
     /**
      * Регистрация пользователя
      *
-     * @param signUpDto телефон, ФИО владельца
+     * @param registrationDto телефон, ФИО владельца
      * @return пин-код для аутентификации
      */
     @PostMapping()
@@ -33,9 +33,8 @@ public class SignUpController {
     @ApiResponse(responseCode = "201",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
     )
-    public ResponseEntity<String> signUp(@RequestBody SignUpDto signUpDto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(signUpService.signUp(signUpDto));
-
+    public ResponseEntity<String> signUp(@RequestBody RegistrationDto registrationDto) {
+        registrationService.signUp(registrationDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

@@ -1,6 +1,6 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.entity.ExchangeRate;
+import com.example.online_bank.domain.entity.ExchangeRate;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.exception.CurrencyPairsNotFoundException;
 import com.example.online_bank.exception.InvalidRateException;

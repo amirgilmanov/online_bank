@@ -1,8 +1,9 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.dto.AccountDtoResponse;
-import com.example.online_bank.entity.Account;
-import com.example.online_bank.entity.User;
+
+import com.example.online_bank.domain.dto.AccountDtoResponse;
+import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.exception.EmptyDataException;
 import com.example.online_bank.mapper.AccountMapper;
@@ -62,7 +63,7 @@ public class AccountService {
      * @param accountNumber Номер счета
      * @param deposit       Сумма пополнения
      */
-    //2.3. Занести деньги насчет (номер счета, сумма).
+    //2.3. Занести деньги на счет (номер счета, сумма).
     //Увеличивает остаток счета. Если счета не существует - ошибка.
     @Transactional()
     public void depositMoney(String accountNumber, BigDecimal deposit) {
@@ -92,23 +93,23 @@ public class AccountService {
         log.info("Обновленный баланс после списания - {}", account.getBalance());
     }
 
-    /**
-     * Найти все счета пользователя
-     *
-     * @param token Токен пользователя
-     * @return Список всех счетов пользователя
-     */
-    @Transactional(readOnly = true)
-    public List<AccountDtoResponse> findAllByHolder(String token) {
-        User holder = userService.findByToken(token);
-        if (holder.getAccounts().isEmpty()) {
-            log.warn("Нет счетов у пользователя {}", holder.getId());
-            throw new EmptyDataException("Нет счетов у данного пользователя");
-        }
-        return accountRepository.findAllByHolder(holder).stream()
-                .map(accountMapper::toDtoResponse)
-                .toList();
-    }
+//    /**
+//     * Найти все счета пользователя
+//     *
+//     * @param token Токен пользователя
+//     * @return Список всех счетов пользователя
+//     */
+//    @Transactional(readOnly = true)
+//    public List<AccountDtoResponse> findAllByHolder(String token) {
+//        User holder = userService.findByToken(token);
+//        if (holder.getAccounts().isEmpty()) {
+//            log.warn("Нет счетов у пользователя {}", holder.getId());
+//            throw new EmptyDataException("Нет счетов у данного пользователя");
+//        }
+//        return accountRepository.findAllByHolder(holder).stream()
+//                .map(accountMapper::toDtoResponse)
+//                .toList();
+//    }
 
     /**
      * Найти баланс по счету

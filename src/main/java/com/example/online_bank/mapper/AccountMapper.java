@@ -1,7 +1,7 @@
 package com.example.online_bank.mapper;
 
-import com.example.online_bank.dto.AccountDtoResponse;
-import com.example.online_bank.entity.Account;
+import com.example.online_bank.domain.dto.AccountDtoResponse;
+import com.example.online_bank.domain.entity.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

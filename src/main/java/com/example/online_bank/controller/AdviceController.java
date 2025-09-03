@@ -25,7 +25,7 @@ public class AdviceController {
      * @param e Обработка ошибки при ошибке аутентификации
      * @return 401 HTTP статус
      */
-    @ExceptionHandler(AuthException.class)
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> handleUserAuthenticationExceptionException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), UNAUTHORIZED);
     }
@@ -63,7 +63,7 @@ public class AdviceController {
     }
 
     /**
-     * @param e Обработка ошибки в случае возниковения ошибки отправке запроса
+     * @param e Обработка ошибки в случае возникновения ошибки отправке запроса
      * @return 500  HTTP статус
      */
     @ExceptionHandler(TransferException.class)
