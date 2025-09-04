@@ -1,1 +1,24 @@
-package com.example.online_bank.security.jwt.service;import org.springframework.stereotype.Component;import javax.crypto.SecretKey;import java.util.Base64;import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;/** * Decode делает байты из строки * (то есть String → byte[], обратно из Base64.getDecoder) */@Componentpublic class SecretKeyDecoder {    /**     * @param base64SecretStr секретный ключ для подписи     * @return преобразованный SecretKey     */    public SecretKey decode(String base64SecretStr) {        byte[] decoded = Base64.getDecoder().decode(base64SecretStr);        return hmacShaKeyFor(decoded);    }}
+package com.example.online_bank.security.jwt.service;
+
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Base64;
+
+import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
+
+/**
+ * Decode делает байты из строки
+ * (то есть String → byte[], обратно из Base64.getDecoder)
+ */
+@Component
+public class SecretKeyDecoder {
+    /**
+     * @param base64SecretStr секретный ключ для подписи
+     * @return преобразованный SecretKey
+     */
+    public SecretKey decode(String base64SecretStr) {
+        byte[] decoded = Base64.getDecoder().decode(base64SecretStr);
+        return hmacShaKeyFor(decoded);
+    }
+}
