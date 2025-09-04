@@ -1,1 +1,50 @@
-package com.example.online_bank.domain.entity;import com.example.online_bank.enums.CurrencyCode;import jakarta.persistence.*;import lombok.*;import org.hibernate.proxy.HibernateProxy;import java.math.BigDecimal;import java.util.List;import java.util.Objects;import static jakarta.persistence.EnumType.STRING;/** * Номер счета (уникален), владелец (класс Пользователь этап1 пункт3), остаток на счете (с копейками). */@AllArgsConstructor@NoArgsConstructor@Builder@ToString@Entity@Getter@Setterpublic class Account {    @Id    @GeneratedValue(strategy = GenerationType.IDENTITY)    private Long id;    @Column    private BigDecimal balance;    @Column    private String accountNumber;    @Column    @Enumerated(STRING)    private CurrencyCode currencyCode;    @OneToMany(mappedBy = "account")    @ToString.Exclude    private List<Operation> operations;    @Column()    private Boolean isBlocked;    @ManyToOne()    @JoinColumn(name = "holder_id", referencedColumnName = "id")    @ToString.Exclude    private User holder;}
+package com.example.online_bank.domain.entity;
+
+import com.example.online_bank.enums.CurrencyCode;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+
+import static jakarta.persistence.EnumType.STRING;
+
+/**
+ * Номер счета (уникален), владелец (класс Пользователь этап1 пункт3), остаток на счете (с копейками).
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
+@Entity
+@Getter
+@Setter
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
+    private BigDecimal balance;
+
+    @Column
+    private String accountNumber;
+
+    @Column
+    @Enumerated(STRING)
+    private CurrencyCode currencyCode;
+
+    @OneToMany(mappedBy = "account")
+    @ToString.Exclude
+    private List<Operation> operations;
+
+    @Column()
+    private Boolean isBlocked;
+
+    @ManyToOne()
+    @JoinColumn(name = "holder_id", referencedColumnName = "id")
+    @ToString.Exclude
+    private User holder;
+}
