@@ -1,1 +1,9 @@
-package com.example.online_bank.exception;import lombok.experimental.StandardException;@StandardExceptionpublic class UnsupportedTokenTypeException extends RuntimeException {    public UnsupportedTokenTypeException(String message) {    }}
+package com.example.online_bank.exception;
+
+import lombok.experimental.StandardException;
+
+@StandardException
+public class UnsupportedTokenTypeException extends RuntimeException {
+    public UnsupportedTokenTypeException(String message) {
+    }
+}
