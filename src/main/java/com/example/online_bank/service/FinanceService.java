@@ -22,15 +22,15 @@ public class FinanceService {
     private final OperationMapper operationMapper;
     private final ValidateFinanceService validateFinanceService;
 
-//    /**
-//     * Делать платеж:
-//     * Проверяем что счет принадлежит пользователю: если счет не принадлежит пользователю выкидываем ошибку.
-//     * Производит списание со счета. Записывает операцию в историю
-//     *
-//     * @param token Токен пользователя
-//     * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
-//     * @return Возвращает информацию об операции списания со счета
-//     */
+    /**
+     * Делать платеж:
+     * Проверяем что счет принадлежит пользователю: если счет не принадлежит пользователю выкидываем ошибку.
+     * Производит списание со счета. Записывает операцию в историю
+     *
+     * @param token Токен пользователя
+     * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
+     * @return Возвращает информацию об операции списания со счета
+     */
 //    @Transactional()
 //    public OperationDtoResponse withdrawMoney(String token, FinanceOperationDto dto, boolean isTransaction) {
 //        validateFinanceService.validateParameters(token, dto.accountNumber(), dto.currencyCode(), dto.amount());
@@ -47,14 +47,14 @@ public class FinanceService {
 //                dto.currencyCode()));
 //    }
 
-//    /**
-//     * Делать зачисление: на вход - номер счета, сумма, описание.
-//     * Зачисляет на банковский счет деньги и записывает операцию в историю.
-//     *
-//     * @param token Токен пользователя
-//     * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
-//     * @return Возвращает информацию об операции пополнении счета
-//     */
+    /**
+     * Делать зачисление: на вход - номер счета, сумма, описание.
+     * Зачисляет на банковский счет деньги и записывает операцию в историю.
+     *
+  //   * @param token Токен пользователя
+  //   * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
+     * @return Возвращает информацию об операции пополнении счета
+     */
 //    @Transactional()
 //    public OperationDtoResponse depositMoney(String token, FinanceOperationDto dto, boolean isDeposit) {
 //        validateFinanceService.
