@@ -1,1 +1,9 @@
-package com.example.online_bank.service;import org.springframework.stereotype.Service;public interface NotificationService {    void sendVerificationCode(String destination, String verificationCode);}
+package com.example.online_bank.service;
+
+
+import org.springframework.stereotype.Service;
+
+public interface NotificationService {
+
+    void sendVerificationCode(String destination, String verificationCode);
+}

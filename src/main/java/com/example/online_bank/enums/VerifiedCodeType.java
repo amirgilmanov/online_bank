@@ -1,1 +1,7 @@
-package com.example.online_bank.enums;public enum VerifiedCodeType {    EMAIL,    PHONE,    RESET}
+package com.example.online_bank.enums;
+
+public enum VerifiedCodeType {
+    EMAIL,
+    PHONE,
+    RESET
+}

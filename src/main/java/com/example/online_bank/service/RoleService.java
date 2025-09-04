@@ -1,1 +1,18 @@
-package com.example.online_bank.service;import com.example.online_bank.domain.entity.Role;import com.example.online_bank.repository.RoleRepository;import lombok.RequiredArgsConstructor;import org.springframework.stereotype.Service;import java.util.Optional;@Service@RequiredArgsConstructorpublic class RoleService {    private final RoleRepository roleRepository;    public Optional<Role> findRoleByName(String name) {        return roleRepository.findByName(name);    }}
+package com.example.online_bank.service;
+
+import com.example.online_bank.domain.entity.Role;
+import com.example.online_bank.repository.RoleRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class RoleService {
+    private final RoleRepository roleRepository;
+
+    public Optional<Role> findRoleByName(String name) {
+        return roleRepository.findByName(name);
+    }
+}
