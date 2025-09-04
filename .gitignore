@@ -35,6 +35,6 @@ build/
 ### Security ###
 .env
 jwt_secret_key_file
-testDb
+testDb.xlsx
 проект онлайн банкинг 1_2.txt
 схема.png
