@@ -1,1 +1,62 @@
-package com.example.online_bank.security.provider;import com.example.online_bank.domain.entity.User;import com.example.online_bank.security.token.EmailAuthenticationToken;import com.example.online_bank.service.UserService;import com.example.online_bank.service.VerifiedCodeService;import jakarta.persistence.EntityNotFoundException;import lombok.RequiredArgsConstructor;import org.springframework.security.authentication.AuthenticationProvider;import org.springframework.security.authentication.BadCredentialsException;import org.springframework.security.core.Authentication;import org.springframework.security.core.AuthenticationException;import org.springframework.security.core.authority.SimpleGrantedAuthority;import org.springframework.stereotype.Component;import java.util.Collection;import java.util.HashMap;import java.util.Map;@Component@RequiredArgsConstructorpublic class EmailAuthenticationProvider implements AuthenticationProvider {    private final VerifiedCodeService verifiedCodeService;    private final UserService userService;    /**     * @param authentication the authentication request object.     * @return authenticated user     */    @Override    public Authentication authenticate(Authentication authentication) throws AuthenticationException {        String email = (String) authentication.getPrincipal();        String code = (String) authentication.getCredentials();        User user = userService.findByEmail(email).orElseThrow(EntityNotFoundException::new);        Collection<SimpleGrantedAuthority> userRoles = userService.toSimpleGrantedAuthority(user);        boolean isVerified = userService.verifyEmailCode(user.getId(), code);        if (!isVerified) {            throw new BadCredentialsException("Что-то пошло не так при проверке верификации");        }        EmailAuthenticationToken token = new EmailAuthenticationToken(email, userRoles);        Map<String, Object> details = new HashMap<>();        details.put("fullName", String.format("%s %s %s", user.getName(), user.getSurname(), user.getPatronymic()));        details.put("name", user.getName());        details.put("uuid", user.getUuid().toString());        token.setDetails(details);        verifiedCodeService.cleanVerifiedCodes(user.getId());        return token;    }    /**     * @param authentication     * @return     */    @Override    public boolean supports(Class<?> authentication) {        return EmailAuthenticationToken.class.isAssignableFrom(authentication);    }}
+package com.example.online_bank.security.provider;
+
+import com.example.online_bank.domain.entity.User;
+import com.example.online_bank.security.token.EmailAuthenticationToken;
+import com.example.online_bank.service.UserService;
+import com.example.online_bank.service.VerifiedCodeService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+@Component
+@RequiredArgsConstructor
+public class EmailAuthenticationProvider implements AuthenticationProvider {
+    private final VerifiedCodeService verifiedCodeService;
+    private final UserService userService;
+
+    /**
+     * @param authentication the authentication request object.
+     * @return authenticated user
+     */
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        String email = (String) authentication.getPrincipal();
+        String code = (String) authentication.getCredentials();
+
+        User user = userService.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Collection<SimpleGrantedAuthority> userRoles = userService.toSimpleGrantedAuthority(user);
+
+        boolean isVerified = userService.verifyEmailCode(user.getId(), code);
+        if (!isVerified) {
+            throw new BadCredentialsException("Что-то пошло не так при проверке верификации");
+        }
+
+        EmailAuthenticationToken token = new EmailAuthenticationToken(email, userRoles);
+        Map<String, Object> details = new HashMap<>();
+        details.put("fullName", String.format("%s %s %s", user.getName(), user.getSurname(), user.getPatronymic()));
+        details.put("name", user.getName());
+        details.put("uuid", user.getUuid().toString());
+        token.setDetails(details);
+
+        verifiedCodeService.cleanVerifiedCodes(user.getId());
+        return token;
+    }
+
+    /**
+     * @param authentication
+     * @return
+     */
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return EmailAuthenticationToken.class.isAssignableFrom(authentication);
+    }
+}
