@@ -30,7 +30,7 @@ public class TokenService {
     }
 
     public String getAccessToken(Authentication token) {
-       return jwtFactoryOrchestrator.createJwt(TokenType.ACCESS, token);
+        return jwtFactoryOrchestrator.createJwt(TokenType.ACCESS, token);
     }
 
     public String getIdToken(Authentication token) {

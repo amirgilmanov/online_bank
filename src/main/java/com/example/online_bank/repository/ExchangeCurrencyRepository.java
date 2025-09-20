@@ -12,15 +12,15 @@ import java.util.Optional;
 @Repository
 public interface ExchangeCurrencyRepository extends JpaRepository<ExchangeRate, Long> {
 
-        @Query(nativeQuery = true, value = """
-                        select id, base_currency, target_currency, rate
-                        from exchange_rate
-                        where base_currency = :baseCurrency
-                        and target_currency = :targetCurrency
-                        """)
-        Optional<ExchangeRate> findCurrencyRate(
-                        @Param("baseCurrency") CurrencyCode baseCurrency,
-                        @Param("targetCurrency") CurrencyCode targetCurrency);
+    @Query(nativeQuery = true, value = """
+            select id, base_currency, target_currency, rate
+            from exchange_rate
+            where base_currency = :baseCurrency
+            and target_currency = :targetCurrency
+            """)
+    Optional<ExchangeRate> findCurrencyRate(
+            @Param("baseCurrency") CurrencyCode baseCurrency,
+            @Param("targetCurrency") CurrencyCode targetCurrency);
 
-        boolean existsByBaseCurrencyAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
+    boolean existsByBaseCurrencyAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
 }

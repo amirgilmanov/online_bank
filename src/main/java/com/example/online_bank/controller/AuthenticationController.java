@@ -1,7 +1,7 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.domain.dto.AuthenticationResponseDto;
 import com.example.online_bank.domain.dto.AuthenticationRequest;
+import com.example.online_bank.domain.dto.AuthenticationResponseDto;
 import com.example.online_bank.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +23,7 @@ public class AuthenticationController {
 
     /**
      * Аутентификация пользователя по электронной почте
+     *
      * @return возвращает токен пользователя
      */
     @PostMapping({"email"})

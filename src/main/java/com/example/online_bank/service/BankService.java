@@ -1,15 +1,8 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.domain.dto.*;
-import com.example.online_bank.domain.entity.User;
-import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.mapper.AccountMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

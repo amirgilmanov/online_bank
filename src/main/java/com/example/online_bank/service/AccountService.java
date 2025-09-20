@@ -1,11 +1,9 @@
 package com.example.online_bank.service;
 
 
-import com.example.online_bank.domain.dto.AccountDtoResponse;
 import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
-import com.example.online_bank.exception.EmptyDataException;
 import com.example.online_bank.mapper.AccountMapper;
 import com.example.online_bank.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumber;
 

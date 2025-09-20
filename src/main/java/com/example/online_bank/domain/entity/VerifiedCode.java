@@ -15,28 +15,28 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VerifiedCode {
-        @Id
-        @GeneratedValue(strategy = GenerationType.UUID)
-        private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-        @Column
-        private String verifiedCode;
+    @Column
+    private String verifiedCode;
 
-        @Column
-        private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime createdAt;
 
-        @Column
-        private LocalDateTime expiresAt;
+    @Column
+    private LocalDateTime expiresAt;
 
-        @Column
-        private Boolean isVerified;
+    @Column
+    private Boolean isVerified;
 
-        @Column
-        @Enumerated(EnumType.STRING)
-        private VerifiedCodeType codeType;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private VerifiedCodeType codeType;
 
-        @ManyToOne()
-        @JoinColumn(name = "user_id", referencedColumnName = "id")
-        @ToString.Exclude
-        private User user;
+    @ManyToOne()
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ToString.Exclude
+    private User user;
 }

@@ -4,15 +4,14 @@ import com.example.online_bank.domain.dto.BuyCurrencyDto;
 import com.example.online_bank.domain.dto.FinanceOperationDto;
 import com.example.online_bank.domain.dto.OperationDtoResponse;
 import com.example.online_bank.domain.dto.TransactionDto;
-import com.example.online_bank.domain.model.AbstractBank;
 import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.model.AbstractBank;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.exception.TransferException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -141,7 +140,7 @@ public class BankIntegrationService {
      */
     private String getHolderToken(Account entity) {
         return "token";
-                //entity.getHolder().getToken();
+        //entity.getHolder().getToken();
     }
 
     /**

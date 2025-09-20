@@ -1,17 +1,11 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.domain.dto.FinanceOperationDto;
-import com.example.online_bank.domain.dto.OperationDtoResponse;
 import com.example.online_bank.service.BankService;
 import com.example.online_bank.service.OperationService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/operation")

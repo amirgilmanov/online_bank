@@ -1,20 +1,15 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.domain.dto.BuyCurrencyDto;
-import com.example.online_bank.domain.dto.OperationDtoResponse;
-import com.example.online_bank.domain.dto.TransactionDto;
 import com.example.online_bank.service.BankService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/integration")

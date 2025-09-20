@@ -21,6 +21,6 @@ public class ServicesLoggingAspect {
         String className = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
         Object[] methodArgs = joinPoint.getArgs();
-        log.info("Метод {} с аргументами {}",className + "." + methodName, methodArgs);
+        log.info("Метод {} с аргументами {}", className + "." + methodName, methodArgs);
     }
 }

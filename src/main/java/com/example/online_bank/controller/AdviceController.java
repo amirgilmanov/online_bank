@@ -86,10 +86,10 @@ public class AdviceController {
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }
 
-    /**
-     //     * @param e обработка ошибки когда произошла неизвестная ошибка
-     //     * @return 503 HTTP статус
-     //     */
+    //
+    //     * @param e обработка ошибки когда произошла неизвестная ошибка
+    //     * @return 503 HTTP статус
+    //     */
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<String> handleApiException(Exception e) {
 //        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)

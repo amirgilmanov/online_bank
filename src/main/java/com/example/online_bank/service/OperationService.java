@@ -2,10 +2,8 @@ package com.example.online_bank.service;
 
 
 import com.example.online_bank.domain.dto.OperationInfoDto;
-
 import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.domain.entity.Operation;
-import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.OperationType;
 import com.example.online_bank.exception.EmptyDataException;

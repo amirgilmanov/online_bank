@@ -17,9 +17,9 @@ public class MailService {
     private String fromTo;
 
     /**
-     * @param to Адрес получателя (example@gmail.com)
+     * @param to      Адрес получателя (example@gmail.com)
      * @param subject Тема письма (Ваш код подтверждения)
-     * @param text Содержимое письма (Здравствуйте, ваш код подтверждения)
+     * @param text    Содержимое письма (Здравствуйте, ваш код подтверждения)
      */
     public void sendMail(String to, String subject, String text) {
         log.info("Отправка сообщения: {}, от: {}", to, fromTo);

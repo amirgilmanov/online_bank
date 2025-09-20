@@ -13,7 +13,7 @@ public class EmailNotificationServiceImpl implements NotificationService {
     private final static String BODY_TEXT = "Ваш код регистрации подтверждения: ";
 
     /**
-     * @param destination          Кому отправить письмо
+     * @param destination      Кому отправить письмо
      * @param verificationCode Код подтверждения
      */
     @Override

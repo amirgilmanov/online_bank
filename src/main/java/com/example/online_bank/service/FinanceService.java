@@ -1,18 +1,9 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.domain.dto.FinanceOperationDto;
-import com.example.online_bank.domain.dto.OperationDtoResponse;
-import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.enums.OperationType;
 import com.example.online_bank.mapper.OperationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import static com.example.online_bank.enums.OperationType.*;
 
 @RequiredArgsConstructor
 @Service
@@ -50,9 +41,10 @@ public class FinanceService {
     /**
      * Делать зачисление: на вход - номер счета, сумма, описание.
      * Зачисляет на банковский счет деньги и записывает операцию в историю.
+     * <p>
+     * //   * @param token Токен пользователя
+     * //   * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
      *
-  //   * @param token Токен пользователя
-  //   * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
      * @return Возвращает информацию об операции пополнении счета
      */
 //    @Transactional()
@@ -74,7 +66,6 @@ public class FinanceService {
 //                dto.currencyCode()
 //        ), balanceBefore);
 //    }
-
     private OperationType setOperationType(boolean condition, OperationType trueType, OperationType falseType) {
         return condition ? trueType : falseType;
     }

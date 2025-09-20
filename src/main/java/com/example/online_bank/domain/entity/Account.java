@@ -3,11 +3,9 @@ package com.example.online_bank.domain.entity;
 import com.example.online_bank.enums.CurrencyCode;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 import static jakarta.persistence.EnumType.STRING;
 

@@ -1,7 +1,6 @@
 package com.example.online_bank.service;
 
 import com.example.online_bank.domain.entity.Account;
-import com.example.online_bank.exception.AccountAccessException;
 import com.example.online_bank.exception.NegativeAccountBalance;
 import com.example.online_bank.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;

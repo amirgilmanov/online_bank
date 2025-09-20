@@ -9,4 +9,5 @@ public abstract class AbstractBank {
     protected final String name;
     @NonNull
     protected final String url;
+
 }

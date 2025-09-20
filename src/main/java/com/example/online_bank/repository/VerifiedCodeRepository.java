@@ -20,9 +20,7 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
      * @param userId      ID пользователя
      * @param type        тип кода (EMAIL, PHONE, RESET)
      * @param currentTime текущее время для проверки
-     *
      * @return {@link Optional} с найденным кодом или пустой, если код не найден/истек
-     *
      * @implNote Метод ищет коды, которые:
      * <ul>
      *   <li>Соответствуют указанному коду и пользователю</li>
@@ -40,12 +38,11 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
     /**
      * Найти все коды, где время истечения раньше времени в параметре
      *
-     * @example Время истечения - 15:00, время в параметре - 15:30. Время истечения < времени в параметре, значит
-     * код истёк. AtBefore - раньше
-     *
      * @param currentTime
      * @param userId
      * @return
+     * @example Время истечения - 15:00, время в параметре - 15:30. Время истечения < времени в параметре, значит
+     * код истёк. AtBefore - раньше
      */
     List<VerifiedCode> findAllByExpiresAtBeforeAndUser_Id(LocalDateTime currentTime, Long userId);
 

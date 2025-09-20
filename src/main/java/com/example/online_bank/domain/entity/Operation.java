@@ -4,11 +4,9 @@ import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.OperationType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
