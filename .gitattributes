@@ -1,0 +1,1 @@
+# Auto detect text files and perform LF normalization* text=auto# Java source files*.java text eol=lf# Configuration files*.xml text eol=lf*.properties text eol=lf*.yml text eol=lf*.yaml text eol=lf# Shell scripts*.sh text eol=lf# Windows scripts*.bat text eol=crlf*.cmd text eol=crlf
