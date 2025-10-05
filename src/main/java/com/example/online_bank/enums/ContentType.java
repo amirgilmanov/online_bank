@@ -1,1 +1,5 @@
-package com.example.online_bank.enums;public enum ContentType {    EMAIL, PHONE}
+package com.example.online_bank.enums;
+
+public enum ContentType {
+    EMAIL, PHONE
+}

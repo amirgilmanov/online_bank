@@ -1,1 +1,68 @@
-package com.example.online_bank.security.token;import lombok.Getter;import org.springframework.security.authentication.AbstractAuthenticationToken;import org.springframework.security.core.GrantedAuthority;import java.util.Collection;public class JwtRequestToken extends AbstractAuthenticationToken {    /**     * Мы храним jwt token, в объекте JwtRequestToken потому что JwtRequestToken имеет два состояния:     * до аутентификации и после аутентификации     */    @Getter    private String token;    private final Object principal;    /**     * Конструктор для пользователя, который еще не был аутентифицирован     */    public JwtRequestToken(String token) {        super(null);        setAuthenticated(false);        this.token = token;        this.principal = null;    }    /**     * Этот конструктор может использоваться только, когда пользователь был аутентифицирован     */    public JwtRequestToken(Collection<? extends GrantedAuthority> authorities, Object principal) {        super(authorities);        setAuthenticated(true);        this.principal = principal;    }    /**     * @return     */    @Override    public Collection<GrantedAuthority> getAuthorities() {        return super.getAuthorities();    }    /**     * @return     */    @Override    public Object getCredentials() {        return "";    }    /**     * @return     */    @Override    public Object getPrincipal() {        return this.principal;    }    /**     * @return     */    @Override    public boolean isAuthenticated() {        return super.isAuthenticated();    }}
+package com.example.online_bank.security.token;
+
+import lombok.Getter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+
+public class JwtRequestToken extends AbstractAuthenticationToken {
+    /**
+     * Мы храним jwt token, в объекте JwtRequestToken потому что JwtRequestToken имеет два состояния:
+     * до аутентификации и после аутентификации
+     */
+    @Getter
+    private String token;
+    private final Object principal;
+
+    /**
+     * Конструктор для пользователя, который еще не был аутентифицирован
+     */
+    public JwtRequestToken(String token) {
+        super(null);
+        setAuthenticated(false);
+        this.token = token;
+        this.principal = null;
+    }
+
+    /**
+     * Этот конструктор может использоваться только, когда пользователь был аутентифицирован
+     */
+    public JwtRequestToken(Collection<? extends GrantedAuthority> authorities, Object principal) {
+        super(authorities);
+        setAuthenticated(true);
+        this.principal = principal;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
+        return super.getAuthorities();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Object getCredentials() {
+        return "";
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Object getPrincipal() {
+        return this.principal;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isAuthenticated() {
+        return super.isAuthenticated();
+    }
+}

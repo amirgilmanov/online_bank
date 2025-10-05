@@ -1,1 +1,7 @@
-package com.example.online_bank;import com.example.online_bank.mapper.UserMapper;public class UserMapperTest {}
+package com.example.online_bank;
+
+import com.example.online_bank.mapper.UserMapper;
+
+public class UserMapperTest {
+
+}

@@ -1,1 +1,64 @@
-package com.example.online_bank.security.jwt.factory.impl;import com.example.online_bank.config.JwtConfig;import com.example.online_bank.domain.dto.UserDetails;import com.example.online_bank.enums.TokenType;import com.example.online_bank.security.jwt.factory.TokenFactory;import com.example.online_bank.security.jwt.service.JwtService;import io.jsonwebtoken.Jwts;import lombok.RequiredArgsConstructor;import org.springframework.stereotype.Component;import java.util.Date;import java.util.Map;@Component@RequiredArgsConstructorpublic class IdTokenFactory implements TokenFactory {    private final JwtConfig config;    private final JwtService jwtService;    /**     * @param userDetails - token - Информация о пользователе     * @return Токен Id     * имя     */    //TODO: добавить фотографию профиля пользователю и подгружать через Amazon S3    @Override    public String createToken(TokenType type, UserDetails userDetails) {        if (!supports(type)) {            throw new IllegalArgumentException("Unsupported token type: " + type);        }        Date issuedDate = new Date();        Date expiredDate = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());        String uuid = userDetails.uuid();        Map<String, Object> claims = jwtService.createClaims();        claims.put("name", userDetails.name());        return Jwts.builder()                .issuedAt(issuedDate)                .expiration(expiredDate)                .subject(uuid)                .claims(claims)                .audience().add(config.getAudience())                .and()                .issuer(config.getIssuer())                .signWith(config.getKey())                .compact();    }    /**     * @param supported     * @return     */    @Override    public boolean supports(TokenType supported) {        return supported.equals(TokenType.ID);    }}
+package com.example.online_bank.security.jwt.factory.impl;
+
+import com.example.online_bank.config.JwtConfig;
+import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.enums.TokenType;
+import com.example.online_bank.security.jwt.factory.TokenFactory;
+import com.example.online_bank.security.jwt.service.JwtService;
+import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.Map;
+
+@Component
+@RequiredArgsConstructor
+public class IdTokenFactory implements TokenFactory {
+    private final JwtConfig config;
+    private final JwtService jwtService;
+
+
+    /**
+     * @param userDetails - token - Информация о пользователе
+     * @return Токен Id
+     * имя
+     */
+    //TODO: добавить фотографию профиля пользователю и подгружать через Amazon S3
+    @Override
+    public String createToken(TokenType type, UserDetails userDetails) {
+        if (!supports(type)) {
+            throw new IllegalArgumentException("Unsupported token type: " + type);
+        }
+
+        Date issuedDate = new Date();
+        Date expiredDate = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
+
+        String uuid = userDetails.uuid();
+
+        Map<String, Object> claims = jwtService.createClaims();
+        claims.put("name", userDetails.name());
+
+
+        return Jwts.builder()
+                .issuedAt(issuedDate)
+                .expiration(expiredDate)
+                .subject(uuid)
+                .claims(claims)
+                .audience().add(config.getAudience())
+                .and()
+                .issuer(config.getIssuer())
+                .signWith(config.getKey())
+                .compact();
+    }
+
+
+    /**
+     * @param supported
+     * @return
+     */
+    @Override
+    public boolean supports(TokenType supported) {
+        return supported.equals(TokenType.ID);
+    }
+}

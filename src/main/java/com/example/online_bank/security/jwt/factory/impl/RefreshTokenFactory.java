@@ -1,1 +1,65 @@
-package com.example.online_bank.security.jwt.factory.impl;import com.example.online_bank.config.JwtConfig;import com.example.online_bank.domain.dto.UserDetails;import com.example.online_bank.enums.TokenType;import com.example.online_bank.security.jwt.factory.TokenFactory;import com.example.online_bank.security.jwt.service.JwtService;import io.jsonwebtoken.Jwts;import lombok.RequiredArgsConstructor;import org.springframework.stereotype.Component;import java.time.Instant;import java.util.Date;import java.util.Map;@Component@RequiredArgsConstructorpublic class RefreshTokenFactory implements TokenFactory {    private final JwtConfig config;    private final JwtService jwtService;    /**     * @param userDetails - Информация о пользователе     * @return Refresh токен     */    //TODO реализовать в будущем с помощью redis таблицу с удаленными/заблокированными токенами    @Override    public String createToken(TokenType type, UserDetails userDetails) {        if (!supports(type)) {            throw new IllegalArgumentException("Unsupported token type: " + type);        }        Date issuedDate = new Date();        Date notBeforeDate = Date.from(Instant.now());        Date expiredAt = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());        String subject = userDetails.uuid();        Map<String, Object> claims = jwtService.createClaims();        claims.put("token_type", type);        String id = jwtService.createUuid();        return Jwts.builder()                .subject(subject)                .issuer(config.getIssuer())                .id(id)                .notBefore(notBeforeDate)                .expiration(expiredAt)                .signWith(config.getKey())                .audience().add(config.getAudience())                .and()                .claims(claims)                .compact();    }    /**     * @param supported     * @return     */    @Override    public boolean supports(TokenType supported) {        return supported.equals(TokenType.REFRESH);    }}
+package com.example.online_bank.security.jwt.factory.impl;
+
+import com.example.online_bank.config.JwtConfig;
+import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.enums.TokenType;
+import com.example.online_bank.security.jwt.factory.TokenFactory;
+import com.example.online_bank.security.jwt.service.JwtService;
+import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+
+@Component
+@RequiredArgsConstructor
+public class RefreshTokenFactory implements TokenFactory {
+    private final JwtConfig config;
+    private final JwtService jwtService;
+
+    /**
+     * @param userDetails - Информация о пользователе
+     * @return Refresh токен
+     */
+    //TODO реализовать в будущем с помощью redis таблицу с удаленными/заблокированными токенами
+    @Override
+    public String createToken(TokenType type, UserDetails userDetails) {
+        if (!supports(type)) {
+            throw new IllegalArgumentException("Unsupported token type: " + type);
+        }
+
+        Date issuedDate = new Date();
+        Date notBeforeDate = Date.from(Instant.now());
+        Date expiredAt = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
+
+        String subject = userDetails.uuid();
+
+        Map<String, Object> claims = jwtService.createClaims();
+        claims.put("token_type", type);
+
+        String id = jwtService.createUuid();
+
+        return Jwts.builder()
+                .subject(subject)
+                .issuer(config.getIssuer())
+                .id(id)
+                .notBefore(notBeforeDate)
+                .expiration(expiredAt)
+                .signWith(config.getKey())
+                .audience().add(config.getAudience())
+                .and()
+                .claims(claims)
+                .compact();
+    }
+
+    /**
+     * @param supported
+     * @return
+     */
+    @Override
+    public boolean supports(TokenType supported) {
+        return supported.equals(TokenType.REFRESH);
+    }
+}

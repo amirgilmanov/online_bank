@@ -1,1 +1,70 @@
-package com.example.online_bank.domain.model;import lombok.AllArgsConstructor;import org.springframework.security.core.GrantedAuthority;import org.springframework.security.core.userdetails.UserDetails;import java.util.Collection;@AllArgsConstructorpublic class JwtUserDetails implements UserDetails {    private String uuid;    private String username;    private Collection<? extends GrantedAuthority> authorities;    /**     * @return     */    @Override    public Collection<? extends GrantedAuthority> getAuthorities() {        return this.authorities;    }    /**     * @return     */    @Override    public String getPassword() {        return "";    }    /**     * @return     */    @Override    public String getUsername() {        return this.username;    }    /**     * @return     */    @Override    public boolean isAccountNonExpired() {        return true;    }    /**     * @return     */    @Override    public boolean isAccountNonLocked() {        return true;    }    /**     * @return     */    @Override    public boolean isCredentialsNonExpired() {        return true;    }    /**     * @return     */    @Override    public boolean isEnabled() {        return true;    }}
+package com.example.online_bank.domain.model;
+
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+
+@AllArgsConstructor
+public class JwtUserDetails implements UserDetails {
+    private String uuid;
+    private String username;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    /**
+     * @return
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+}
