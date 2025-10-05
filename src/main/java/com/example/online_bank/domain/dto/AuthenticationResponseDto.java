@@ -1,4 +1,6 @@
 package com.example.online_bank.domain.dto;
 
-public record AuthenticationResponseDto(String accessToken, String idToken, String refreshToken) {
+import java.util.Set;
+
+public record AuthenticationResponseDto(Set<String> tokens) {
 }

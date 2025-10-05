@@ -1,5 +1,7 @@
 package com.example.online_bank.controller;
 
+import com.example.online_bank.domain.dto.AccountDtoResponse;
+import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.service.AccountService;
 import com.example.online_bank.service.BankService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,10 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -24,31 +26,31 @@ public class AccountController {
     private final BankService bankService;
     private final AccountService accountService;
 
-//    /**
-//     * Создать счет для пользователя
-//     *
-//     * @param token        Токен пользователя
-//     * @param currencyCode Код валюты
-//     * @return Информацию об счете
-//     */
-//    @PostMapping()
-//    @Operation(summary = "Создать счёт для пользователя")
-//    @ApiResponse(
-//            responseCode = "201",
-//            content = @Content(
-//                    mediaType = "application/json",
-//                    schema = @Schema(implementation = String.class)
-//            )
-//    )
-//    public ResponseEntity<AccountDtoResponse> createUserAccount(
-//            @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
-//            @RequestHeader String token,
-//
-//            @Parameter(description = "Код валюты", example = "USD")
-//            @RequestParam CurrencyCode currencyCode
-//    ) throws BadRequestException {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(bankService.createAccount(token, currencyCode));
-//    }
+    /**
+     * Создать счет для пользователя
+     *
+     * @param token        Токен пользователя
+     * @param currencyCode Код валюты
+     * @return Информацию об счете
+     */
+    @PostMapping()
+    @Operation(summary = "Создать счёт для пользователя")
+    @ApiResponse(
+            responseCode = "201",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)
+            )
+    )
+    public ResponseEntity<AccountDtoResponse> createUserAccount(
+            @Parameter(description = "Токен пользователя", example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
+            @RequestHeader String token,
+
+            @Parameter(description = "Код валюты", example = "USD")
+            @RequestParam CurrencyCode currencyCode
+    ) throws BadRequestException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(bankService.createAccount(token, currencyCode));
+    }
 
     /**
      * Просмотреть баланс по счету

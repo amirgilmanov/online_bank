@@ -28,10 +28,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
     /**
-     * Метод, чтобы встроится в цепочку фильтров Spring
+     * Метод, чтобы выстроиться в цепочку фильтров Spring
      * Если запрос в защищенную область если в нем есть токен(JWT), этот фильтр
-     * будет
-     * перекладывать данные из токена в Security контекст
+     * будет перекладывать данные из токена в Security контекст
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

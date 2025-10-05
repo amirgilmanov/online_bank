@@ -1,9 +1,18 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.domain.dto.FinanceOperationDto;
+import com.example.online_bank.domain.dto.OperationDtoResponse;
+import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.enums.OperationType;
 import com.example.online_bank.mapper.OperationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+import static com.example.online_bank.enums.OperationType.TRANSACTION;
+import static com.example.online_bank.enums.OperationType.WITHDRAW;
 
 @RequiredArgsConstructor
 @Service
@@ -22,21 +31,21 @@ public class FinanceService {
      * @param dto   Содержит информацию о номере счета, код валюты, описание, количестве денег
      * @return Возвращает информацию об операции списания со счета
      */
-//    @Transactional()
-//    public OperationDtoResponse withdrawMoney(String token, FinanceOperationDto dto, boolean isTransaction) {
-//        validateFinanceService.validateParameters(token, dto.accountNumber(), dto.currencyCode(), dto.amount());
-//        Account account = accountService.findByAccountNumber(dto.accountNumber());
-//
-//        accountService.withdrawMoney(dto.accountNumber(), dto.amount());
-//
-//        return operationMapper.toWithdrawOperationDto(operationService.createOperation(
-//                LocalDateTime.now(),
-//                setOperationType(isTransaction, TRANSACTION, WITHDRAW),
-//                dto.amount(),
-//                dto.description(),
-//                account,
-//                dto.currencyCode()));
-//    }
+    @Transactional()
+    public OperationDtoResponse withdrawMoney(String token, FinanceOperationDto dto, boolean isTransaction) {
+        validateFinanceService.validateParameters(token, dto.accountNumber(), dto.currencyCode(), dto.amount());
+        Account account = accountService.findByAccountNumber(dto.accountNumber());
+
+        accountService.withdrawMoney(dto.accountNumber(), dto.amount());
+
+        return operationMapper.toWithdrawOperationDto(operationService.createOperation(
+                LocalDateTime.now(),
+                setOperationType(isTransaction, TRANSACTION, WITHDRAW),
+                dto.amount(),
+                dto.description(),
+                account,
+                dto.currencyCode()));
+    }
 
     /**
      * Делать зачисление: на вход - номер счета, сумма, описание.

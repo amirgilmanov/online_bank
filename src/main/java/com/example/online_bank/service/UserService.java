@@ -92,7 +92,6 @@ public class UserService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .toList();
     }
-
 }
 
 //TODO сделать подтверждение номера и почты

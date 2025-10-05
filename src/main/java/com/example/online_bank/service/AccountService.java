@@ -1,11 +1,15 @@
 package com.example.online_bank.service;
 
 
+import com.example.online_bank.domain.dto.AccountDtoResponse;
 import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
+import com.example.online_bank.exception.EmptyDataException;
+import com.example.online_bank.exception.NegativeAccountBalance;
 import com.example.online_bank.mapper.AccountMapper;
 import com.example.online_bank.repository.AccountRepository;
+import com.example.online_bank.security.jwt.service.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumber;
 
@@ -27,9 +32,9 @@ import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumb
 @Slf4j
 public class AccountService {
     private final AccountRepository accountRepository;
-    private final ValidateAccountService validateAccountService;
     private final UserService userService;
     private final AccountMapper accountMapper;
+    private final JwtService jwtService;
 
     /**
      * Создать счет для пользователя
@@ -58,18 +63,12 @@ public class AccountService {
      * Занести деньги на счет. Увеличивает остаток счета. Если счета не существует - ошибка.
      *
      * @param accountNumber Номер счета
-     * @param deposit       Сумма пополнения
+     * @param amount        Сумма пополнения
      */
-    //2.3. Занести деньги на счет (номер счета, сумма).
-    //Увеличивает остаток счета. Если счета не существует - ошибка.
     @Transactional()
-    public void depositMoney(String accountNumber, BigDecimal deposit) {
-        log.info("Пополнение счета {} на сумму {}", accountNumber, deposit);
+    public void depositMoney(String accountNumber, BigDecimal amount) {
         Account account = findByAccountNumber(accountNumber);
-
-        account.setBalance(account.getBalance().add(deposit));
-        accountRepository.save(account);
-        log.info("Обновленный баланс после пополнения - {}", account.getBalance());
+        account.setBalance(account.getBalance().add(amount));
     }
 
     /**
@@ -81,32 +80,30 @@ public class AccountService {
      */
     @Transactional
     public void withdrawMoney(String accountNumber, BigDecimal countWithdrawMoney) {
-        log.info("Списание со счета {} на сумму {}", accountNumber, countWithdrawMoney);
         Account account = findByAccountNumber(accountNumber);
-
-        validateAccountService.negativeBalanceCheck(accountNumber, countWithdrawMoney, account);
+        if (account.getBalance().compareTo(countWithdrawMoney) < 0) {
+            throw new NegativeAccountBalance(countWithdrawMoney, account.getBalance());
+        }
         account.setBalance(account.getBalance().subtract(countWithdrawMoney));
-        accountRepository.save(account);
-        log.info("Обновленный баланс после списания - {}", account.getBalance());
     }
 
-//    /**
-//     * Найти все счета пользователя
-//     *
-//     * @param token Токен пользователя
-//     * @return Список всех счетов пользователя
-//     */
-//    @Transactional(readOnly = true)
-//    public List<AccountDtoResponse> findAllByHolder(String token) {
-//        User holder = userService.findByToken(token);
-//        if (holder.getAccounts().isEmpty()) {
-//            log.warn("Нет счетов у пользователя {}", holder.getId());
-//            throw new EmptyDataException("Нет счетов у данного пользователя");
-//        }
-//        return accountRepository.findAllByHolder(holder).stream()
-//                .map(accountMapper::toDtoResponse)
-//                .toList();
-//    }
+    /**
+     * Найти все счета пользователя
+     *
+     * @param token Токен пользователя
+     * @return Список всех счетов пользователя
+     */
+    @Transactional(readOnly = true)
+    public List<AccountDtoResponse> findAllByHolder(String token) {
+
+        if (holder.getAccounts().isEmpty()) {
+            log.warn("Нет счетов у пользователя {}", holder.getId());
+            throw new EmptyDataException("Нет счетов у данного пользователя");
+        }
+        return accountRepository.findAllByHolder(holder).stream()
+                .map(accountMapper::toDtoResponse)
+                .toList();
+    }
 
     /**
      * Найти баланс по счету

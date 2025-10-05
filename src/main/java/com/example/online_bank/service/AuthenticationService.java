@@ -3,32 +3,45 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.AuthenticationRequest;
 import com.example.online_bank.domain.dto.AuthenticationResponseDto;
-import com.example.online_bank.security.token.EmailAuthenticationToken;
+import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.domain.entity.User;
+import com.example.online_bank.mapper.UserMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final TokenService tokenService;
-    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final VerifiedCodeService verifiedCodeService;
+    private final UserMapper userMapper;
 
     @Transactional
     public AuthenticationResponseDto signIn(AuthenticationRequest dtoRequest) {
-        EmailAuthenticationToken authToken = new EmailAuthenticationToken(dtoRequest.email(), dtoRequest.code());
-        Authentication authResult = authenticationManager.authenticate(authToken);
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            SecurityContextHolder.getContext().setAuthentication(authResult);
+        User user = userService
+                .findByEmail(dtoRequest.email())
+                .orElseThrow(EntityNotFoundException::new);
+
+        boolean isVerified = userService.verifyEmailCode(user.getId(), dtoRequest.code());
+        if (!isVerified) {
+            throw new BadCredentialsException("Введенный код не действителен");
         }
-        String accessToken = tokenService.getAccessToken(authResult);
-        String refreshToken = tokenService.getRefreshToken(authResult);
-        String idToken = tokenService.getIdToken(authResult);
-        return new AuthenticationResponseDto(accessToken, refreshToken, idToken);
+
+        UserDetails userDetails = userMapper.toUserDetails(user);
+        verifiedCodeService.cleanVerifiedCodes(user.getId());
+
+        String accessToken = tokenService.getAccessToken(userDetails);
+        String refreshToken = tokenService.getRefreshToken(userDetails);
+        String idToken = tokenService.getIdToken(userDetails);
+
+        return new AuthenticationResponseDto(Set.of(accessToken, refreshToken, idToken));
     }
 }
