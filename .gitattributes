@@ -1,1 +1,54 @@
-# Auto detect text files and perform LF normalization* text=auto# Java source files*.java text eol=lf# Configuration files*.xml text eol=lf*.properties text eol=lf*.yml text eol=lf*.yaml text eol=lf# Shell scripts*.sh text eol=lf# Windows scripts*.bat text eol=crlf*.cmd text eol=crlf
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Source code
+*.java text eol=lf
+*.kt text eol=lf
+*.groovy text eol=lf
+*.scala text eol=lf
+
+# Configuration files
+*.xml text eol=lf
+*.properties text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+
+# Build files
+*.gradle text eol=lf
+*.gradle.kts text eol=lf
+*.maven text eol=lf
+pom.xml text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# Web files
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+
+# Windows scripts (только эти должны быть CRLF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files (не трогать)
+*.jar binary
+*.war binary
+*.class binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
