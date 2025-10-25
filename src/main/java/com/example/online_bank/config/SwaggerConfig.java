@@ -33,7 +33,7 @@ public class SwaggerConfig {
 
         Info info = new Info()
                 .title("Онлайн-банкинг")
-                .version("1.0")
+                .version("1.1")
                 .contact(contact)
                 .description("Api сервис, для работы со счетами клиентов ");
         return new OpenAPI().servers(List.of(euroBank, moneyBank, defaultBank)).info(info);

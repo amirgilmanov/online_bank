@@ -67,7 +67,7 @@ public class User {
     @ToString.Exclude
     private List<Account> accounts;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<VerifiedCode> verifiedCode;
 

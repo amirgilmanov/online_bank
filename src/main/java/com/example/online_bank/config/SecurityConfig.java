@@ -1,6 +1,5 @@
 package com.example.online_bank.config;
 
-import com.example.online_bank.security.filter.EmailAuthenticationFilter;
 import com.example.online_bank.security.filter.JwtRequestFilter;
 import com.example.online_bank.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +35,41 @@ public class SecurityConfig extends SecurityFilterAutoConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JwtRequestFilter jwtRequestFilter,
-            EmailAuthenticationFilter emailAuthenticationFilter) throws
+            JwtRequestFilter jwtRequestFilter) throws
             Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authRequestManager ->
-                        authRequestManager.anyRequest().permitAll()
+                        authRequestManager
+                                .requestMatchers(
+                                        "/api/sign-up",
+                                        "/swagger-ui/index.html",
+                                        "/test",
+                                        "/v3/api-docs/**",
+                                        "/swagger-resources/**",
+                                        "/webjars/**",
+                                        "/configuration",
+                                        ".css",
+                                        ".js",
+                                        ".png",
+                                        ".ico",
+                                        "/test/",
+                                        "/",
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui/index.html",
+                                        "/v3/api-docs/**",
+                                        "/v3/api-docs",
+                                        "/swagger-resources/**",
+                                        "/swagger-resources",
+                                        "/webjars/**",
+                                        "/configuration/ui",
+                                        "/configuration/security",
+                                        "/api/authentication/email"
+                                ).permitAll().anyRequest().authenticated()
+
                 )
 
                 .sessionManagement(sessionManagement ->
@@ -52,8 +77,7 @@ public class SecurityConfig extends SecurityFilterAutoConfiguration {
 
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED)))
-                .addFilterAt(emailAuthenticationFilter, BasicAuthenticationFilter.class)
-                .addFilterBefore(jwtRequestFilter, EmailAuthenticationFilter.class)
+                .addFilterBefore(jwtRequestFilter, BasicAuthenticationFilter.class)
                 .build();
     }
 

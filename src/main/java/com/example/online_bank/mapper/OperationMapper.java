@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 
 @Mapper(componentModel = "spring")
@@ -22,17 +21,22 @@ public interface OperationMapper {
 
     @Mapping(target = "accountNumber", source = "operation.account.accountNumber")
     @Mapping(target = "operationId", source = "operation.id")
-    @Mapping(target = "amountAfter", source = "operation.account.balance")
-    @Mapping(target = "amountBefore", source = "balanceBefore")
-    OperationDtoResponse toDepositOperationDto(Operation operation, BigDecimal balanceBefore);
+    @Mapping(target = "amountBefore", source = "operation.account.balance")
+    @Mapping(target = "amountAfter", source = "operation", qualifiedByName = "calcAmountAfterDeposit")
+    OperationDtoResponse toDepositOperationDto(Operation operation);
 
     @Mapping(target = "accountNumber", source = "operation.account.accountNumber")
     OperationInfoDto toOperationInfoDto(Operation operation);
 
-    List<OperationInfoDto> toOperationInfoDtoList(List<Operation> operations);
 
     @Named("calcAmountAfterWithdraw")
     default BigDecimal calcAmountAfterWithdraw(Operation operation) {
         return (operation.getAccount().getBalance().subtract(operation.getAmount()));
     }
+
+    @Named("calcAmountAfterDeposit")
+    default BigDecimal calcAmountAfterDeposit(Operation operation) {
+        return (operation.getAccount().getBalance().add(operation.getAmount()));
+    }
+
 }

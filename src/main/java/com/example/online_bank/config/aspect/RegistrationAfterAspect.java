@@ -1,6 +1,6 @@
 package com.example.online_bank.config.aspect;
 
-import com.example.online_bank.domain.dto.SignUpDtoResponse;
+import com.example.online_bank.domain.dto.RegistrationDtoResponse;
 import com.example.online_bank.service.impl.EmailNotificationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,8 +23,8 @@ public class RegistrationAfterAspect {
     @SneakyThrows
     @Around(value = "pointCut()")
     public Object after(ProceedingJoinPoint joinPoint) {
-        SignUpDtoResponse result = (SignUpDtoResponse) joinPoint.proceed();
-        emailNotificationService.sendVerificationCode(result.email(), result.code());
+        RegistrationDtoResponse result = (RegistrationDtoResponse) joinPoint.proceed();
+        emailNotificationService.sendOtpCode(result.email(), result.code());
         return result;
     }
 }

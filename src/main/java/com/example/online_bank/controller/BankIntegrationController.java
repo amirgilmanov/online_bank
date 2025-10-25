@@ -1,11 +1,9 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.domain.dto.BuyCurrencyDto;
 import com.example.online_bank.domain.dto.OperationDtoResponse;
-import com.example.online_bank.domain.dto.TransactionDto;
-import com.example.online_bank.service.BankService;
+import com.example.online_bank.domain.dto.TransferDto;
+import com.example.online_bank.service.TransferService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -21,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Интеграция банков", description = "Методы по рабе интеграции между банками")
 public class BankIntegrationController {
-    private final BankService bankService;
+    private final TransferService transferService;
 
     @GetMapping("/get-bank-info")
     @Operation(summary = "Получить название текущего банка")
@@ -32,7 +29,7 @@ public class BankIntegrationController {
             )
     )
     public String info() {
-        return bankService.info();
+        return transferService.getBankInfo();
     }
 
     /**
@@ -48,25 +45,8 @@ public class BankIntegrationController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = OperationDtoResponse.class))
     )
-    public List<OperationDtoResponse> receiveTransferMoneyToPartnerBank(@RequestBody TransactionDto dto) {
-        return bankService.transfer(dto);
-    }
-
-    @PostMapping("/buy-currency")
-    @Operation(summary = "Купить валюту с одного счёта на другой")
-    @ApiResponse(responseCode = "200",
-            content = @Content(
-                    mediaType = "text/plain",
-                    schema = @Schema(implementation = BigDecimal.class)
-            )
-    )
-    public List<OperationDtoResponse> buyCurrency(
-            @RequestBody BuyCurrencyDto dto,
-            @Parameter(description = "Токен пользователя",
-                    example = "online4c314d57-cbd0-4a83-9ce3-943e95b277a9token")
-            @RequestHeader String token
-    ) {
-        return bankService.buyCurrency(dto, token);
+    public List<OperationDtoResponse> transfer(@RequestBody TransferDto dto) {
+        return transferService.transferMoney(dto);
     }
 }
 

@@ -9,13 +9,13 @@ import java.math.BigDecimal;
  * @param accountNumber Номер счета
  * @param amount        Количество денег
  * @param description   Описание
- * @param currencyCode  Код валюты
+ * @param selectedCurrencyCode Выбранный курс валюты, на который конвертировать сумму из счета(accountNumber)
  */
 @Builder
 public record FinanceOperationDto(
         String accountNumber,
         BigDecimal amount,
         String description,
-        CurrencyCode currencyCode
+        CurrencyCode selectedCurrencyCode
 ) {
 }

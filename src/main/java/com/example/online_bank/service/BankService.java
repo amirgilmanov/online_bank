@@ -1,64 +1,118 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.domain.dto.*;
-import com.example.online_bank.domain.entity.User;
+import com.example.online_bank.domain.dto.BuyCurrencyDto;
+import com.example.online_bank.domain.dto.FinanceOperationDto;
+import com.example.online_bank.domain.dto.OperationDtoResponse;
 import com.example.online_bank.enums.CurrencyCode;
-import com.example.online_bank.mapper.AccountMapper;
+import com.example.online_bank.mapper.OperationMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.example.online_bank.enums.OperationType.DEPOSIT;
+import static com.example.online_bank.enums.OperationType.WITHDRAW;
 
 @Service
 @RequiredArgsConstructor
 public class BankService {
     private final AccountService accountService;
-    private final BankIntegrationService bankIntegrationService;
-    private final FinanceService financeService;
-    private final UserService userService;
-    private final AccountMapper accountMapper;
-
-    @Transactional
-    public AccountDtoResponse createAccount(String token, CurrencyCode currencyCode) throws BadRequestException {
-        User user = userService.findByToken(token);
-        return accountMapper.toDtoResponse(accountService.createAccountForUser(user, currencyCode));
-    }
-
-    @Transactional
-    public OperationDtoResponse withdraw(String token, FinanceOperationDto financeOperationDto) {
-        return financeService.withdrawMoney(token, financeOperationDto, false);
-    }
-
-    //3.3. Делать зачисление: на вход - номер счета, сумма, описание.
-    // Зачисляет насчет деньги и записывает операцию в историю.
-    @Transactional
-    public OperationDtoResponse deposit(String userToken, FinanceOperationDto financeOperationDto) {
-        return financeService.depositMoney(userToken, financeOperationDto, true);
-    }
-
-    @Transactional
-    public List<OperationDtoResponse> transfer(TransactionDto transactionDto) {
-        return bankIntegrationService.transferMoney(transactionDto);
-    }
-
-    public String info() {
-        return bankIntegrationService.getBankInfo();
-    }
+    private final OperationService operationService;
+    private final OperationMapper operationMapper;
+    private final ValidateCurrencyService validateCurrencyService;
 
     /**
-     * Купить валюту с одного счета пользователя на другой.
+     * Делать платеж:
      * <p>
-     * Производит списание суммы со счета1, делает конвертацию в валюту счета2.
-     * <p>
-     * Проверяет, что счета принадлежат пользователю (получить счет на основании токена).
+     * Проверяем что счет принадлежит пользователю.
+     * Производит списание со счета. Записывает операцию в историю
      *
-     * @param dto   Номер счета с которого произойдет списание, номер счета куда пополнится сумма, сумма
-     * @param token токен пользователя
+     * @param dto Номер счета, выбранный код валюты, описание, количестве денег
+     * @return Возвращает информацию об операции списания со счета
      */
+    //TODO: сделать @PreAuthorize(uuid = account.holder.uuid = dto.accountNumber)
+    @Transactional()
+    public OperationDtoResponse makePayment(FinanceOperationDto dto) {
+        CurrencyCode accountCurrencyCode = accountService.findCurrencyCode(dto.accountNumber());
+
+        BigDecimal finalAmount = validateCurrencyService.processTransaction(
+                accountCurrencyCode,
+                dto.selectedCurrencyCode(),
+                accountService::withdrawMoney,
+                dto.accountNumber(),
+                dto.amount()
+        );
+
+        return operationMapper.toWithdrawOperationDto(operationService.createOperation(
+                LocalDateTime.now(),
+                WITHDRAW,
+                finalAmount,
+                dto.description(),
+                dto.accountNumber(),
+                dto.selectedCurrencyCode())
+        );
+    }
+
+    //TODO: сделать @PreAuthorize(uuid = account.holder.uuid = dto.accountNumber)
+    /**
+     * Делать зачисление: на вход - номер счета, сумма, описание.
+     * Зачисляет на банковский счет деньги и записывает операцию в историю.
+     *
+     * @param dto Содержит информацию о номере счета, код валюты, описание, количестве денег
+     * @return Возвращает информацию об операции пополнении счета
+     */
+    @Transactional()
+    public OperationDtoResponse makeDeposit(FinanceOperationDto dto) {
+        CurrencyCode accountCurrencyCode = accountService.findCurrencyCode(dto.accountNumber());
+
+        BigDecimal finalAmount = validateCurrencyService.processTransaction(
+                accountCurrencyCode,
+                dto.selectedCurrencyCode(),
+                accountService::depositMoney,
+                dto.accountNumber(), dto.amount()
+        );
+
+        return operationMapper.toDepositOperationDto(operationService.createOperation(
+                LocalDateTime.now(),
+                DEPOSIT,
+                finalAmount,
+                dto.description(),
+                dto.accountNumber(),
+                dto.selectedCurrencyCode())
+        );
+    }
+
+    //4. Добавить в банк сервис метод купить валюту: на вход счет1, счет2, сумма, токен.
+    //Производит списание суммы со счета1, делает конвертацию в валюту счета2.
+    //Проверяет, что счета принадлежат пользователю (получить счет на основании токена).
+    //TODO: сделать @PreAuthorize(uuid = account.holder.uuid = dto.accountNumber)
     @Transactional
-    public List<OperationDtoResponse> buyCurrency(BuyCurrencyDto dto, String token) {
-        return bankIntegrationService.buyCurrency(dto, token);
+    public List<OperationDtoResponse> buyCurrency(BuyCurrencyDto dto) {
+        CurrencyCode targetCurrencyCode = accountService.findCurrencyCode(dto.targetAccountNumber());
+        List<String> buyCurrencyDescriptions = createBuyCurrencyDescriptions(dto);
+
+        OperationDtoResponse fromOperation = makePayment(
+                new FinanceOperationDto(dto.baseAccountNumber(),
+                        dto.amount(),
+                        buyCurrencyDescriptions.getFirst(),
+                        targetCurrencyCode)
+        );
+
+        OperationDtoResponse toOperationResponse = makeDeposit(new FinanceOperationDto(
+                dto.targetAccountNumber(),
+                dto.amount(),
+                buyCurrencyDescriptions.get(1),
+                targetCurrencyCode
+        ));
+        return List.of(fromOperation, toOperationResponse);
+    }
+
+    private List<String> createBuyCurrencyDescriptions(BuyCurrencyDto dto) {
+        String baseAccountPostfix = "валюты со счета %s".formatted(dto.baseAccountNumber());
+        String targetAccountPostfix = "валюты со счета %s".formatted(dto.targetAccountNumber());
+        return List.of("Продажа %s".formatted(baseAccountPostfix), "Покупка %s".formatted(targetAccountPostfix));
     }
 }

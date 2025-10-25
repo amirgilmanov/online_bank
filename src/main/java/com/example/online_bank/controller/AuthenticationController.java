@@ -9,7 +9,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,12 +29,12 @@ public class AuthenticationController {
      *
      * @return возвращает токен пользователя
      */
-    @PostMapping({"email"})
+    @PostMapping("/email")
     @Operation(summary = "Аутентификация")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
-    public AuthenticationResponseDto authentication(AuthenticationRequest dtoRequest) {
-        return authenticationService.signIn(dtoRequest);
+    public ResponseEntity<AuthenticationResponseDto> authentication(@RequestBody AuthenticationRequest dtoRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body( authenticationService.signIn(dtoRequest));
     }
 }

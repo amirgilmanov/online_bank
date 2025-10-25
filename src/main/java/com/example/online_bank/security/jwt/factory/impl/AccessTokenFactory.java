@@ -1,7 +1,7 @@
 package com.example.online_bank.security.jwt.factory.impl;
 
 import com.example.online_bank.config.JwtConfig;
-import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.enums.TokenType;
 import com.example.online_bank.security.jwt.factory.TokenFactory;
 import com.example.online_bank.security.jwt.service.JwtService;
@@ -25,7 +25,7 @@ public class AccessTokenFactory implements TokenFactory {
      * Создает даты
      */
     @Override
-    public String createToken(TokenType type, UserDetails userDetails) {
+    public String createToken(TokenType type, UserContainer userContainer) {
         if (!supports(type)) {
             throw new IllegalArgumentException("Unsupported token type: " + type);
         }
@@ -34,13 +34,13 @@ public class AccessTokenFactory implements TokenFactory {
         Date expiredDate = new Date(issuedDate.getTime() + config.getAccessTokenLifetime().toMillis());
         Date notBeforeDate = new Date(issuedDate.getTime() + config.getNotBeforeTime().toMillis());
 
-        String subject = userDetails.uuid();
-        List<String> userRoles = userDetails.roles();
+        String subject = userContainer.uuid();
+        List<String> roles = userContainer.roles();
 
         String id = jwtService.createUuid();
 
         Map<String, Object> claims = jwtService.createClaims();
-        claims.put("roles", userRoles);
+        claims.put("roles", roles);
         claims.put("token_type", type);
 
         return Jwts.builder()

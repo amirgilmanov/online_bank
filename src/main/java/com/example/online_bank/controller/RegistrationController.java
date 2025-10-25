@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/sign-up")
 @RequiredArgsConstructor
 @Tag(name = "Контроллер регистрации")
-public class SignUpController {
+public class RegistrationController {
     private final RegistrationService registrationService;
 
     /**

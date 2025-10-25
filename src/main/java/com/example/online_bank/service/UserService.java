@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.example.online_bank.enums.VerifiedCodeType.EMAIL;
 
@@ -92,7 +93,10 @@ public class UserService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .toList();
     }
+
+    public Optional<User> findByUuid(UUID userUuid) {
+        return userRepository.findByUuid(userUuid);
+    }
 }
 
 //TODO сделать подтверждение номера и почты
-

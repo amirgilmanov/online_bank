@@ -9,17 +9,16 @@ import com.example.online_bank.exception.EmptyDataException;
 import com.example.online_bank.exception.NegativeAccountBalance;
 import com.example.online_bank.mapper.AccountMapper;
 import com.example.online_bank.repository.AccountRepository;
-import com.example.online_bank.security.jwt.service.JwtService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumber;
 
@@ -32,21 +31,22 @@ import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumb
 @Slf4j
 public class AccountService {
     private final AccountRepository accountRepository;
-    private final UserService userService;
     private final AccountMapper accountMapper;
-    private final JwtService jwtService;
+    private final UserService userService;
 
     /**
      * Создать счет для пользователя
      *
-     * @param user         Пользователь
+     * @param userUuid     Пользователь
      * @param currencyCode Код валюты
      */
     @Transactional()
-    public Account createAccountForUser(User user, CurrencyCode currencyCode) throws BadRequestException {
+    public AccountDtoResponse createAccountForUser(UUID userUuid, CurrencyCode currencyCode)  {
         Arrays.stream(CurrencyCode.values())
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException("Переданный код валюты не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Переданный код валюты не найден"));
+
+        User user = userService.findByUuid(userUuid).<EntityNotFoundException>orElseThrow(EntityNotFoundException::new);
 
         Account account = Account
                 .builder()
@@ -55,8 +55,8 @@ public class AccountService {
                 .accountNumber(generateAccountNumber(currencyCode))
                 .currencyCode(currencyCode)
                 .build();
-        accountRepository.save(account);
-        return account;
+        accountRepository.<Account>save(account);
+        return accountMapper.toDtoResponse(account);
     }
 
     /**
@@ -90,17 +90,18 @@ public class AccountService {
     /**
      * Найти все счета пользователя
      *
-     * @param token Токен пользователя
+     * @param holderUuid пользователь
      * @return Список всех счетов пользователя
      */
     @Transactional(readOnly = true)
-    public List<AccountDtoResponse> findAllByHolder(String token) {
-
-        if (holder.getAccounts().isEmpty()) {
-            log.warn("Нет счетов у пользователя {}", holder.getId());
+    public List<AccountDtoResponse> findAllByHolder(UUID holderUuid) {
+        List<Account> allAccounts = accountRepository.findAllByHolderUuid(holderUuid);
+        if (allAccounts.isEmpty()) {
+            log.warn("Нет счетов у пользователя {}", holderUuid);
             throw new EmptyDataException("Нет счетов у данного пользователя");
         }
-        return accountRepository.findAllByHolder(holder).stream()
+
+        return allAccounts.stream()
                 .map(accountMapper::toDtoResponse)
                 .toList();
     }
@@ -113,7 +114,7 @@ public class AccountService {
      */
     @Transactional(readOnly = true)
     public BigDecimal getBalance(String accountNumber) {
-        return findByAccountNumber(accountNumber).getBalance();
+        return accountRepository.findBalanceByAccountNumber(accountNumber);
     }
 
     /**
@@ -128,7 +129,7 @@ public class AccountService {
                 .orElseThrow(() -> new EntityNotFoundException("Счета с таким номером не найдено"));
     }
 
-    public boolean existsByAccountNumber(String accountNumber) {
-        return accountRepository.existsByAccountNumber(accountNumber);
+    public CurrencyCode findCurrencyCode(String accountNumber) {
+        return accountRepository.findCurrencyCodeByAccountNumber(accountNumber);
     }
 }

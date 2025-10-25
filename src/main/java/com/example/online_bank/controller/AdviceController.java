@@ -13,15 +13,6 @@ import static org.springframework.http.HttpStatus.*;
 public class AdviceController {
 
     /**
-     * @param e Обработка ошибки если счет не принадлежит пользователю
-     * @return 403 HTTP статус
-     */
-    @ExceptionHandler(AccountAccessException.class)
-    public ResponseEntity<String> handleAccountAccessException(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), FORBIDDEN);
-    }
-
-    /**
      * @param e Обработка ошибки при ошибке аутентификации
      * @return 401 HTTP статус
      */
@@ -81,7 +72,7 @@ public class AdviceController {
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidRateException.class)
+    @ExceptionHandler(InvalidCountException.class)
     public ResponseEntity<String> handleInvalidRateException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), BAD_REQUEST);
     }

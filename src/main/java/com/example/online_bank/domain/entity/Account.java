@@ -34,7 +34,7 @@ public class Account {
     @Enumerated(STRING)
     private CurrencyCode currencyCode;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Operation> operations;
 

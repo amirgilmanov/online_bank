@@ -17,7 +17,7 @@ public class EmailNotificationServiceImpl implements NotificationService {
      * @param verificationCode Код подтверждения
      */
     @Override
-    public void sendVerificationCode(String destination, String verificationCode) {
+    public void sendOtpCode(String destination, String verificationCode) {
 
         mailService.sendMail(destination, EMAIL_SUBJECT, BODY_TEXT + verificationCode);
     }

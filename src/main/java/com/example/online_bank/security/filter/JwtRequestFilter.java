@@ -39,7 +39,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwtToken;
 
         String pathInfo = request.getRequestURI();
-        if (pathInfo.equals("/login")) {
+        if (isPublicUri(pathInfo)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,5 +54,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         }
+    }
+
+    private boolean isPublicUri(String uri) {
+        return uri.startsWith("/api/sign-up") ||
+                uri.startsWith("/swagger-ui/index.html") ||
+                uri.startsWith("/test") ||
+                uri.startsWith("/v3/api-docs") ||
+                uri.startsWith("/swagger-resources/") ||
+                uri.startsWith("/webjars/") ||
+                uri.startsWith("/configuration") ||
+                uri.endsWith(".css") ||
+                uri.endsWith(".js") ||
+                uri.endsWith(".png") ||
+                uri.endsWith(".ico") ||
+                uri.startsWith("/test/") ||
+                uri.startsWith("/") ||
+                uri.startsWith("/api/authentication/email");
     }
 }

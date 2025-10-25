@@ -6,9 +6,9 @@ import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.domain.entity.Operation;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.OperationType;
-import com.example.online_bank.exception.EmptyDataException;
 import com.example.online_bank.mapper.OperationMapper;
 import com.example.online_bank.repository.OperationRepository;
+import jakarta.persistence.EntityManager;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -28,9 +29,8 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 @RequiredArgsConstructor
 public class OperationService {
     private final OperationRepository operationRepository;
-    private final AccountService accountService;
     private final OperationMapper operationMapper;
-    private final UserService userService;
+    private final EntityManager entityManager;
 
     /**
      * Создать операцию
@@ -39,7 +39,7 @@ public class OperationService {
      * @param operationType тип операции
      * @param amount        количество денег
      * @param description   описание
-     * @param account       счет(сущность)
+     * @param accountNumber номер счета
      * @param currencyCode  код валюты
      */
     @Transactional()
@@ -48,9 +48,10 @@ public class OperationService {
             @NonNull OperationType operationType,
             @NonNull BigDecimal amount,
             @NonNull String description,
-            @NonNull Account account,
+            @NonNull String accountNumber,
             @NonNull CurrencyCode currencyCode) {
         log.info("Создание операции");
+        Account accountProxy = entityManager.getReference(Account.class, accountNumber);
 
         Operation operation = Operation.builder()
                 .operationType(operationType)
@@ -58,7 +59,7 @@ public class OperationService {
                 .description(description)
                 .currencyCode(currencyCode)
                 .createdAt(createdAt)
-                .account(account)
+                .account(accountProxy)
                 .build();
 
         operationRepository.save(operation);
@@ -74,12 +75,6 @@ public class OperationService {
     @Transactional(readOnly = true)
     public List<OperationInfoDto> findAllByAccount(String accountNumber, int page, int size) {
         log.info("Показ операций по счету {} (начало с индекса - {}, размер - {})", accountNumber, page, size);
-        Account account = accountService.findByAccountNumber(accountNumber);
-
-        if (account.getOperations().isEmpty()) {
-            log.warn("Нет операций у счета {}", account.getAccountNumber());
-            throw new EmptyDataException("Нет операций по счету");
-        }
 
         return operationRepository.findAllByAccount_AccountNumber(
                         accountNumber,
@@ -89,21 +84,22 @@ public class OperationService {
                 .toList();
     }
 
-//    /**
-//     * @param token Токен пользователя
-//     * @param page  индекс отображения
-//     * @param size  размер
-//     * @return список отфильтрованных операций(порционно)
-//     */
-//    @Transactional(readOnly = true)
-//    public List<OperationInfoDto> findAllByUserPaged(String token, int page, int size) {
-//        User holder = userService.findByToken(token);
-//        log.info("Поиск операций по пользователю {}. Начало с индекса {}, размер {}", holder.getId(), page, size);
-//
-//        return operationRepository.findAllByAccount_Holder(holder, createPageRequest(page, size)).stream()
-//                .map(operationMapper::toOperationInfoDto)
-//                .toList();
-//    }
+    /**
+     * Найти все операции по пользователю(порционно)
+     *
+     * @param userUuid Uuid пользователя
+     * @param page     индекс отображения
+     * @param size     размер
+     * @return список отфильтрованных операций(порционно)
+     */
+    @Transactional(readOnly = true)
+    public List<OperationInfoDto> findAllByUserPaged(UUID userUuid, int page, int size) {
+        log.info("Поиск операций по пользователю {}. Начало с индекса {}, размер {}", userUuid.toString(), page, size);
+
+        return operationRepository.findAllByAccount_Holder_Uuid(userUuid, createPageRequest(page, size)).stream()
+                .map(operationMapper::toOperationInfoDto)
+                .toList();
+    }
 
     private PageRequest createPageRequest(int page, int size) {
         return PageRequest.of(page, size, Sort.by(DESC, "createdAt"));

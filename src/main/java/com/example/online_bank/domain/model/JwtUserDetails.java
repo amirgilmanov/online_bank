@@ -1,6 +1,7 @@
 package com.example.online_bank.domain.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,6 +9,7 @@ import java.util.Collection;
 
 @AllArgsConstructor
 public class JwtUserDetails implements UserDetails {
+    @Getter
     private String uuid;
     private String username;
     private Collection<? extends GrantedAuthority> authorities;

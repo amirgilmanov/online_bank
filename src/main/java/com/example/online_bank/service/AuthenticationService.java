@@ -3,7 +3,7 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.AuthenticationRequest;
 import com.example.online_bank.domain.dto.AuthenticationResponseDto;
-import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.mapper.UserMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,12 +35,12 @@ public class AuthenticationService {
             throw new BadCredentialsException("Введенный код не действителен");
         }
 
-        UserDetails userDetails = userMapper.toUserDetails(user);
+        UserContainer userContainer = userMapper.toUserContainer(user);
         verifiedCodeService.cleanVerifiedCodes(user.getId());
 
-        String accessToken = tokenService.getAccessToken(userDetails);
-        String refreshToken = tokenService.getRefreshToken(userDetails);
-        String idToken = tokenService.getIdToken(userDetails);
+        String accessToken = tokenService.getAccessToken(userContainer);
+        String refreshToken = tokenService.getRefreshToken(userContainer);
+        String idToken = tokenService.getIdToken(userContainer);
 
         return new AuthenticationResponseDto(Set.of(accessToken, refreshToken, idToken));
     }

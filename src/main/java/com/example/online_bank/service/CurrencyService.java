@@ -1,9 +1,11 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.domain.dto.ConvertCurrencyResponse;
+import com.example.online_bank.domain.dto.RateResponseDto;
 import com.example.online_bank.domain.entity.ExchangeRate;
 import com.example.online_bank.enums.CurrencyCode;
-import com.example.online_bank.exception.CurrencyPairsNotFoundException;
-import com.example.online_bank.exception.InvalidRateException;
+import com.example.online_bank.exception.InvalidCountException;
+import com.example.online_bank.exception.InvertedRateNotFound;
 import com.example.online_bank.repository.ExchangeCurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,37 +23,18 @@ public class CurrencyService {
      * @param targetCurrency Валюта, к которой происходит обмен(RUB)
      * @param rate           Цена котируемой валюты по отношению к базовой.
      *                       Создает запись курса
+     *                       //Пример: доллар рубль 90. Т.е за 1 доллар получим 90 рублей.
      */
-    //Курс не может быть равен нулю или отрицательным.
-    //Пример: доллар рубль 90. Т.е за 1 доллар получим 90 рублей.
-    public void create(CurrencyCode baseCurrency, CurrencyCode targetCurrency, BigDecimal rate) {
-        validateSum(rate);
+
+    public RateResponseDto create(CurrencyCode baseCurrency, CurrencyCode targetCurrency, BigDecimal rate) {
+        validateRateOrCount(rate);
         ExchangeRate entity = ExchangeRate.builder()
                 .baseCurrency(baseCurrency)
                 .targetCurrency(targetCurrency)
                 .rate(rate)
                 .build();
         currencyRepository.save(entity);
-    }
-
-    /**
-     * @param baseCurrency   Базовая валюта
-     * @param targetCurrency Котируемая валюта
-     * @return Курс базовой валюты по отношению к котируемой валюте
-     * <p>
-     * Если оказывается что есть только перевернутый курс, то считаем его по формуле 1 / на курс.
-     * <p>
-     * Например:
-     * у нас есть курс доллар - рубль = 90. В метод "найти курс" передали - рубль, доллар.
-     * У нас нет валютной пары рубль - доллар, но есть доллар - рубль.
-     * Соответственно, мы вернем курс 1 / 90 = 0,01111.
-     */
-    public BigDecimal findRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
-        if (!currencyRepository.existsByBaseCurrencyAndTargetCurrency(baseCurrency, targetCurrency)) {
-            return calcInvertedRate(baseCurrency, targetCurrency);
-        } else {
-            return checkCurrencyPair(baseCurrency, targetCurrency).getRate();
-        }
+        return new RateResponseDto(baseCurrency, targetCurrency, rate);
     }
 
     /**
@@ -59,42 +42,48 @@ public class CurrencyService {
      *
      * @param baseCurrency   Валюта от которой делаем конвертацию
      * @param targetCurrency Валюта к которой делаем конвертацию
-     * @param count          Сумма к конвертации
+     * @param amount         Сумма к конвертации
      * @return Сумма купленной валюты
      */
-    public BigDecimal convertCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency, BigDecimal count) {
-        BigDecimal rate = checkCurrencyPair(baseCurrency, targetCurrency).getRate();
-        return calcConvertCurrency(count, rate);
+    public ConvertCurrencyResponse convertCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
+        validateRateOrCount(amount);
+        BigDecimal rate = findRate(baseCurrency, targetCurrency).convertedRate();
+        return new ConvertCurrencyResponse(targetCurrency, amount.multiply(rate), amount, baseCurrency);
     }
 
+    /**
+     * Найти курс
+     *
+     * @param baseCurrency   Базовая валюта
+     * @param targetCurrency Котируемая валюта
+     * @return Курс базовой валюты по отношению к котируемой валюте
+     * Если оказывается что есть только перевернутый курс, то считаем его по формуле 1 / на курс.
+     * Например:
+     * у нас есть курс доллар - рубль = 90. В метод "найти курс" передали - рубль, доллар.
+     * У нас нет валютной пары рубль - доллар, но есть доллар - рубль.
+     * Соответственно, мы вернем курс 1 / 90 = 0,01111.
+     */
+    public ConvertCurrencyResponse findRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
+        BigDecimal rate = currencyRepository.findRateByBaseAndTargetCurrency(baseCurrency, targetCurrency)
+                .orElseGet(() -> calcInvertedRate(baseCurrency, targetCurrency));
+        return new ConvertCurrencyResponse(targetCurrency, rate, BigDecimal.ONE, baseCurrency);
+    }
+
+    /**
+     * Находим ставку перевернутого курса, делаем расчет курса для изначальной пары валют
+     */
     private BigDecimal calcInvertedRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
-        ExchangeRate invertedExchangeRate = findInvertedRate(baseCurrency, targetCurrency);
-        return calcInvertedRateHelper(invertedExchangeRate);
+        BigDecimal invertedRate = currencyRepository.findRateByBaseAndTargetCurrency(targetCurrency, baseCurrency)
+                .orElseThrow(() -> new InvertedRateNotFound("Перевернутый курс не найден"));
+        return BigDecimal.ONE.divide(invertedRate, 5, RoundingMode.HALF_EVEN);
     }
 
-    private ExchangeRate findInvertedRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
-        return currencyRepository.findCurrencyRate(targetCurrency, baseCurrency)
-                .orElseThrow(() -> new CurrencyPairsNotFoundException("Перевернутый курс не найден"));
-    }
-
-    private BigDecimal calcInvertedRateHelper(ExchangeRate rate) {
-        return BigDecimal.ONE.divide(rate.getRate(), 4, RoundingMode.HALF_EVEN);
-    }
-
-    private void validateSum(BigDecimal rate) {
-        if (rate.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ZERO) == 0) {
-            throw new InvalidRateException("Курс не может быть равен нулю или отрицательным");
+    /**
+     * Проверка на, то введенное пользователем количество для конвертации
+     */
+    private void validateRateOrCount(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0 || amount.compareTo(BigDecimal.ZERO) == 0) {
+            throw new InvalidCountException("Неверное переданное количество к переводу");
         }
-    }
-
-    private ExchangeRate checkCurrencyPair(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
-        return currencyRepository.findCurrencyRate(baseCurrency, targetCurrency)
-                .orElseThrow(() -> new CurrencyPairsNotFoundException("Курс не найден"));
-    }
-
-    private BigDecimal calcConvertCurrency(BigDecimal count, BigDecimal rate) {
-        BigDecimal convertedCurrency = rate.multiply(count);
-        validateSum(convertedCurrency);
-        return convertedCurrency;
     }
 }

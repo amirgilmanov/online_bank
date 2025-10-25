@@ -1,7 +1,7 @@
 package com.example.online_bank.security.jwt.factory.impl;
 
 import com.example.online_bank.config.JwtConfig;
-import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.enums.TokenType;
 import com.example.online_bank.security.jwt.factory.TokenFactory;
 import com.example.online_bank.security.jwt.service.JwtService;
@@ -20,13 +20,13 @@ public class IdTokenFactory implements TokenFactory {
 
 
     /**
-     * @param userDetails - token - Информация о пользователе
+     * @param userContainer - token - Информация о пользователе
      * @return Токен Id
      * имя
      */
     //TODO: добавить фотографию профиля пользователю и подгружать через Amazon S3
     @Override
-    public String createToken(TokenType type, UserDetails userDetails) {
+    public String createToken(TokenType type, UserContainer userContainer) {
         if (!supports(type)) {
             throw new IllegalArgumentException("Unsupported token type: " + type);
         }
@@ -34,10 +34,10 @@ public class IdTokenFactory implements TokenFactory {
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
 
-        String uuid = userDetails.uuid();
+        String uuid = userContainer.uuid();
 
         Map<String, Object> claims = jwtService.createClaims();
-        claims.put("name", userDetails.name());
+        claims.put("name", userContainer.name());
 
 
         return Jwts.builder()

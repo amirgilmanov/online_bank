@@ -1,0 +1,118 @@
+package com.example.online_bank.service.it;
+
+import com.example.online_bank.OnlineBankApplication;
+import com.example.online_bank.domain.entity.User;
+import com.example.online_bank.domain.entity.VerifiedCode;
+import com.example.online_bank.enums.VerifiedCodeType;
+import com.example.online_bank.repository.VerifiedCodeRepository;
+import com.example.online_bank.service.UserService;
+import com.example.online_bank.service.VerifiedCodeService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.example.online_bank.util.CodeGeneratorUtil.generateOtp;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+
+@RequiredArgsConstructor
+@ContextConfiguration(classes = OnlineBankApplication.class)
+@SpringBootTest(classes = OnlineBankApplication.class)
+@Slf4j
+class VerifiedCodeServiceTestIT {
+    @Autowired
+    private VerifiedCodeService verifiedCodeService;
+    @Autowired
+    private VerifiedCodeRepository verifiedCodeRepository;
+    @Autowired
+    private UserService userService;
+
+    @Test
+    @Transactional
+    @DisplayName("Успешное создание otp кода")
+    void successCreateVerifiedCode() {
+        //подготовка данных arr
+        User userMock = User.builder().build();
+        userService.save(userMock);
+
+        VerifiedCode otpCodeEntity = verifiedCodeService.createVerifiedCode(
+                "4444",
+                userMock,
+                verifiedCodeService.createExpirationDate(20),
+                VerifiedCodeType.EMAIL);
+
+        verifiedCodeService.save(otpCodeEntity);
+        //act
+        assertDoesNotThrow(() -> verifiedCodeRepository.findVerifiedCodeByVerifiedCode(otpCodeEntity.getVerifiedCode())
+                .orElseThrow(EntityNotFoundException::new));
+
+        Assertions.assertNotNull(otpCodeEntity.getVerifiedCode());
+        Assertions.assertFalse(otpCodeEntity.getIsVerified());
+        Assertions.assertNotNull(otpCodeEntity.getCreatedAt());
+        Assertions.assertTrue(otpCodeEntity.getExpiresAt().isAfter(otpCodeEntity.getCreatedAt()));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Успешное удаление всех истекших кодов")
+    void successfulRemoveExpiredOtpCode() {
+        verifiedCodeService.clearOldCodes();
+        List<VerifiedCode> allOtps = verifiedCodeRepository.findAll();
+        Assertions.assertTrue(allOtps.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Успешное удаление истекших кодов пользователя")
+    void successfulRemoveExpiredOtpCodeByUser() {
+        //подготовка данных arr
+        User userMock = User.builder().build();
+        userService.save(userMock);
+
+        LocalDateTime now = LocalDateTime.now();
+        VerifiedCode otpCodeEntity = verifiedCodeService.createVerifiedCode(
+                generateOtp(),
+                userMock,
+                now,
+                VerifiedCodeType.EMAIL);
+
+        verifiedCodeService.save(otpCodeEntity);
+        verifiedCodeService.cleanVerifiedCodes(userMock.getId());
+        //act
+        Assertions.assertTrue(verifiedCodeRepository.findAllByExpiresAtBeforeAndUser_Id(now, userMock.getId()).isEmpty());
+    }
+
+    @Test
+    @DisplayName("Найти неистекший код для пользователя и поставить ему isVerified = true")
+    @Transactional
+    void validateCode() {
+        //подготовка данных arr
+        User userMock = User.builder().build();
+        userService.save(userMock);
+
+        VerifiedCode otpCodeEntity = verifiedCodeService.createVerifiedCode(
+                "7777",
+                userMock,
+                verifiedCodeService.createExpirationDate(20),
+                VerifiedCodeType.EMAIL);
+
+        verifiedCodeService.save(otpCodeEntity);
+        //act
+        boolean isVerified = verifiedCodeService.validateCode(userMock, "7777", VerifiedCodeType.EMAIL);
+        Assertions.assertTrue(isVerified);
+        VerifiedCode verifiedCode = assertDoesNotThrow(() -> verifiedCodeRepository.findVerifiedCodeByVerifiedCode("7777")
+                .orElseThrow(EntityNotFoundException::new));
+        log.debug(verifiedCode.toString());
+        Assertions.assertTrue(verifiedCode.getIsVerified());
+    }
+}

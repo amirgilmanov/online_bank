@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Repository
@@ -23,4 +24,9 @@ public interface ExchangeCurrencyRepository extends JpaRepository<ExchangeRate, 
             @Param("targetCurrency") CurrencyCode targetCurrency);
 
     boolean existsByBaseCurrencyAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
+
+    @Query("""
+            select e.rate from ExchangeRate e where e.baseCurrency = :baseCurrency and e.targetCurrency = :targetCurrency
+            """)
+    Optional<BigDecimal> findRateByBaseAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
 }

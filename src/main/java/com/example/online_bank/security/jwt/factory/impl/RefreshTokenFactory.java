@@ -1,7 +1,7 @@
 package com.example.online_bank.security.jwt.factory.impl;
 
 import com.example.online_bank.config.JwtConfig;
-import com.example.online_bank.domain.dto.UserDetails;
+import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.enums.TokenType;
 import com.example.online_bank.security.jwt.factory.TokenFactory;
 import com.example.online_bank.security.jwt.service.JwtService;
@@ -20,12 +20,12 @@ public class RefreshTokenFactory implements TokenFactory {
     private final JwtService jwtService;
 
     /**
-     * @param userDetails - Информация о пользователе
+     * @param userContainer - Информация о пользователе
      * @return Refresh токен
      */
     //TODO реализовать в будущем с помощью redis таблицу с удаленными/заблокированными токенами
     @Override
-    public String createToken(TokenType type, UserDetails userDetails) {
+    public String createToken(TokenType type, UserContainer userContainer) {
         if (!supports(type)) {
             throw new IllegalArgumentException("Unsupported token type: " + type);
         }
@@ -34,7 +34,7 @@ public class RefreshTokenFactory implements TokenFactory {
         Date notBeforeDate = Date.from(Instant.now());
         Date expiredAt = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
 
-        String subject = userDetails.uuid();
+        String subject = userContainer.uuid();
 
         Map<String, Object> claims = jwtService.createClaims();
         claims.put("token_type", type);

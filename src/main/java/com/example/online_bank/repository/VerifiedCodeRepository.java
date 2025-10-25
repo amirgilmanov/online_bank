@@ -48,4 +48,6 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
 
     @Modifying
     void deleteAllByIsVerifiedTrueAndUser_id(Long user_id);
+
+    Optional<VerifiedCode> findVerifiedCodeByVerifiedCode(String verifiedCode);
 }

@@ -22,7 +22,7 @@ public class MailService {
      * @param text    Содержимое письма (Здравствуйте, ваш код подтверждения)
      */
     public void sendMail(String to, String subject, String text) {
-        log.info("Отправка сообщения: {}, от: {}", to, fromTo);
+        log.info("Отправка сообщения: {}", to);
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setTo(to);

@@ -4,7 +4,6 @@ import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
 import com.example.online_bank.enums.VerifiedCodeType;
 import com.example.online_bank.repository.VerifiedCodeRepository;
-import com.example.online_bank.util.CodeGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,44 +19,38 @@ import static java.lang.Boolean.TRUE;
 public class VerifiedCodeService {
     private final VerifiedCodeRepository verifiedCodeRepository;
 
-    public void createAndSave(String verifiedCode, User user, LocalDateTime expirationDate, VerifiedCodeType type) {
-        save(createVerifiedCode(verifiedCode, user, expirationDate, type));
-    }
-
     public void save(VerifiedCode verifiedCode) {
         verifiedCodeRepository.save(verifiedCode);
     }
 
     public VerifiedCode createVerifiedCode(String verifiedCode, User user, LocalDateTime expirationDate, VerifiedCodeType type) {
-        cleanOldCodes(user.getId());
-
         return VerifiedCode.builder()
                 .id(UUID.randomUUID())
                 .expiresAt(expirationDate)
                 .verifiedCode(verifiedCode)
+                .createdAt(LocalDateTime.now())
                 .user(user)
                 .isVerified(FALSE)
                 .codeType(type)
                 .build();
     }
 
-    public String generateVerifiedCode() {
-        return CodeGeneratorUtil.generatePinCode();
-    }
-
     public LocalDateTime createExpirationDate(int seconds) {
         return LocalDateTime.now().plusSeconds(seconds);
-    }
-
-    public void clearOldCodes() {
-        List<VerifiedCode> oldCodes = verifiedCodeRepository.findAllByExpiresAtBefore(LocalDateTime.now());
-        verifiedCodeRepository.deleteAll(oldCodes);
     }
 
     public void cleanVerifiedCodes(Long userId) {
         verifiedCodeRepository.deleteAllByIsVerifiedTrueAndUser_id(userId);
     }
 
+    /**
+     * Очистка всех старых кодов
+     */
+    public void clearOldCodes() {
+        List<VerifiedCode> oldCodes = verifiedCodeRepository.findAllByExpiresAtBefore(LocalDateTime.now());
+        verifiedCodeRepository.deleteAll(oldCodes);
+    }
+    //FIXME: добавить метод в контроллер ввести код заново и в логику этого метода(ввести код заново) вклинить этот метод
     private void cleanOldCodes(Long userId) {
         LocalDateTime now = LocalDateTime.now();
         List<VerifiedCode> oldUserCodes = verifiedCodeRepository.findAllByExpiresAtBeforeAndUser_Id(now, userId);
@@ -81,5 +74,4 @@ public class VerifiedCodeService {
                 })
                 .orElse(false);
     }
-
 }
