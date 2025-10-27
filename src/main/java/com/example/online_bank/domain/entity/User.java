@@ -63,12 +63,10 @@ public class User {
     @Column
     private Boolean isVerified;
 
-    @OneToMany(mappedBy = "holder", cascade = ALL, orphanRemoval = true)
-    @ToString.Exclude
+    @OneToMany(mappedBy = "holder", cascade = ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Account> accounts;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @ToString.Exclude
     private List<VerifiedCode> verifiedCode;
 
     @ManyToMany()

@@ -41,7 +41,7 @@ public class AccountService {
      * @param currencyCode Код валюты
      */
     @Transactional()
-    public AccountDtoResponse createAccountForUser(UUID userUuid, CurrencyCode currencyCode)  {
+    public AccountDtoResponse createAccountForUser(UUID userUuid, CurrencyCode currencyCode) {
         Arrays.stream(CurrencyCode.values())
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Переданный код валюты не найден"));
@@ -55,7 +55,7 @@ public class AccountService {
                 .accountNumber(generateAccountNumber(currencyCode))
                 .currencyCode(currencyCode)
                 .build();
-        accountRepository.<Account>save(account);
+        accountRepository.save(account);
         return accountMapper.toDtoResponse(account);
     }
 
@@ -114,7 +114,8 @@ public class AccountService {
      */
     @Transactional(readOnly = true)
     public BigDecimal getBalance(String accountNumber) {
-        return accountRepository.findBalanceByAccountNumber(accountNumber);
+        return accountRepository.findBalanceByAccountNumber(accountNumber)
+                .orElseThrow(() -> new EmptyDataException("Счета с номером %s не найден".formatted(accountNumber)));
     }
 
     /**
@@ -126,10 +127,11 @@ public class AccountService {
     @Transactional(readOnly = true)
     public Account findByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new EntityNotFoundException("Счета с таким номером не найдено"));
+                .orElseThrow(() -> new EntityNotFoundException("Счет с номером %s не найден".formatted(accountNumber)));
     }
 
     public CurrencyCode findCurrencyCode(String accountNumber) {
-        return accountRepository.findCurrencyCodeByAccountNumber(accountNumber);
+        return accountRepository.findCurrencyCodeByAccountNumber(accountNumber)
+                .orElseThrow(() -> new EmptyDataException(("Счет с номером %s не найден".formatted(accountNumber))));
     }
 }

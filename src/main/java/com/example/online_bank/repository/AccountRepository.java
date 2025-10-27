@@ -19,10 +19,10 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findAllByHolderUuid(UUID holderUuid);
 
     @Query("select a.balance from Account a where a.accountNumber = :accountNumber")
-    BigDecimal findBalanceByAccountNumber(String accountNumber);
+    Optional<BigDecimal> findBalanceByAccountNumber(String accountNumber);
 
     @Query("select a.currencyCode from Account a where a.accountNumber = :accountNumber")
-    CurrencyCode findCurrencyCodeByAccountNumber(String accountNumber);
+    Optional<CurrencyCode> findCurrencyCodeByAccountNumber(String accountNumber);
 
     boolean existsByAccountNumberAndHolder_Uuid(String accountNumber, UUID holderUuid);
 }
