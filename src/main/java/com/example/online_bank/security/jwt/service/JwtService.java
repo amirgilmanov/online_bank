@@ -10,7 +10,7 @@ import java.util.Map;
 @Service
 public interface JwtService {
     /**
-     * @return Создание UUID для токена
+     * @return Создать UUID для токена
      */
     String createUuid();
 
@@ -29,24 +29,27 @@ public interface JwtService {
     Claims getPayload(String token);
 
     /**
-     * Получаем роли из клаймов токена для authentification
+     * Получаем роли из клаймов токена для spring authentification
      *
      * @param claims - клаймы токена
      * @return Роли пользователя
      */
-    Collection<? extends GrantedAuthority> getAuthoritiesForAuthToken(Claims claims);
+    Collection<? extends GrantedAuthority> mapRolesForSpringToken(Claims claims);
 
     /**
+     * Получить клайм "name"
+     *
      * @param claims клаймы токена
      * @return Имя пользователя
      * <p>
-     * достаем name, что является именем пользователя
      */
     String getUsername(Claims claims);
 
     /**
+     * Получить subject(user.uuid)
+     *
      * @param claims клаймы токена
      * @return uuid пользователя
      */
-    String getUuid(Claims claims);
+    String getSubject(Claims claims);
 }

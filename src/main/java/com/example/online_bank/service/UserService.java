@@ -6,14 +6,12 @@ import com.example.online_bank.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -64,18 +62,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    public boolean verifyEmailCode(String email, String code) {
-        User user = findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь с почтой %s не найден".formatted(email)));
-
-        boolean isValid = verifiedCodeService.validateCode(user, code, EMAIL);
-        if (isValid) {
-            user.setIsVerified(true);
-            userRepository.save(user);
-        }
-        return isValid;
-    }
-
     public boolean verifyEmailCode(Long userId, String code) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с id %s не найден".formatted(userId)));
@@ -88,15 +74,7 @@ public class UserService implements UserDetailsService {
         return isValid;
     }
 
-    public Collection<SimpleGrantedAuthority> toSimpleGrantedAuthority(User user) {
-        return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .toList();
-    }
-
     public Optional<User> findByUuid(UUID userUuid) {
         return userRepository.findByUuid(userUuid);
     }
 }
-
-//TODO сделать подтверждение номера и почты

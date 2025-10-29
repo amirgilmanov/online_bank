@@ -1,6 +1,6 @@
 package com.example.online_bank.config;
 
-import com.example.online_bank.security.jwt.service.impl.SecretKeyManagerImpl;
+import com.example.online_bank.security.jwt.service.SecretKeyManager;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +37,41 @@ public class JwtConfig {
 
     private SecretKey key;
 
-    private final SecretKeyManagerImpl secretKeyManager;
+    private final SecretKeyManager secretKeyManager;
 
+    /**
+     * Файл есть?
+     * <p>
+     * Да:
+     * <p>
+     * 1) {@code decodeFile} - считывает преобразованные байты с файла ({@code  readKeyFromFile})
+     * и преобразует в SecretKey(decode):
+     * <p>
+     * 1.1) {@code readKeyFromFile} - читаем строку из байтов из указанного файла
+     * <p>
+     * 1.2) {@code decode}  - декодирует строку в массив байтов с использованием схемы кодирования Base64
+     * <p>
+     * 1.3) {@code return hmacShaKeyFor} - Создает SecretKey на основе указанного массива байтов ключа
+     * <p>
+     * Нет:
+     * <p>
+     * 1)	Создаем секретный ключ ({@code createSecretKey})
+     * <p>
+     * 2)	Устанавливаем его в конфиге JWT ({@code this.key = SecretKey })
+     * <p>
+     * 3)	Кодируем и записываем ключ в файл(3.1 {@code encodeAndWriteKey} ):
+     * <p>
+     * 3.1) {@code encode}  - получаем байты секретного ключа в строке;
+     * <p>
+     * 3.1.1){@code encodeToString}  - создаем String из массива байтов с помощью кодировки ISO-8859-1
+     * <p>
+     * 3.2) {@code writeKeyToFile} - записываем строку из байтов в указанный файл
+     */
     @PostConstruct
     public void initSecretKey() throws IOException {
         File file = new File(fileName);
         if (file.exists()) {
-            this.key = secretKeyManager.readAndDecodeKey(fileName);
+            this.key = secretKeyManager.decodeFile(fileName);
         } else {
             SecretKey secretKey = secretKeyManager.createSecretKey();
             this.key = secretKey;

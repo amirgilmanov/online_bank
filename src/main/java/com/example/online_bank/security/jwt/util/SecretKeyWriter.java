@@ -9,15 +9,16 @@ import java.io.IOException;
 @Slf4j
 @UtilityClass
 public class SecretKeyWriter {
-    public void writeKeyToFile(FileWriter writer, String strKey) throws IOException {
+    /**
+     * Записывает закодированные байты ключа в файл
+     */
+    public void writeKeyToFile(FileWriter writer, String encodedSecretKeyBytes) {
         try {
-            writer.write(strKey);
+            log.debug("Записываю ключ в файл");
+            writer.write(encodedSecretKeyBytes);
             writer.close();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-        // log.debug("Записываю ключ в файл");
-        //TODO сделать аспект логирования
-
     }
 }

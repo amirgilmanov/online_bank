@@ -16,27 +16,14 @@ import java.util.*;
 public class JwtServiceImpl implements JwtService {
     private final JwtConfig jwtConfig;
 
-    /**
-     * @param claims клаймы токена
-     * @return
-     */
-    @Override
-    public String getUsername(Claims claims) {
-        return claims.get("name", String.class);
-    }
-
-    /**
-     * @param claims клаймы токена
-     * @return
-     */
-    @Override
-    public String getUuid(Claims claims) {
-        return claims.get("uuid", String.class);
-    }
-
     @Override
     public String createUuid() {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public Map<String, Object> createClaims() {
+        return new HashMap<>();
     }
 
     @Override
@@ -49,14 +36,19 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthoritiesForAuthToken(Claims claims) {
+    public Collection<? extends GrantedAuthority> mapRolesForSpringToken(Claims claims) {
         return claims.get("roles", List.class).stream()
                 .map(role -> new SimpleGrantedAuthority((String) role))
                 .toList();
     }
 
     @Override
-    public Map<String, Object> createClaims() {
-        return new HashMap<>();
+    public String getUsername(Claims claims) {
+        return claims.get("name", String.class);
+    }
+
+    @Override
+    public String getSubject(Claims claims) {
+        return claims.getSubject();
     }
 }

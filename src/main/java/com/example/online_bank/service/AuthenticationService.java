@@ -26,8 +26,7 @@ public class AuthenticationService {
 
     @Transactional
     public AuthenticationResponseDto signIn(AuthenticationRequest dtoRequest) {
-        User user = userService
-                .findByEmail(dtoRequest.email())
+        User user = userService.findByEmail(dtoRequest.email())
                 .orElseThrow(EntityNotFoundException::new);
 
         boolean isVerified = userService.verifyEmailCode(user.getId(), dtoRequest.code());

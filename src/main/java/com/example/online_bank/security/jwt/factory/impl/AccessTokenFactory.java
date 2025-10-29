@@ -42,6 +42,7 @@ public class AccessTokenFactory implements TokenFactory {
         Map<String, Object> claims = jwtService.createClaims();
         claims.put("roles", roles);
         claims.put("token_type", type);
+        claims.put("name", userContainer.name());
 
         return Jwts.builder()
                 .expiration(expiredDate)

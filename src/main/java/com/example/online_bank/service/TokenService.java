@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class TokenService {
-    private final UserService userService;
     private final JwtFactoryOrchestrator jwtFactoryOrchestrator;
 
     public String getAccessToken(UserContainer userContainer) {

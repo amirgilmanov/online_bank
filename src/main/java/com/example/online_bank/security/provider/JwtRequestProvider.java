@@ -37,8 +37,8 @@ public class JwtRequestProvider implements AuthenticationProvider {
             //     throw new BadCredentialsException("Token is blacklisted");
             // }
 
-            Collection<? extends GrantedAuthority> authorities = jwtService.getAuthoritiesForAuthToken(jwtClaims);
-            String uuid = jwtService.getUuid(jwtClaims);
+            Collection<? extends GrantedAuthority> authorities = jwtService.mapRolesForSpringToken(jwtClaims);
+            String uuid = jwtService.getSubject(jwtClaims);
             String username = jwtService.getUsername(jwtClaims);
 
             JwtUserDetails details = new JwtUserDetails(uuid, username, authorities);
