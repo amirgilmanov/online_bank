@@ -10,8 +10,8 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
- * BaseCurrency - Валюта, от которой происходит обмен.
- * TargetCurrency - Валюта, к которой происходит обмен
+ * Base - батька(пишется слева)
+ * Target - сынку(пишется справа)
  * ExchangeRate - Курс обмена.
  * Пример записи - доллар/рубль 90. Это значит, что один доллар стоит 90 рублей
  */
@@ -28,10 +28,10 @@ public class ExchangeRate {
     private Long id;
     @Column
     @Enumerated(STRING)
-    private CurrencyCode baseCurrency;     // Валюта, от которой происходит обмен(USD)
+    private CurrencyCode baseCurrency;     // Валюта, к которой происходит обмен(USD)
     @Column
     @Enumerated(STRING)
-    private CurrencyCode targetCurrency;   // Валюта, к которой происходит обмен(RUB)
+    private CurrencyCode targetCurrency;   // Валюта, от которой происходит обмен(RUB)
     @Column
     private BigDecimal rate; // цена котируемой валюты по отношению к базовой
 }

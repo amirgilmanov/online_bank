@@ -10,9 +10,9 @@ import java.io.FileReader;
 public class SecretKeyReader {
 
     /**
-    * Считывает строку через файл
+     * Считывает строку через файл
      */
-    public String readKeyFromFile(FileReader reader) {
+    public static String readKeyFromFile(FileReader reader) {
         var builder = new StringBuilder();
         try {
             int readSymbol;

@@ -12,7 +12,7 @@ public class SecretKeyWriter {
     /**
      * Записывает закодированные байты ключа в файл
      */
-    public void writeKeyToFile(FileWriter writer, String encodedSecretKeyBytes) {
+    public static void writeKeyToFile(FileWriter writer, String encodedSecretKeyBytes) {
         try {
             log.debug("Записываю ключ в файл");
             writer.write(encodedSecretKeyBytes);

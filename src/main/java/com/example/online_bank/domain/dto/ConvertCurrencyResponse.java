@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public record ConvertCurrencyResponse(
         CurrencyCode targetCurrency,
-        BigDecimal convertedRate,
+        BigDecimal convertedAmount,
         BigDecimal amount,
         CurrencyCode baseCurrency) {
 }

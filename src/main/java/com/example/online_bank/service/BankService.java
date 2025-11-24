@@ -33,7 +33,6 @@ public class BankService {
      * @param dto Номер счета, выбранный код валюты, описание, количестве денег
      * @return Возвращает информацию об операции списания со счета
      */
-    //TODO: сделать @PreAuthorize(uuid = account.holder.uuid = dto.accountNumber)
     @Transactional()
     public OperationDtoResponse makePayment(FinanceOperationDto dto) {
         CurrencyCode accountCurrencyCode = accountService.findCurrencyCode(dto.accountNumber());
@@ -56,7 +55,6 @@ public class BankService {
         );
     }
 
-    //TODO: сделать @PreAuthorize(uuid = account.holder.uuid = dto.accountNumber)
     /**
      * Делать зачисление: на вход - номер счета, сумма, описание.
      * Зачисляет на банковский счет деньги и записывает операцию в историю.
@@ -85,32 +83,39 @@ public class BankService {
         );
     }
 
+    /**
+     * Покупка валюты. Производит списание суммы со счета {@code dto.baseTargetAccount},
+     * делает конвертацию в валюту {@code dto.targetAccountNumber}
+     */
     //4. Добавить в банк сервис метод купить валюту: на вход счет1, счет2, сумма, токен.
     //Производит списание суммы со счета1, делает конвертацию в валюту счета2.
     //Проверяет, что счета принадлежат пользователю (получить счет на основании токена).
-    //TODO: сделать @PreAuthorize(uuid = account.holder.uuid = dto.accountNumber)
-    @Transactional
+    @Transactional()
     public List<OperationDtoResponse> buyCurrency(BuyCurrencyDto dto) {
         CurrencyCode targetCurrencyCode = accountService.findCurrencyCode(dto.targetAccountNumber());
-        List<String> buyCurrencyDescriptions = createBuyCurrencyDescriptions(dto);
 
-        OperationDtoResponse fromOperation = makePayment(
+        List<String> descriptions = createDescriptions(dto);
+
+        final String paymentDescription = descriptions.getFirst();
+        final String depositDescription = descriptions.getLast();
+
+        OperationDtoResponse paymentOperation = makePayment(
                 new FinanceOperationDto(dto.baseAccountNumber(),
                         dto.amount(),
-                        buyCurrencyDescriptions.getFirst(),
+                        paymentDescription,
                         targetCurrencyCode)
         );
 
-        OperationDtoResponse toOperationResponse = makeDeposit(new FinanceOperationDto(
+        OperationDtoResponse depositOperation = makeDeposit(new FinanceOperationDto(
                 dto.targetAccountNumber(),
                 dto.amount(),
-                buyCurrencyDescriptions.get(1),
+                depositDescription,
                 targetCurrencyCode
         ));
-        return List.of(fromOperation, toOperationResponse);
+        return List.of(paymentOperation, depositOperation);
     }
 
-    private List<String> createBuyCurrencyDescriptions(BuyCurrencyDto dto) {
+    private List<String> createDescriptions(BuyCurrencyDto dto) {
         String baseAccountPostfix = "валюты со счета %s".formatted(dto.baseAccountNumber());
         String targetAccountPostfix = "валюты со счета %s".formatted(dto.targetAccountNumber());
         return List.of("Продажа %s".formatted(baseAccountPostfix), "Покупка %s".formatted(targetAccountPostfix));

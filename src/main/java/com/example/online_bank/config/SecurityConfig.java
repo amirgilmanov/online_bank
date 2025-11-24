@@ -2,7 +2,6 @@ package com.example.online_bank.config;
 
 import com.example.online_bank.security.filter.JwtRequestFilter;
 import com.example.online_bank.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,13 +24,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
-@RequiredArgsConstructor
 public class SecurityConfig extends SecurityFilterAutoConfiguration {
 
-    /**
-     * Напоминание для себя: не делать поля с фильтрами, а передавать в сигнатуру метода т.к. на них уже весит аннотация @Component
-     * и не делать @Bean
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -68,7 +62,9 @@ public class SecurityConfig extends SecurityFilterAutoConfiguration {
                                         "/configuration/ui",
                                         "/configuration/security",
                                         "/api/authentication/email"
-                                ).permitAll().anyRequest().authenticated()
+                                ).permitAll()
+                                .anyRequest()
+                                .authenticated()
 
                 )
 
@@ -81,8 +77,8 @@ public class SecurityConfig extends SecurityFilterAutoConfiguration {
                 .build();
     }
 
-    @Bean
-    DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserService userService) {
+        @Bean
+        DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserService userService) {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(passwordEncoder);
         daoAuthenticationProvider.setUserDetailsService(userService);
         return daoAuthenticationProvider;

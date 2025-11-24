@@ -25,7 +25,6 @@ public class CurrencyService {
      *                       Создает запись курса
      *                       //Пример: доллар рубль 90. Т.е за 1 доллар получим 90 рублей.
      */
-
     public RateResponseDto create(CurrencyCode baseCurrency, CurrencyCode targetCurrency, BigDecimal rate) {
         validateRateOrCount(rate);
         ExchangeRate entity = ExchangeRate.builder()
@@ -47,7 +46,8 @@ public class CurrencyService {
      */
     public ConvertCurrencyResponse convertCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
         validateRateOrCount(amount);
-        BigDecimal rate = findRate(baseCurrency, targetCurrency).convertedRate();
+        ConvertCurrencyResponse convertResult = findRate(baseCurrency, targetCurrency);
+        BigDecimal rate = convertResult.convertedAmount();
         return new ConvertCurrencyResponse(targetCurrency, amount.multiply(rate), amount, baseCurrency);
     }
 
@@ -72,7 +72,7 @@ public class CurrencyService {
     /**
      * Находим ставку перевернутого курса, делаем расчет курса для изначальной пары валют
      */
-    private BigDecimal calcInvertedRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
+    public BigDecimal calcInvertedRate(CurrencyCode baseCurrency, CurrencyCode targetCurrency) {
         BigDecimal invertedRate = currencyRepository.findRateByBaseAndTargetCurrency(targetCurrency, baseCurrency)
                 .orElseThrow(() -> new InvertedRateNotFound("Перевернутый курс не найден"));
         return BigDecimal.ONE.divide(invertedRate, 5, RoundingMode.HALF_EVEN);

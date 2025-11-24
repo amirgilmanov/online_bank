@@ -34,7 +34,7 @@ public class ValidateCurrencyService {
                     selectedCurrencyCode,
                     amount
             );
-            finalAmount = convertCurrencyResponse.convertedRate();
+            finalAmount = convertCurrencyResponse.convertedAmount();
             operation.accept(accountNumberTo, finalAmount);
         }
         return finalAmount;
