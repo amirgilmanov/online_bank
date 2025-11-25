@@ -7,8 +7,11 @@ import com.example.online_bank.domain.entity.Operation;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.OperationType;
 import com.example.online_bank.mapper.OperationMapper;
+import com.example.online_bank.repository.AccountRepository;
 import com.example.online_bank.repository.OperationRepository;
+import com.example.online_bank.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,8 @@ public class OperationService {
     private final OperationRepository operationRepository;
     private final OperationMapper operationMapper;
     private final EntityManager entityManager;
+    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     /**
      * Создать операцию
@@ -52,7 +57,7 @@ public class OperationService {
             @NonNull CurrencyCode currencyCode) {
         log.info("Создание операции");
         Account accountProxy = entityManager.getReference(Account.class, accountNumber);
-
+        log.info("{}", accountProxy);
         Operation operation = Operation.builder()
                 .operationType(operationType)
                 .amount(amount)
@@ -74,6 +79,11 @@ public class OperationService {
      */
     @Transactional(readOnly = true)
     public List<OperationInfoDto> findAllByAccount(String accountNumber, int page, int size) {
+        if (!accountRepository.existsByAccountNumber(accountNumber)) {
+            throw new EntityNotFoundException("Счет %s не существует".formatted(accountNumber));
+        }
+
+
         log.info("Показ операций по счету {} (начало с индекса - {}, размер - {})", accountNumber, page, size);
 
         return operationRepository.findAllByAccount_AccountNumber(
@@ -94,6 +104,9 @@ public class OperationService {
      */
     @Transactional(readOnly = true)
     public List<OperationInfoDto> findAllByUserPaged(UUID userUuid, int page, int size) {
+        if (!userRepository.existsByUuid(userUuid)){
+            throw new EntityNotFoundException("Пользователь с uuid %s не существует".formatted(userUuid));
+        }
         log.info("Поиск операций по пользователю {}. Начало с индекса {}, размер {}", userUuid.toString(), page, size);
 
         return operationRepository.findAllByAccount_Holder_Uuid(userUuid, createPageRequest(page, size)).stream()

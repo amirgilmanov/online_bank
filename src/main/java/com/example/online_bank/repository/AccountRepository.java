@@ -25,4 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<CurrencyCode> findCurrencyCodeByAccountNumber(String accountNumber);
 
     boolean existsByAccountNumberAndHolder_Uuid(String accountNumber, UUID holderUuid);
+
+    boolean existsByAccountNumber(String accountNumber);
 }

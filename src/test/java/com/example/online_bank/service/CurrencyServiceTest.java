@@ -16,11 +16,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static com.example.online_bank.enums.CurrencyCode.RUB;
 import static com.example.online_bank.enums.CurrencyCode.USD;
 import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.valueOf;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -37,14 +40,14 @@ class CurrencyServiceTest {
         ExchangeRate savedEntity = ExchangeRate.builder()
                 .baseCurrency(USD)
                 .targetCurrency(RUB)
-                .rate(BigDecimal.valueOf(90))
+                .rate(valueOf(90))
                 .id(1L)
                 .build();
 
-         when(exchangeCurrencyRepository.save(any(ExchangeRate.class))).thenReturn(savedEntity);
-        RateResponseDto rateResponseDto = currencyService.create(USD, RUB, BigDecimal.valueOf(90));
+        when(exchangeCurrencyRepository.save(any(ExchangeRate.class))).thenReturn(savedEntity);
+        RateResponseDto rateResponseDto = currencyService.create(USD, RUB, valueOf(90));
         log.info("{}", rateResponseDto);
-        Assertions.assertEquals(BigDecimal.valueOf(90), rateResponseDto.rate());
+        assertEquals(valueOf(90), rateResponseDto.rate());
     }
 
     @Test
@@ -52,14 +55,14 @@ class CurrencyServiceTest {
         //доллары в рубли
         CurrencyCode baseCurrency = USD;
         CurrencyCode targetCurrency = RUB;
-        BigDecimal amount = BigDecimal.valueOf(100);
+        BigDecimal amount = valueOf(100);
 
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(Optional.of(BigDecimal.valueOf(90)));
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(of(valueOf(90)));
         ConvertCurrencyResponse convertCurrencyResponse = currencyService.convertCurrency(baseCurrency, targetCurrency, amount);
         log.info("{}", convertCurrencyResponse);
         BigDecimal rate = convertCurrencyResponse.convertedAmount();
 
-        Assertions.assertEquals(BigDecimal.valueOf(9000), rate);
+        assertEquals(valueOf(9000), rate);
     }
 
     @Test
@@ -71,21 +74,21 @@ class CurrencyServiceTest {
         // 1 / 0.01111 = 90.09
         // 15 * 90.09
 
-        BigDecimal amount = BigDecimal.valueOf(15);
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(Optional.empty());
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(RUB, USD)).thenReturn(Optional.of(new BigDecimal("0.01111")));
+        BigDecimal amount = valueOf(15);
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(empty());
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(RUB, USD)).thenReturn(of(new BigDecimal("0.01111")));
 
         ConvertCurrencyResponse result = currencyService.convertCurrency(USD, RUB, amount);
         log.info("{}", result);
-        Assertions.assertEquals(new BigDecimal("15"), result.amount());
-        Assertions.assertEquals(new BigDecimal("1350.13500"), result.convertedAmount());
+        assertEquals(new BigDecimal("15"), result.amount());
+        assertEquals(new BigDecimal("1350.13500"), result.convertedAmount());
     }
 
     @Test
     void failConvert_InvertedRateNotFound() {
-        BigDecimal amount = BigDecimal.valueOf(15);
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(Optional.empty());
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(RUB, USD)).thenReturn(Optional.empty());
+        BigDecimal amount = valueOf(15);
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(empty());
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(RUB, USD)).thenReturn(empty());
 
         Assertions.assertThrows(InvertedRateNotFound.class, () -> currencyService.convertCurrency(USD, RUB, amount));
     }
@@ -93,17 +96,17 @@ class CurrencyServiceTest {
     @Test
     void successCalcInvertRate() {
         //для случая когда курс доллар рубль 90 не найден
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(RUB, USD)).thenReturn(Optional.of(new BigDecimal("0.01111")));
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(RUB, USD)).thenReturn(of(new BigDecimal("0.01111")));
         BigDecimal rate = currencyService.calcInvertedRate(USD, RUB);
-        Assertions.assertEquals(new BigDecimal("90.00900"), rate);
+        assertEquals(new BigDecimal("90.00900"), rate);
     }
 
     @Test
     void successCalcInvertRate_ForRUB_USD() {
         //для случая когда курс рубль доллар 0.01111 не найден
-        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(Optional.of(new BigDecimal("90")));
+        when(exchangeCurrencyRepository.findRateByBaseAndTargetCurrency(USD, RUB)).thenReturn(of(new BigDecimal("90")));
         BigDecimal rate = currencyService.calcInvertedRate(RUB, USD);
-        Assertions.assertEquals(new BigDecimal("0.01111"), rate);
+        assertEquals(new BigDecimal("0.01111"), rate);
 
     }
 
@@ -114,10 +117,5 @@ class CurrencyServiceTest {
         BigDecimal amount = ZERO;
 
         Assertions.assertThrows(InvalidCountException.class, () -> currencyService.convertCurrency(baseCurrency, targetCurrency, amount));
-    }
-
-
-    @Test
-    void findRate() {
     }
 }

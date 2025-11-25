@@ -45,6 +45,5 @@ public class Operation {
 
     @JoinColumn(name = "account_id")
     @ManyToOne
-    @ToString.Exclude
     private Account account;
 }
