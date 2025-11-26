@@ -36,7 +36,7 @@ import static org.springframework.data.domain.Sort.by;
 @Slf4j
 class OperationServiceTest {
     @InjectMocks
-    OperationService operationService;
+    private OperationService operationService;
 
     @Mock
     EntityManager entityManager;

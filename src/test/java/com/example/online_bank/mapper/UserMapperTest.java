@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +59,7 @@ public class UserMapperTest {
         );
 
         List<Role> roles = List.of(new Role(1L, "ROLE_USER"));
-        Mockito.when(roleService.findRoleByName("ROLE_USER")).thenReturn(Optional.of(new Role(1L, "ROLE_USER")));
+        Mockito.when(roleService.findRoleByName("ROLE_USER")).thenReturn(new Role(1L, "ROLE_USER"));
 
         //Сверяем данные
         User user = userMapper.toUser(registrationDto, roleService, bCryptPasswordEncoder);
@@ -81,7 +80,14 @@ public class UserMapperTest {
     @Test
     @DisplayName("Успешное конвертирование в registrationDtoResponse")
     void successfulMapToRegistrationDtoResponse() {
-        RegistrationDto registrationDto = new RegistrationDto("test", "test", "test", "89999999999", "pass", "testEmail@.com");
+        RegistrationDto registrationDto = new RegistrationDto(
+                "test",
+                "testSurname",
+                "testPatronymic",
+                "89999999999",
+                "pass",
+                "testEmail@.com"
+        );
         String code = "1234";
         RegistrationDtoResponse registrationDtoResponse = userMapper.toRegistrationDtoResponse(registrationDto, code);
 

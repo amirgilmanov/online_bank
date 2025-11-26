@@ -22,11 +22,11 @@ import static com.example.online_bank.enums.VerifiedCodeType.EMAIL;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @InjectMocks
-    UserService userService;
+    private UserService userService;
     @Mock
-    VerifiedCodeService verifiedCodeService;
+    private VerifiedCodeService verifiedCodeService;
 
     @Test
     void successLoadUserByUsername() {

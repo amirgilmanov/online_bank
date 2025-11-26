@@ -1,0 +1,7 @@
+euro-bank:
+  bank:
+    name: "LLC EuroBank"
+    partner:
+      prefix-url: http://localhost:8002
+server:
+  port: 8001

@@ -4,6 +4,7 @@ import com.example.online_bank.security.jwt.service.SecretKeyManager;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @Getter
@@ -68,14 +70,18 @@ public class JwtConfig {
      * 3.2) {@code writeKeyToFile} - записываем строку из байтов в указанный файл
      */
     @PostConstruct
-    public void initSecretKey() throws IOException {
-        File file = new File(fileName);
-        if (file.exists()) {
-            this.key = secretKeyManager.decodeFile(fileName);
-        } else {
-            SecretKey secretKey = secretKeyManager.createSecretKey();
-            this.key = secretKey;
-            secretKeyManager.encodeAndWriteKey(new FileWriter(fileName), secretKey);
+    public void initSecretKey() {
+        try {
+            File file = new File(fileName);
+            if (file.exists()) {
+            } else {
+                SecretKey secretKey = secretKeyManager.createSecretKey();
+                this.key = secretKey;
+                secretKeyManager.encodeAndWriteKey(new FileWriter(fileName), secretKey);
+            }
+        } catch (IOException e){
+            log.info(e.getMessage());
         }
+
     }
 }

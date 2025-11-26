@@ -8,6 +8,5 @@ public abstract class AbstractBank {
     @NonNull
     protected final String name;
     @NonNull
-    protected final String url;
-
+    protected final String prefixUrl;
 }

@@ -13,9 +13,9 @@ public class MoneyBank extends AbstractBank {
     public MoneyBank(
             @Value("${money-bank.bank.name}")
             String name,
-            @Value("${money-bank.bank.partner.url}")
-            String url
+            @Value("${money-bank.bank.partner.prefix-url}")
+            String prefixUrl
     ) {
-        super(name, url);
+        super(name, prefixUrl);
     }
 }

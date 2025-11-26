@@ -1,12 +1,15 @@
 package com.example.online_bank.service.it;
 
 import com.example.online_bank.OnlineBankApplication;
+import com.example.online_bank.config.JwtConfig;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
 import com.example.online_bank.enums.VerifiedCodeType;
 import com.example.online_bank.repository.VerifiedCodeRepository;
+import com.example.online_bank.service.MailService;
 import com.example.online_bank.service.UserService;
 import com.example.online_bank.service.VerifiedCodeService;
+import com.example.online_bank.service.impl.EmailNotificationServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,12 @@ class VerifiedCodeServiceTestIT {
     private VerifiedCodeRepository verifiedCodeRepository;
     @Autowired
     private UserService userService;
+    @MockBean
+    private EmailNotificationServiceImpl emailNotificationService;
+    @MockBean
+    private MailService mailService;
+    @MockBean
+    JwtConfig jwtConfig;
 
     @Test
     @Transactional
@@ -67,8 +77,8 @@ class VerifiedCodeServiceTestIT {
     @DisplayName("Успешное удаление всех истекших кодов")
     void successfulRemoveExpiredOtpCode() {
         verifiedCodeService.clearOldCodes();
-        List<VerifiedCode> allOtps = verifiedCodeRepository.findAll();
-        Assertions.assertTrue(allOtps.isEmpty());
+        List<VerifiedCode> allOtp = verifiedCodeRepository.findAll();
+        Assertions.assertTrue(allOtp.isEmpty());
     }
 
     @Test
@@ -97,7 +107,9 @@ class VerifiedCodeServiceTestIT {
     @Transactional
     void validateCode() {
         //подготовка данных arr
-        User userMock = User.builder().build();
+        User userMock = User.builder()
+                .isVerified(Boolean.FALSE)
+                .build();
         userService.save(userMock);
 
         VerifiedCode otpCodeEntity = verifiedCodeService.createVerifiedCode(

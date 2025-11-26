@@ -87,9 +87,6 @@ public class BankService {
      * Покупка валюты. Производит списание суммы со счета {@code dto.baseTargetAccount},
      * делает конвертацию в валюту {@code dto.targetAccountNumber}
      */
-    //4. Добавить в банк сервис метод купить валюту: на вход счет1, счет2, сумма, токен.
-    //Производит списание суммы со счета1, делает конвертацию в валюту счета2.
-    //Проверяет, что счета принадлежат пользователю (получить счет на основании токена).
     @Transactional()
     public List<OperationDtoResponse> buyCurrency(BuyCurrencyDto dto) {
         CurrencyCode targetCurrencyCode = accountService.findCurrencyCode(dto.targetAccountNumber());

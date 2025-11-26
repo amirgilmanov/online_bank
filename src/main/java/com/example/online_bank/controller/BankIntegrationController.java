@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/integration")
 @RequiredArgsConstructor
@@ -45,7 +43,7 @@ public class BankIntegrationController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = OperationDtoResponse.class))
     )
-    public List<OperationDtoResponse> transfer(@RequestBody TransferDto dto) {
+    public OperationDtoResponse transfer(@RequestBody TransferDto dto) {
         return transferService.transferMoney(dto);
     }
 }

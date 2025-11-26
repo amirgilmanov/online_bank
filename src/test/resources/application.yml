@@ -2,7 +2,7 @@ default-bank:
   bank:
     name: "LLC DefaultBank"
     partner:
-      url: "http://localhost:8080"
+      prefix-url: "http://localhost:8080"
 server:
   port: 8081
 
@@ -11,23 +11,23 @@ spring:
     allow-bean-definition-overriding: true
 
   liquibase:
-    enabled: true
+    enabled: false
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
   jpa:
     hibernate:
       show-sql: true
-      ddl-auto: validate
+      ddl-auto: create-drop
     defer-datasource-initialization: false
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:h2:mem:online_bank_test;DB_CLOSE_DELAY=-1;
+    username: test_name
+    password: 1234
     hikari:
       allow-pool-suspension: true
 
-    driverClassName: org.postgresql.Driver
+    driverClassName: org.h2.Driver
 
   mail:
     host: smtp.gmail.com

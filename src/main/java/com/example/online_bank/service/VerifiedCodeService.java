@@ -26,7 +26,12 @@ public class VerifiedCodeService {
         verifiedCodeRepository.save(verifiedCode);
     }
 
-    public VerifiedCode createVerifiedCode(String verifiedCode, User user, LocalDateTime expirationDate, VerifiedCodeType type) {
+    public VerifiedCode createVerifiedCode(
+            String verifiedCode,
+            User user,
+            LocalDateTime expirationDate,
+            VerifiedCodeType type
+    ) {
         return VerifiedCode.builder()
                 .id(UUID.randomUUID())
                 .expiresAt(expirationDate)
@@ -53,12 +58,6 @@ public class VerifiedCodeService {
         List<VerifiedCode> oldCodes = verifiedCodeRepository.findAllByExpiresAtBefore(LocalDateTime.now());
         verifiedCodeRepository.deleteAll(oldCodes);
     }
-    //FIXME: добавить метод в контроллер ввести код заново и в логику этого метода(ввести код заново) вклинить этот метод
-    private void cleanOldCodes(Long userId) {
-        LocalDateTime now = LocalDateTime.now();
-        List<VerifiedCode> oldUserCodes = verifiedCodeRepository.findAllByExpiresAtBeforeAndUser_Id(now, userId);
-        verifiedCodeRepository.deleteAll(oldUserCodes);
-    }
 
     /**
      * Возвращает true после того как код для верификации был найден
@@ -66,7 +65,7 @@ public class VerifiedCodeService {
      * если код не был найден - вернет false
      */
     public boolean validateCode(User user, String code, VerifiedCodeType type) {
-        if (user.getIsVerified()){
+        if (user.getIsVerified()) {
             log.debug("Пользователь уже верифицирован");
             throw new EntityAlreadyVerifiedException("Пользователь уже верифицирован");
         }

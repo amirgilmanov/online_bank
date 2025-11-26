@@ -14,9 +14,9 @@ public class EuroBank extends AbstractBank {
     public EuroBank(
             @Value("${euro-bank.bank.name}")
             String name,
-            @Value("${euro-bank.bank.partner.url}")
-            String url
+            @Value("${euro-bank.bank.partner.prefix-url}")
+            String prefixUrl
     ) {
-        super(name, url);
+        super(name, prefixUrl);
     }
 }

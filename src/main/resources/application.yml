@@ -2,7 +2,7 @@ default-bank:
   bank:
     name: "LLC DefaultBank"
     partner:
-      url: "http://localhost:8080"
+      prefix-url: "http://localhost:8080"
 server:
   port: 8081
 

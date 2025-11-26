@@ -2,6 +2,6 @@ money-bank:
   bank:
     name: "LLC MoneyBank"
     partner:
-      url: "http://localhost:8001"
+      prefix-url: "http://localhost:8001"
 server:
   port: 8002

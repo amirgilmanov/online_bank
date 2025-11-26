@@ -35,11 +35,8 @@ public interface UserMapper {
     @Mapping(target = "isBlocked", constant = "false")
     @Mapping(target = "isVerified", constant = "false")
     @Mapping(target = "roles", expression = """
-            java(List.of(roleService.findRoleByName(com.example.online_bank.enums.Roles.ROLE_USER.getValue()).orElseThrow(
-            () -> new jakarta.persistence.EntityNotFoundException("Роль %s не найдена"
-            .formatted(com.example.online_bank.enums.Roles.ROLE_USER.getValue())))))
+            java(List.of(roleService.findRoleByName(com.example.online_bank.enums.Roles.ROLE_USER.getValue())))
             """)
-
     User toUser(RegistrationDto dto, @Context RoleService roleService, @Context BCryptPasswordEncoder passwordEncoder);
 
     //для UserContainer
