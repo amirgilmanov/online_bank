@@ -12,7 +12,7 @@ A RESTful Web Service for banking operations built with **Java 17** and **Spring
 ## Tech Stack
 - **Backend:** Java 17, Spring Boot, Spring Data JPA, Spring Security.
 - **Database:** PostgreSQL.
-- **Tools:** Maven, Lombok, Swagger/OpenAPI.
+- **Tools:** Maven, Lombok, Swagger
 
 ## Why this project?
 I developed this project to demonstrate my understanding of **enterprise-level backend architecture**. It showcases clean code principles, DTO patterns, and database integrity.
