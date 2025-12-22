@@ -15,4 +15,4 @@ A RESTful Web Service for banking operations built with **Java 17** and **Spring
 - **Tools:** Maven, Lombok, Swagger
 
 ## Why this project?
-I developed this project to demonstrate my understanding of **enterprise-level backend architecture**. It showcases clean code principles, DTO patterns, and database integrity.
+I developed this project to demonstrate my understanding of **enterprise-level backend architecture**. It showcases clean code principles, using Spring Security and JWT, and database integrity.
