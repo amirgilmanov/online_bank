@@ -4,9 +4,10 @@ import com.example.online_bank.config.JwtConfig;
 import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.enums.TokenType;
 import com.example.online_bank.security.jwt.factory.TokenFactory;
-import com.example.online_bank.security.jwt.service.JwtService;
+import com.example.online_bank.service.JwtService;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RefreshTokenFactory implements TokenFactory {
     private final JwtConfig config;
     private final JwtService jwtService;
@@ -26,9 +28,7 @@ public class RefreshTokenFactory implements TokenFactory {
     //TODO реализовать в будущем с помощью redis таблицу с удаленными/заблокированными токенами
     @Override
     public String createToken(TokenType type, UserContainer userContainer) {
-        if (!supports(type)) {
-            throw new IllegalArgumentException("Unsupported token type: " + type);
-        }
+        log.info("Create refresh token");
 
         Date issuedDate = new Date();
         Date notBeforeDate = Date.from(Instant.now());
@@ -41,7 +41,7 @@ public class RefreshTokenFactory implements TokenFactory {
 
         String id = jwtService.createUuid();
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .subject(subject)
                 .issuer(config.getIssuer())
                 .id(id)
@@ -51,7 +51,11 @@ public class RefreshTokenFactory implements TokenFactory {
                 .audience().add(config.getAudience())
                 .and()
                 .claims(claims)
+                .issuedAt(issuedDate)
                 .compact();
+
+        log.info("refresh token created: {}", token);
+        return token;
     }
 
     /**
@@ -60,6 +64,6 @@ public class RefreshTokenFactory implements TokenFactory {
      */
     @Override
     public boolean supports(TokenType supported) {
-        return supported.equals(TokenType.REFRESH);
+        return supported == TokenType.REFRESH;
     }
 }

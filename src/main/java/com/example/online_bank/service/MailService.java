@@ -27,7 +27,7 @@ public class MailService {
      */
     public void sendMail(String to, String subject, String text) {
 
-        if (fromTo == null){
+        if (fromTo == null) {
             throw new NullPointerException("fromTo is null");
         }
 

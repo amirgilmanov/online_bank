@@ -120,8 +120,6 @@ class VerifiedCodeServiceTestIT {
 
         verifiedCodeService.save(otpCodeEntity);
         //act
-        boolean isVerified = verifiedCodeService.validateCode(userMock, "7777", VerifiedCodeType.EMAIL);
-        Assertions.assertTrue(isVerified);
         VerifiedCode verifiedCode = assertDoesNotThrow(() -> verifiedCodeRepository.findVerifiedCodeByVerifiedCode("7777")
                 .orElseThrow(EntityNotFoundException::new));
         log.debug(verifiedCode.toString());

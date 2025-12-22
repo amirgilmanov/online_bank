@@ -28,7 +28,7 @@ class ValidateCurrencyServiceTest {
     AccountService accountService;
 
     @Test
-    void successProcessTransactionAndCurrencyCodesIsEquals(){
+    void successProcessTransactionAndCurrencyCodesIsEquals() {
         CurrencyCode accountCurrencyCode = CurrencyCode.USD;
         CurrencyCode selectedCurrencyCode = CurrencyCode.USD;
 
@@ -38,13 +38,13 @@ class ValidateCurrencyServiceTest {
     }
 
     @Test
-    void successProcessTransactionCurrencyCodeIsDifferent(){
+    void successProcessTransactionCurrencyCodeIsDifferent() {
         CurrencyCode accountCurrencyCode = CurrencyCode.RUB;
         CurrencyCode selectedCurrencyCode = CurrencyCode.CNY;
         String accountNumberTo = "0002";
         BigDecimal amount = BigDecimal.valueOf(200);
 
-         Mockito.when(currencyService.convertCurrency(accountCurrencyCode, selectedCurrencyCode, amount)).thenReturn(new ConvertCurrencyResponse(selectedCurrencyCode, BigDecimal.valueOf(2000), amount,accountCurrencyCode));
+        Mockito.when(currencyService.convertCurrency(accountCurrencyCode, selectedCurrencyCode, amount)).thenReturn(new ConvertCurrencyResponse(selectedCurrencyCode, BigDecimal.valueOf(2000), amount, accountCurrencyCode));
         BigDecimal result = validateCurrencyService.processTransaction(accountCurrencyCode, selectedCurrencyCode, accountService::withdrawMoney, "001", amount);
         Assertions.assertEquals(BigDecimal.valueOf(2000), result);
     }

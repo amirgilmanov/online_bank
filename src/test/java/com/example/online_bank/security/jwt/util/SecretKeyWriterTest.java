@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
 class SecretKeyWriterTest {
 
     @Test

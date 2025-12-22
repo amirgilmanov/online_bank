@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 
 /**
  * @param accountNumber номер счета
- * @param currencyCode код валюты
- * @param balance баланс
- * @param holderName имя пользователя
+ * @param currencyCode  код валюты
+ * @param balance       баланс
+ * @param holderName    имя пользователя
  * @param holderSurname фамилия пользователя
  */
 public record AccountDtoResponse(

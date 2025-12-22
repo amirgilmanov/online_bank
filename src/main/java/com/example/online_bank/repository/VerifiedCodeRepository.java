@@ -4,6 +4,8 @@ import com.example.online_bank.domain.entity.VerifiedCode;
 import com.example.online_bank.enums.VerifiedCodeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,13 +15,13 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
     List<VerifiedCode> findAllByExpiresAtBefore(LocalDateTime now);
 
     /**
-     * Найти неиспользованный код верификации, который еще не истек для конкретного пользователя.
-     * Найти код по пользовательскому id и типу кода и код не верифицирован и время истечения БОЛЬШЕ времени, приведенным в параметре
+     * Найти код по id пользователя и типу кода, код не верифицирован и время истечения БОЛЬШЕ (наступит позже) времени,
+     * приведенным в параметре
      *
-     * @param code        код верификации
-     * @param userId      ID пользователя
-     * @param type        тип кода (EMAIL, PHONE, RESET)
-     * @param currentTime текущее время для проверки
+     * @param code        Код верификации
+     * @param userId      Id пользователя
+     * @param type        Тип кода (EMAIL, PHONE, RESET)
+     * @param currentTime Текущее время для проверки
      * @return {@link Optional} с найденным кодом или пустой, если код не найден/истек
      * @implNote Метод ищет коды, которые:
      * <ul>
@@ -50,4 +52,16 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
     void deleteAllByIsVerifiedTrueAndUser_id(Long user_id);
 
     Optional<VerifiedCode> findVerifiedCodeByVerifiedCode(String verifiedCode);
+
+    @Modifying
+    @Query("""
+            update VerifiedCode v
+            set v.verifiedCode = :otp, v.expiresAt =:newExpDate
+            where v.user.id = (select u.id from User u where u.email = :email)
+            """)
+    void updateVerifiedCodeByUser_Email(
+            @Param("email") String email,
+            @Param("otp") String otp,
+            @Param("newExpDate") LocalDateTime newExpDate
+    );
 }

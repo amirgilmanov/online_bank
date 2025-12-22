@@ -2,19 +2,21 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
+import com.example.online_bank.dto.RegenerateOtpDto;
 import com.example.online_bank.enums.VerifiedCodeType;
-import com.example.online_bank.exception.EntityAlreadyVerifiedException;
+import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.VerifiedCodeRepository;
+import com.example.online_bank.util.CodeGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 @Slf4j
 @Service
@@ -60,25 +62,30 @@ public class VerifiedCodeService {
     }
 
     /**
-     * Возвращает true после того как код для верификации был найден
-     * производит изменения в репозитории
-     * если код не был найден - вернет false
+     * Ищет код. Если найден, меняет флаг на аутентифицированного
      */
-    public boolean validateCode(User user, String code, VerifiedCodeType type) {
-        if (user.getIsVerified()) {
-            log.debug("Пользователь уже верифицирован");
-            throw new EntityAlreadyVerifiedException("Пользователь уже верифицирован");
-        }
-
+    public void validateCode(User user, String code, VerifiedCodeType type) throws VerificationOtpException {
         LocalDateTime now = LocalDateTime.now();
 
-        return verifiedCodeRepository
-                .findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsFalseAndExpiresAtAfter(code, user.getId(), type, now)
-                .map(verifiedCode -> {
-                    verifiedCode.setIsVerified(TRUE);
-                    verifiedCodeRepository.save(verifiedCode);
-                    return true;
-                })
-                .orElse(false);
+        VerifiedCode verifiedCode = verifiedCodeRepository
+                .findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsFalseAndExpiresAtAfter(
+                        code, user.getId(), type, now)
+                .orElseThrow(() ->
+                        new VerificationOtpException("Ошибка верификации. Запросите новый код"));
+        log.info("Otp код был найден и будет верифицирован {}", verifiedCode);
+        verifiedCode.setIsVerified(true);
+        verifiedCodeRepository.save(verifiedCode);
+
+
+    }
+
+    @Transactional
+    public String regenerateOtp(RegenerateOtpDto dto) {
+        log.info("Regenerate otp starting with args: {}", dto.email());
+
+        String newOtp = CodeGeneratorUtil.generateOtp();
+        LocalDateTime newExpDate = createExpirationDate(200);
+        verifiedCodeRepository.updateVerifiedCodeByUser_Email(dto.email(), newOtp, newExpDate);
+        return newOtp;
     }
 }

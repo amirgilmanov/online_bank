@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/authentication")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Tag(name = "Контроллер аутентификации")
 public class AuthenticationController {
@@ -35,6 +35,6 @@ public class AuthenticationController {
             content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
     public ResponseEntity<AuthenticationResponseDto> authentication(@RequestBody AuthenticationRequest dtoRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED.value()).body( authenticationService.signIn(dtoRequest));
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body(authenticationService.signIn(dtoRequest));
     }
 }

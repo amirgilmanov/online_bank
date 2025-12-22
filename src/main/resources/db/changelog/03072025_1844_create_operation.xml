@@ -5,16 +5,39 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="03072025_1844_create_operation.xml" author="amirgilmanov">
-    <sql>
-        create table if not exists operation(
-            id bigserial primary key,
-            account_id bigint references account(id),
-            created_at timestamp,
-            operation_type varchar(100),
-            amount numeric(9,2),
-            description varchar(100),
-            currency_code varchar(100)
-        )
-    </sql>
+        <sql>
+            create table if not exists operation
+            (
+                id
+                bigserial
+                primary
+                key,
+                account_id
+                bigint
+                references
+                account
+            (
+                id
+            ),
+                created_at timestamp,
+                operation_type varchar
+            (
+                100
+            ),
+                amount numeric
+            (
+                9,
+                2
+            ),
+                description varchar
+            (
+                100
+            ),
+                currency_code varchar
+            (
+                100
+            )
+                )
+        </sql>
     </changeSet>
 </databaseChangeLog>

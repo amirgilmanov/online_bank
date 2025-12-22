@@ -6,12 +6,27 @@
 
     <changeSet id="03072025_1847_create_exchange_rate.xml" author="amirgilmanov">
         <sql>
-            create table if not exists exchange_rate(
-                id bigserial primary key,
-                base_currency varchar(100),
-                target_currency varchar(100),
-                rate numeric(9,2)
+            create table if not exists exchange_rate
+            (
+                id
+                bigserial
+                primary
+                key,
+                base_currency
+                varchar
+            (
+                100
+            ),
+                target_currency varchar
+            (
+                100
+            ),
+                rate numeric
+            (
+                9,
+                2
             )
+                )
         </sql>
     </changeSet>
 </databaseChangeLog>

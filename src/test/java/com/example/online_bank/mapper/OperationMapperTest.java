@@ -120,7 +120,7 @@ class OperationMapperTest {
         assertEquals(CurrencyCode.RUB, operationInfoDto.currencyCode());
     }
 
-//return (operation.getAccount().getBalance().subtract(operation.getAmount()));
+    //return (operation.getAccount().getBalance().subtract(operation.getAmount()));
     @Test
     void calcAmountAfterWithdraw() {
         BigDecimal amount = BigDecimal.valueOf(100);

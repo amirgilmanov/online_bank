@@ -78,6 +78,7 @@ public class AccountController {
 
     /**
      * Найти все счета пользователя
+     *
      * @return возвращает список всех счетов пользователя
      */
     @ApiResponse(

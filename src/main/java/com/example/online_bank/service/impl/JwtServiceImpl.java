@@ -1,10 +1,11 @@
-package com.example.online_bank.security.jwt.service.impl;
+package com.example.online_bank.service.impl;
 
 import com.example.online_bank.config.JwtConfig;
-import com.example.online_bank.security.jwt.service.JwtService;
+import com.example.online_bank.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtServiceImpl implements JwtService {
     private final JwtConfig jwtConfig;
 
@@ -23,6 +25,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Map<String, Object> createClaims() {
+        log.info("createClaims");
         return new HashMap<>();
     }
 

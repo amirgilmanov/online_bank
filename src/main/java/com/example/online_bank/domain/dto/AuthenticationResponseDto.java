@@ -1,6 +1,6 @@
 package com.example.online_bank.domain.dto;
 
-import java.util.Set;
+import java.util.Map;
 
-public record AuthenticationResponseDto(Set<String> tokens) {
+public record AuthenticationResponseDto(Map<String, String> tokens) {
 }

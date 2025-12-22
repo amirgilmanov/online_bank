@@ -104,7 +104,7 @@ public class OperationService {
      */
     @Transactional(readOnly = true)
     public List<OperationInfoDto> findAllByUserPaged(UUID userUuid, int page, int size) {
-        if (!userRepository.existsByUuid(userUuid)){
+        if (!userRepository.existsByUuid(userUuid)) {
             throw new EntityNotFoundException("Пользователь с uuid %s не существует".formatted(userUuid));
         }
         log.info("Поиск операций по пользователю {}. Начало с индекса {}, размер {}", userUuid.toString(), page, size);

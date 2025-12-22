@@ -1,4 +1,4 @@
-package com.example.online_bank.security.jwt.service;
+package com.example.online_bank.service;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.GrantedAuthority;

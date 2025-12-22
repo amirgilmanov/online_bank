@@ -4,6 +4,7 @@ import com.example.online_bank.security.jwt.service.SecretKeyManager;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.time.Duration;
 @Component
 @RequiredArgsConstructor
 @Getter
+@ToString
 public class JwtConfig {
     @Value("${jwt.lifetime}")
     private Duration accessTokenLifetime;
@@ -71,17 +73,20 @@ public class JwtConfig {
      */
     @PostConstruct
     public void initSecretKey() {
+        log.info("init secret key");
         try {
             File file = new File(fileName);
             if (file.exists()) {
+                this.key = secretKeyManager.decodeFile(file.getName());
+                log.info("Secret key decoded successfully");
             } else {
                 SecretKey secretKey = secretKeyManager.createSecretKey();
                 this.key = secretKey;
                 secretKeyManager.encodeAndWriteKey(new FileWriter(fileName), secretKey);
+                log.info("Secret key has been encoded and written");
             }
-        } catch (IOException e){
-            log.info(e.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
-
     }
 }

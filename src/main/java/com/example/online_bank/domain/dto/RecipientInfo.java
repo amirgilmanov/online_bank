@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @param accountNumberTo номер счета
- * @param bankName имя банка
+ * @param bankName        имя банка
  */
 public record RecipientInfo(
         @Schema(description = "Номер счета получателя", example = "810000002")

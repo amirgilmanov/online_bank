@@ -4,20 +4,22 @@ import com.example.online_bank.config.JwtConfig;
 import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.enums.TokenType;
 import com.example.online_bank.security.jwt.factory.TokenFactory;
-import com.example.online_bank.security.jwt.service.JwtService;
+import com.example.online_bank.service.JwtService;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class IdTokenFactory implements TokenFactory {
     private final JwtConfig config;
     private final JwtService jwtService;
-
 
     /**
      * @param userContainer - token - Информация о пользователе
@@ -27,31 +29,35 @@ public class IdTokenFactory implements TokenFactory {
     //TODO: добавить фотографию профиля пользователю и подгружать через Amazon S3
     @Override
     public String createToken(TokenType type, UserContainer userContainer) {
-        if (!supports(type)) {
-            throw new IllegalArgumentException("Unsupported token type: " + type);
-        }
+        log.info("Creating IdToken");
 
         Date issuedDate = new Date();
+        Date notBeforeDate = Date.from(Instant.now());
         Date expiredDate = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
 
-        String uuid = userContainer.uuid();
+        String subject = userContainer.uuid();
 
         Map<String, Object> claims = jwtService.createClaims();
-        claims.put("name", userContainer.name());
+        claims.put("token_type", type);
 
+        String id = jwtService.createUuid();
 
-        return Jwts.builder()
-                .issuedAt(issuedDate)
+        String token = Jwts.builder()
+                .subject(subject)
+                .issuer(config.getIssuer())
+                .id(id)
+                .notBefore(notBeforeDate)
                 .expiration(expiredDate)
-                .subject(uuid)
-                .claims(claims)
+                .signWith(config.getKey())
                 .audience().add(config.getAudience())
                 .and()
-                .issuer(config.getIssuer())
-                .signWith(config.getKey())
+                .claims(claims)
+                .issuedAt(issuedDate)
                 .compact();
-    }
 
+        log.info("id token created {}", token);
+        return token;
+    }
 
     /**
      * @param supported
@@ -59,6 +65,6 @@ public class IdTokenFactory implements TokenFactory {
      */
     @Override
     public boolean supports(TokenType supported) {
-        return supported.equals(TokenType.ID);
+        return supported == TokenType.ID;
     }
 }

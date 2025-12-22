@@ -6,11 +6,24 @@
 
     <changeSet id="03072025_1831_create_role_user.xml" author="amirgilmanov">
         <sql>
-            create table if not exists role_user(
-                id bigserial primary key,
-                user_id bigint references user_bank(id),
-                role_id bigint references role(id)
+            create table if not exists role_user
+            (
+                id
+                bigserial
+                primary
+                key,
+                user_id
+                bigint
+                references
+                user_bank
+            (
+                id
+            ),
+                role_id bigint references role
+            (
+                id
             )
+                )
         </sql>
 
     </changeSet>

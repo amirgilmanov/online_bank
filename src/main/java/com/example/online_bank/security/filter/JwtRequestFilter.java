@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,43 +35,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      * будет перекладывать данные из токена в Security контекст
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
             throws ServletException, IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
-        String jwtToken;
+        try {
+            String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+            String jwtToken;
 
-        String pathInfo = request.getRequestURI();
-        if (isPublicUri(pathInfo)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                jwtToken = authorizationHeader.substring(7);
+                Authentication authResult = this.authenticationManager.authenticate(new JwtRequestToken(jwtToken));
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwtToken = authorizationHeader.substring(7);
-            Authentication authResult = this.authenticationManager.authenticate(new JwtRequestToken(jwtToken));
-
-            // Проверка на то, что контекст не занят кем-то другим
-            if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                SecurityContextHolder.getContext().setAuthentication(authResult);
+                // Проверка на то, что контекст не занят кем-то другим
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    SecurityContextHolder.getContext().setAuthentication(authResult);
+                }
             }
-            filterChain.doFilter(request, response);
+        } catch (AuthenticationException e) {
+            log.error("Authentification failed cause by: {}", e.getMessage());
+            SecurityContextHolder.clearContext();
         }
-    }
-
-    private boolean isPublicUri(String uri) {
-        return uri.startsWith("/api/sign-up") ||
-                uri.startsWith("/swagger-ui/index.html") ||
-                uri.startsWith("/test") ||
-                uri.startsWith("/v3/api-docs") ||
-                uri.startsWith("/swagger-resources/") ||
-                uri.startsWith("/webjars/") ||
-                uri.startsWith("/configuration") ||
-                uri.endsWith(".css") ||
-                uri.endsWith(".js") ||
-                uri.endsWith(".png") ||
-                uri.endsWith(".ico") ||
-                uri.startsWith("/test/") ||
-                uri.startsWith("/") ||
-                uri.startsWith("/api/authentication/email");
+        filterChain.doFilter(request, response);
     }
 }

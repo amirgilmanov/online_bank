@@ -33,7 +33,7 @@ class CurrencyServiceTest {
     @Mock
     ExchangeCurrencyRepository exchangeCurrencyRepository;
     @InjectMocks
-   private CurrencyService currencyService;
+    private CurrencyService currencyService;
 
     @Test
     void successCreateRate() {

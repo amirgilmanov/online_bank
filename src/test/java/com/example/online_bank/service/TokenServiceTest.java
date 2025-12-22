@@ -20,7 +20,7 @@ class TokenServiceTest {
     private JwtFactoryOrchestrator jwtFactoryOrchestrator;
 
     @Test
-    void successGetAccessToken(){
+    void successGetAccessToken() {
         UserContainer userContainer = new UserContainer(UUID.randomUUID().toString(), "test", List.of("ROLE_USER"));
         Assertions.assertDoesNotThrow(() -> {
             tokenService.getAccessToken(userContainer);

@@ -1,8 +1,8 @@
 package com.example.online_bank.security.provider;
 
 import com.example.online_bank.domain.model.JwtUserDetails;
-import com.example.online_bank.security.jwt.service.impl.JwtServiceImpl;
 import com.example.online_bank.security.token.JwtRequestToken;
+import com.example.online_bank.service.impl.JwtServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +55,6 @@ public class JwtRequestProvider implements AuthenticationProvider {
      */
     @Override
     public boolean supports(Class<?> authentication) {
-        return JwtRequestProvider.class.isAssignableFrom(authentication);
+        return JwtRequestToken.class.isAssignableFrom(authentication);
     }
 }

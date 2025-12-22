@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
@@ -63,10 +64,10 @@ public class User {
     @Column
     private Boolean isVerified;
 
-    @OneToMany(mappedBy = "holder", cascade = ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "holder", cascade = ALL, orphanRemoval = true, fetch = LAZY)
     private List<Account> accounts;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY)
     private List<VerifiedCode> verifiedCode;
 
     @ManyToMany()
@@ -75,6 +76,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @ToString.Exclude
+
     private List<Role> roles;
 }

@@ -2,8 +2,8 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.model.CustomUserDetails;
+import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,16 +31,14 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
-    public boolean verifyEmailCode(Long userId, String code) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id %s не найден".formatted(userId)));
-
-        boolean isValid = verifiedCodeService.validateCode(user, code, EMAIL);
-        if (isValid) {
-            user.setIsVerified(true);
-            userRepository.save(user);
-        }
-        return isValid;
+    /**
+     * Устанавливает флаги для пользователя в случае успешной аутентификации
+     */
+    //Логика верификации
+    public void verifyEmailCode(User user, String code) throws VerificationOtpException {
+        verifiedCodeService.validateCode(user, code, EMAIL);
+        user.setIsVerified(true);
+        userRepository.save(user);
     }
 
     public void save(User user) {

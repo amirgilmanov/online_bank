@@ -5,9 +5,9 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="22072025_add_column_user.xml" author="amirgilmanov">
-    <sql>
-        ALTER TABLE user_bank
-        ADD COLUMN is_verified BOOLEAN;
-    </sql>
+        <sql>
+            ALTER TABLE user_bank
+                ADD COLUMN is_verified BOOLEAN;
+        </sql>
     </changeSet>
 </databaseChangeLog>

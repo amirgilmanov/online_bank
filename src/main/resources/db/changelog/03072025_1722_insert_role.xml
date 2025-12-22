@@ -6,9 +6,9 @@
 
     <changeSet id="03072025_1722_insert_role.xml" author="amirgilmanov">
         <sql>
-            insert into role(name) values
-                                       ('ROLE_USER'),
-                                       ('ROLE_ADMIN')
+            insert into role(name)
+            values ('ROLE_USER'),
+                   ('ROLE_ADMIN')
         </sql>
     </changeSet>
 </databaseChangeLog>

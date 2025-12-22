@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("test")
+@RequestMapping("/test")
 @NoArgsConstructor
 public class TestController {
     @GetMapping
-    public ResponseEntity<String>  test(){
+    public ResponseEntity<String> test() {
         return ResponseEntity.status(201).body("test");
     }
 

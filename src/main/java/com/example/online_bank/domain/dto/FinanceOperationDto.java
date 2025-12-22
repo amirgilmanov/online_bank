@@ -6,9 +6,9 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 /**
- * @param accountNumber Номер счета
- * @param amount        Количество денег
- * @param description   Описание
+ * @param accountNumber        Номер счета
+ * @param amount               Количество денег
+ * @param description          Описание
  * @param selectedCurrencyCode Выбранный курс валюты, на который конвертировать сумму из счета(accountNumber)
  */
 @Builder

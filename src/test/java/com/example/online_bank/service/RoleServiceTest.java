@@ -40,6 +40,6 @@ class RoleServiceTest {
     void failerFindRole_RoleNameNotFound() {
         when(roleRepository.findByName("SOME_NAME")).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, ()-> roleService.findRoleByName("SOME_NAME"));
+        assertThrows(EntityNotFoundException.class, () -> roleService.findRoleByName("SOME_NAME"));
     }
 }

@@ -5,8 +5,8 @@ import java.util.List;
 /**
  * Контейнер для хранения данных пользователя
  *
- * @param uuid uuid пользователя
- * @param name имя пользователя
+ * @param uuid  uuid пользователя
+ * @param name  имя пользователя
  * @param roles роли пользователя
  */
 public record UserContainer(

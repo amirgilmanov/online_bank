@@ -10,10 +10,10 @@ class SecretKeyReaderTest {
 
     @Test
     @SneakyThrows
-    void successReadKeyFromFile()  {
+    void successReadKeyFromFile() {
         String filename = "src/test/resources/testsecretfile.txt";
         String exceptedContent = "testcontent";
-        try(FileReader fr = new FileReader(filename)) {
+        try (FileReader fr = new FileReader(filename)) {
             String result = SecretKeyReader.readKeyFromFile(fr);
             Assertions.assertEquals(exceptedContent, result);
         }
