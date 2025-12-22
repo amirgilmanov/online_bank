@@ -5,7 +5,7 @@ A RESTful Web Service for banking operations built with **Java 17** and **Spring
 ## Key Features
 - **Account Management:** Create and manage accounts with PostgreSQL.
 - **Financial Operations:** Transfer money, deposits, and withdrawals.
-- **Security:** Integrated **Spring Security** with JWT (planned/basic) and password encryption.
+- **Security:** Integrated **Spring Security** with JWT and password encryption.
 - **Database Migrations:** Managed by **Liquibase**.
 - **Data Mapping:** Efficient object mapping using **MapStruct**.
 
