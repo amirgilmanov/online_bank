@@ -2,6 +2,8 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.ConvertCurrencyResponse;
 import com.example.online_bank.enums.CurrencyCode;
+import com.example.online_bank.exception.CurrencyPairsNotFoundException;
+import com.example.online_bank.repository.ExchangeCurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import java.util.function.BiConsumer;
 @RequiredArgsConstructor
 public class ValidateCurrencyService {
     private final CurrencyService currencyService;
+    private final ExchangeCurrencyRepository exchangeCurrencyRepository;
 
     /**
      * Сверяет код валюты для снятия с кодом валюты кошелька.
@@ -31,6 +34,10 @@ public class ValidateCurrencyService {
             finalAmount = amount;
             operationMethodReference.accept(accountNumberTo, finalAmount); //accountService.someOneOperationType(*accountNumber, amount*)
         } else {
+            if (!exchangeCurrencyRepository.existsByBaseCurrencyAndTargetCurrency(selectedCurrencyCode, accountCurrencyCode)) {
+                throw new CurrencyPairsNotFoundException("Курс не существует. Выберите другую валюту для пополнения.");
+            }
+
             ConvertCurrencyResponse convertCurrencyResponse = currencyService.convertCurrency(
                     accountCurrencyCode,
                     selectedCurrencyCode,

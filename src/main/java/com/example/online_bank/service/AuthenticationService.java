@@ -51,7 +51,6 @@ public class AuthenticationService {
             String refreshToken = tokenService.getRefreshToken(userContainer);
             String idToken = tokenService.getIdToken(userContainer);
 
-
             return new AuthenticationResponseDto(Map.of("accessToken", accessToken, "refreshToken", refreshToken, "idToken", idToken));
         } catch (VerificationOtpException e) {
             log.error(e.getMessage());

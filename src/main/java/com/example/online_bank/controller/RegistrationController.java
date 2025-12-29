@@ -37,4 +37,10 @@ public class RegistrationController {
         registrationService.signUp(registrationDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/admin")
+    public ResponseEntity<String> signUpAdmin(@RequestBody RegistrationDto registrationDto) {
+        registrationService.adminSignUp(registrationDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

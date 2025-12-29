@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class RegistrationAfterAspect {
     private final EmailNotificationServiceImpl emailNotificationService;
 
-    @Pointcut(value = "execution(* com.example.online_bank.service.RegistrationService.signUp(..))")
+    @Pointcut(value = "execution(* com.example.online_bank.service.RegistrationService.register(..))")
     public void pointCut() {
     }
 

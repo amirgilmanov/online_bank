@@ -43,9 +43,7 @@ class TransferServiceTest {
             1L,
             WITHDRAW,
             "test",
-            RUB,
-            BigDecimal.valueOf(200),
-            BigDecimal.valueOf(100)
+            RUB
     );
 
     TransferDto transferDto = new TransferDto
@@ -114,6 +112,4 @@ class TransferServiceTest {
         String bankInfo = transferService.getBankInfo();
         Assertions.assertEquals("testBankName", bankInfo);
     }
-
-
 }

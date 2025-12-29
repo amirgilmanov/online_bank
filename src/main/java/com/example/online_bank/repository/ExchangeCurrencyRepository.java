@@ -16,4 +16,6 @@ public interface ExchangeCurrencyRepository extends JpaRepository<ExchangeRate, 
             select e.rate from ExchangeRate e where e.baseCurrency = :baseCurrency and e.targetCurrency = :targetCurrency
             """)
     Optional<BigDecimal> findRateByBaseAndTargetCurrency(CurrencyCode baseCurrency, CurrencyCode targetCurrency);
+
+    boolean existsByBaseCurrencyAndTargetCurrency(CurrencyCode selectedCurrencyCode, CurrencyCode accountCurrencyCode);
 }

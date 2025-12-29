@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/verify")
 @RequiredArgsConstructor
 @Tag(name = "Контроллер аутентификации")
 public class AuthenticationController {
@@ -25,12 +25,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     /**
-     * Аутентификация пользователя по электронной почте
+     * Верификация пользователя по электронной почте
      *
      * @return возвращает токен пользователя
      */
     @PostMapping("/email")
-    @Operation(summary = "Аутентификация")
+    @Operation(summary = "Верификация")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )

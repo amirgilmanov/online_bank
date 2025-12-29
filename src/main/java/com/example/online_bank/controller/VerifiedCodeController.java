@@ -1,6 +1,6 @@
 package com.example.online_bank.controller;
 
-import com.example.online_bank.dto.RegenerateOtpDto;
+import com.example.online_bank.domain.dto.RegenerateOtpDto;
 import com.example.online_bank.service.VerifiedCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

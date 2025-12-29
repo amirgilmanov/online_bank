@@ -10,6 +10,7 @@ import com.example.online_bank.util.CodeGeneratorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.function.TriFunction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +30,25 @@ public class RegistrationService {
 
     @Transactional
     public RegistrationDtoResponse signUp(RegistrationDto registrationDto) {
+        return register(registrationDto, userMapper::toUser);
+    }
+
+    @Transactional
+    public RegistrationDtoResponse adminSignUp(RegistrationDto registrationDto) {
+        return register(registrationDto, userMapper::toUserAdmin);
+    }
+
+    public RegistrationDtoResponse register(
+            RegistrationDto registrationDto,
+            TriFunction<RegistrationDto, RoleService, BCryptPasswordEncoder, User> mapper) {
+
         if (userService.existsByPhoneNumber(registrationDto.phone()) ||
                 userService.existsByEmail(registrationDto.email())) {
             log.warn("Номер или почта уже используется");
             throw new EntityAlreadyExistsException("Пользователь с таким номером или почтой уже зарегистрирован");
         }
 
-        User user = userMapper.toUser(registrationDto, roleService, bCryptPasswordEncoder);
+        User user = mapper.apply(registrationDto, roleService, bCryptPasswordEncoder);
         userService.save(user);
 
         String code = CodeGeneratorUtil.generateOtp();

@@ -2,12 +2,14 @@ package com.example.online_bank.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 @AllArgsConstructor
+@ToString
 public class JwtUserDetails implements UserDetails {
     @Getter
     private String uuid;

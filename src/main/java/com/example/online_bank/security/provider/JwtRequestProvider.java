@@ -24,6 +24,7 @@ public class JwtRequestProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        log.info("Начало работы фильтра jwt аутентификации");
         // Получаем информацию о пользователе.
         // Проверяем пользователя.
         //Библиотека jjwt проверяет подпись, дату истечения
@@ -32,16 +33,14 @@ public class JwtRequestProvider implements AuthenticationProvider {
         try {
             Claims jwtClaims = jwtService.getPayload(token);
 
-            // TODO: проверка blacklist
-            // if (tokenBlacklistService.isBlacklisted(token)) {
-            //     throw new BadCredentialsException("Token is blacklisted");
-            // }
-
             Collection<? extends GrantedAuthority> authorities = jwtService.mapRolesForSpringToken(jwtClaims);
             String uuid = jwtService.getSubject(jwtClaims);
             String username = jwtService.getUsername(jwtClaims);
 
+            log.info("Создаем JwtUserDetails");
             JwtUserDetails details = new JwtUserDetails(uuid, username, authorities);
+            log.info("Возвращаем аутентифицированный токен {}", details);
+
             return new JwtRequestToken(authorities, details);
         } catch (JwtException e) {
             log.error(e.getMessage());

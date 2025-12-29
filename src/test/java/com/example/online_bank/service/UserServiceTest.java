@@ -4,7 +4,6 @@ import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.model.CustomUserDetails;
 import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -50,26 +48,16 @@ class UserServiceTest {
     @DisplayName("Успешная верификация почты")
     void successVerifyEmailCode() throws VerificationOtpException {
         Long userId = 1L;
-        User user = User.builder().id(userId).build();
         String correctOtp = "1234";
         User userMock = User.builder()
                 .id(userId)
                 .isVerified(false)
                 .build();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userMock));
-        doNothing().when(verifiedCodeService).validateCode(userMock, Mockito.anyString(), EMAIL);
 
-        assertDoesNotThrow(() -> userService.verifyEmailCode(user, correctOtp));
-    }
+//        when(userRepository.findById(userId)).thenReturn(Optional.of(userMock));
+        doNothing().when(verifiedCodeService).validateCode(userMock, correctOtp, EMAIL);
 
-    @Test
-    @DisplayName("Ошибка верификации по почте: пользователь не найден")
-    void failVerifyEmailCode_ByIdNotFound() {
-        Long userId = 1L;
-        User user = User.builder().id(userId).build();
-        String correctOtp = "1234";
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> userService.verifyEmailCode(user, correctOtp));
+        assertDoesNotThrow(() -> userService.verifyEmailCode(userMock, correctOtp));
     }
 
     @Test
@@ -82,7 +70,7 @@ class UserServiceTest {
 
         doThrow(VerificationOtpException.class)
                 .when(verifiedCodeService)
-                .validateCode(userMock, Mockito.anyString(), EMAIL);
+                .validateCode(userMock, correctOtp, EMAIL);
 
         assertThrows(
                 VerificationOtpException.class,

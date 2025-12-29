@@ -10,7 +10,6 @@ import com.example.online_bank.mapper.OperationMapper;
 import com.example.online_bank.repository.AccountRepository;
 import com.example.online_bank.repository.OperationRepository;
 import com.example.online_bank.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +32,9 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class OperationService {
     private final OperationRepository operationRepository;
     private final OperationMapper operationMapper;
-    private final EntityManager entityManager;
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final AccountService accountService;
 
     /**
      * Создать операцию
@@ -56,15 +55,16 @@ public class OperationService {
             @NonNull String accountNumber,
             @NonNull CurrencyCode currencyCode) {
         log.info("Создание операции");
-        Account accountProxy = entityManager.getReference(Account.class, accountNumber);
-        log.info("{}", accountProxy);
+        Account accountNumberEntity = accountService.findByAccountNumber(accountNumber);
+        System.out.println(accountNumberEntity);
+        log.info("{}", accountNumberEntity);
         Operation operation = Operation.builder()
                 .operationType(operationType)
                 .amount(amount)
                 .description(description)
                 .currencyCode(currencyCode)
                 .createdAt(createdAt)
-                .account(accountProxy)
+                .account(accountNumberEntity)
                 .build();
 
         operationRepository.save(operation);
@@ -82,8 +82,6 @@ public class OperationService {
         if (!accountRepository.existsByAccountNumber(accountNumber)) {
             throw new EntityNotFoundException("Счет %s не существует".formatted(accountNumber));
         }
-
-
         log.info("Показ операций по счету {} (начало с индекса - {}, размер - {})", accountNumber, page, size);
 
         return operationRepository.findAllByAccount_AccountNumber(

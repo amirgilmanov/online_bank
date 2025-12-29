@@ -2,18 +2,19 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.ConvertCurrencyResponse;
 import com.example.online_bank.enums.CurrencyCode;
+import com.example.online_bank.repository.ExchangeCurrencyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
 import static java.math.BigDecimal.TEN;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
@@ -23,6 +24,9 @@ class ValidateCurrencyServiceTest {
 
     @Mock
     CurrencyService currencyService;
+
+    @Mock
+    ExchangeCurrencyRepository exchangeCurrencyRepository;
 
     @Mock
     AccountService accountService;
@@ -44,7 +48,8 @@ class ValidateCurrencyServiceTest {
         String accountNumberTo = "0002";
         BigDecimal amount = BigDecimal.valueOf(200);
 
-        Mockito.when(currencyService.convertCurrency(accountCurrencyCode, selectedCurrencyCode, amount)).thenReturn(new ConvertCurrencyResponse(selectedCurrencyCode, BigDecimal.valueOf(2000), amount, accountCurrencyCode));
+        when(currencyService.convertCurrency(accountCurrencyCode, selectedCurrencyCode, amount)).thenReturn(new ConvertCurrencyResponse(selectedCurrencyCode, BigDecimal.valueOf(2000), amount, accountCurrencyCode));
+        when(exchangeCurrencyRepository.existsByBaseCurrencyAndTargetCurrency(selectedCurrencyCode, accountCurrencyCode)).thenReturn(true);
         BigDecimal result = validateCurrencyService.processTransaction(accountCurrencyCode, selectedCurrencyCode, accountService::withdrawMoney, "001", amount);
         Assertions.assertEquals(BigDecimal.valueOf(2000), result);
     }

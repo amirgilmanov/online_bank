@@ -7,7 +7,6 @@ import com.example.online_bank.mapper.OperationMapper;
 import com.example.online_bank.repository.AccountRepository;
 import com.example.online_bank.repository.OperationRepository;
 import com.example.online_bank.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -39,9 +38,6 @@ class OperationServiceTest {
     private OperationService operationService;
 
     @Mock
-    EntityManager entityManager;
-
-    @Mock
     OperationRepository operationRepository;
 
     @Mock
@@ -52,6 +48,9 @@ class OperationServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    AccountService accountService;
 
     @Test
     void successCreateOperation() {
@@ -66,7 +65,7 @@ class OperationServiceTest {
                 .balance(BigDecimal.TEN)
                 .id(1L)
                 .build();
-        when(entityManager.getReference(Account.class, accountNumber)).thenReturn(account);
+        when(accountService.findByAccountNumber(accountNumber)).thenReturn(account);
         Operation operation = operationService.createOperation(
                 createdAt,
                 WITHDRAW,
@@ -98,7 +97,7 @@ class OperationServiceTest {
         String description = "testDescr";
         String accountNumber = "0011";
 
-        when(entityManager.getReference(Account.class, accountNumber)).thenThrow(EntityNotFoundException.class);
+        when(accountService.findByAccountNumber(accountNumber)).thenThrow(EntityNotFoundException.class);
 
         assertThrows(EntityNotFoundException.class, () -> operationService.createOperation(
                 createdAt,

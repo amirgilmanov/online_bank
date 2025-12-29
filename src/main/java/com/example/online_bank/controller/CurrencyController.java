@@ -25,11 +25,6 @@ public class CurrencyController {
     @Operation(summary = "Создать обменный курс")
     @ApiResponse(responseCode = "201", content = @Content(mediaType = "text/plain"))
     public ResponseEntity<RateResponseDto> createExchangeRate(@RequestBody CreateExchangeRateDto dtoRequest) {
-        currencyService.create(
-                dtoRequest.baseCurrency(),
-                dtoRequest.targetCurrency(),
-                dtoRequest.rate()
-        );
         return ResponseEntity.status(CREATED).body(currencyService.create(
                 dtoRequest.baseCurrency(),
                 dtoRequest.targetCurrency(),

@@ -36,8 +36,11 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/code/update/otp",
                                         "/api/sign-up",
-                                        "/api/auth/email",
-                                        "/test/pure")
+                                        "api/sign-up/admin",
+                                        "/api/verify/email",
+                                        "/test/pure",
+                                        "api/token/get-access-token"
+                                )
                                 .permitAll()
                                 .requestMatchers(
                                         "/swagger-ui/**",

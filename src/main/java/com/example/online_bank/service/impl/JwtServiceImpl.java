@@ -3,6 +3,7 @@ package com.example.online_bank.service.impl;
 import com.example.online_bank.config.JwtConfig;
 import com.example.online_bank.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +26,22 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Map<String, Object> createClaims() {
-        log.info("createClaims");
         return new HashMap<>();
     }
 
     @Override
     public Claims getPayload(String token) {
-        return Jwts.parser()
-                .verifyWith(jwtConfig.getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(jwtConfig.getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new JwtException(e.getMessage());
+        }
+
     }
 
     @Override

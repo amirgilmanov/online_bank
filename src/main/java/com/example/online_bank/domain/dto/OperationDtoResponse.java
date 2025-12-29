@@ -3,7 +3,6 @@ package com.example.online_bank.domain.dto;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.OperationType;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -16,8 +15,6 @@ import java.time.LocalDateTime;
  * @param operationType Тип операции
  * @param description   Описание операции
  * @param currencyCode  Код валюты
- * @param amountBefore  Количество денег до совершения операции
- * @param amountAfter   Количество денег после совершения операции
  */
 public record OperationDtoResponse(
         String accountNumber,
@@ -25,8 +22,6 @@ public record OperationDtoResponse(
         Long operationId,
         OperationType operationType,
         String description,
-        CurrencyCode currencyCode,
-        BigDecimal amountBefore,
-        BigDecimal amountAfter
+        CurrencyCode currencyCode
 ) {
 }

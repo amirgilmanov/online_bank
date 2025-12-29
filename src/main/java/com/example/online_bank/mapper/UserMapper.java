@@ -39,6 +39,17 @@ public interface UserMapper {
             """)
     User toUser(RegistrationDto dto, @Context RoleService roleService, @Context BCryptPasswordEncoder passwordEncoder);
 
+    @Mapping(target = "phoneNumber", source = "phone")
+    @Mapping(target = "passwordHash", source = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "uuid", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "failedAttempts", constant = "0")
+    @Mapping(target = "isBlocked", constant = "false")
+    @Mapping(target = "isVerified", constant = "false")
+    @Mapping(target = "roles", expression = """
+            java(List.of(roleService.findRoleByName(com.example.online_bank.enums.Roles.ROLE_ADMIN.getValue())))
+            """)
+    User toUserAdmin(RegistrationDto dto, @Context RoleService roleService, @Context BCryptPasswordEncoder passwordEncoder);
+
     //для UserContainer
     @Named(value = "rolesToString")
     default List<String> rolesToString(List<Role> roles) {

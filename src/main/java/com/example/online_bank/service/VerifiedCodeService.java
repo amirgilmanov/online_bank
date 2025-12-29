@@ -1,8 +1,8 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.domain.dto.RegenerateOtpDto;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
-import com.example.online_bank.dto.RegenerateOtpDto;
 import com.example.online_bank.enums.VerifiedCodeType;
 import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.VerifiedCodeRepository;
@@ -75,8 +75,6 @@ public class VerifiedCodeService {
         log.info("Otp код был найден и будет верифицирован {}", verifiedCode);
         verifiedCode.setIsVerified(true);
         verifiedCodeRepository.save(verifiedCode);
-
-
     }
 
     @Transactional

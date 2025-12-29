@@ -43,7 +43,7 @@ public class Operation {
     @Enumerated(EnumType.STRING)
     private CurrencyCode currencyCode;
 
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
     @ManyToOne
     private Account account;
 }

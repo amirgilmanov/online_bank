@@ -21,7 +21,6 @@ import static com.example.online_bank.enums.CurrencyCode.RUB;
 import static com.example.online_bank.enums.OperationType.DEPOSIT;
 import static com.example.online_bank.enums.OperationType.WITHDRAW;
 import static java.math.BigDecimal.TEN;
-import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,9 +60,7 @@ class BankServiceTest {
                 operation.getId(),
                 operation.getOperationType(),
                 operation.getDescription(),
-                RUB,
-                BigDecimal.valueOf(100),
-                operation.getAmount()
+                RUB
         );
 
         when(accountService.findCurrencyCode("001")).thenReturn((RUB));
@@ -88,7 +85,6 @@ class BankServiceTest {
         log.info("operationDtoResponse - {}", operationDtoResponse);
         assertNotNull(operationDtoResponse);
         assertEquals(dtoRq.accountNumber(), operationDtoResponse.accountNumber());
-        assertEquals(BigDecimal.valueOf(100), operationDtoResponse.amountBefore());
     }
 
     @Test
@@ -110,9 +106,7 @@ class BankServiceTest {
                 operation.getId(),
                 operation.getOperationType(),
                 operation.getDescription(),
-                RUB,
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(110)
+                RUB
         );
 
         when(accountService.findCurrencyCode("001")).thenReturn((RUB));
@@ -136,8 +130,6 @@ class BankServiceTest {
         OperationDtoResponse operationDtoResponse = bankService.makeDeposit(dtoRq);
         assertNotNull(operationDtoResponse);
         assertEquals(dtoRq.accountNumber(), operationDtoResponse.accountNumber());
-        assertEquals(BigDecimal.valueOf(100), operationDtoResponse.amountBefore());
-        assertEquals(BigDecimal.valueOf(110), operationDtoResponse.amountAfter());
     }
 
     @Test
@@ -153,18 +145,18 @@ class BankServiceTest {
         final String depositDescription = descriptions.getLast();
 
         LocalDateTime now = LocalDateTime.now();
-        OperationDtoResponse paymentOperationDto = new OperationDtoResponse(dto.baseAccountNumber(), now, 1L, WITHDRAW, paymentDescription, CNY, BigDecimal.valueOf(100), ZERO);
+        OperationDtoResponse paymentOperationDto = new OperationDtoResponse(dto.baseAccountNumber(), now, 1L, WITHDRAW, paymentDescription, CNY);
 
         when(bankService.makePayment(new FinanceOperationDto(dto.baseAccountNumber(), dto.amount(), paymentDescription, CNY))).thenReturn(paymentOperationDto);
 
-        OperationDtoResponse depositOperationDto = new OperationDtoResponse(dto.targetAccountNumber(), now, 1L, DEPOSIT, depositDescription, RUB, ZERO, BigDecimal.valueOf(200));
+        OperationDtoResponse depositOperationDto = new OperationDtoResponse(dto.targetAccountNumber(), now, 1L, DEPOSIT, depositDescription, RUB);
         when(bankService.makeDeposit(new FinanceOperationDto(dto.targetAccountNumber(), dto.amount(), depositDescription, RUB))).thenReturn(depositOperationDto);
         List<OperationDtoResponse> operationDtoResponses = bankService.buyCurrency(dto);
         log.info("operationDtoResponses - {}", operationDtoResponses);
         OperationDtoResponse paymentDto = operationDtoResponses.getFirst();
         log.info("paymentDto - {}", paymentDto);
+
         assertNotNull(operationDtoResponses);
-        assertEquals(ZERO, paymentDto.amountAfter());
         assertEquals(paymentDescription, paymentDto.description());
         assertEquals(CNY, paymentDto.currencyCode());
         assertEquals("001", paymentDto.accountNumber());

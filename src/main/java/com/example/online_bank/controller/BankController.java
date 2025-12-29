@@ -42,7 +42,7 @@ public class BankController {
             )
     )
     @PreAuthorize("@accountSecurity.isOwner(#dto.accountNumber(), authentication.principal.uuid)")
-    @PostMapping("receive")
+    @PostMapping("/receive")
     public ResponseEntity<OperationDtoResponse> receive(@RequestBody FinanceOperationDto dto) {
         return ResponseEntity.status(201).body(bankService.makeDeposit(dto));
     }
@@ -59,11 +59,10 @@ public class BankController {
             content = @Content(mediaType = "text/plain")
     )
     @PreAuthorize("@accountSecurity.isOwner(#dto.accountNumber(), authentication.principal.uuid)")
-    @PostMapping("operation/withdraw")
+    @PostMapping("/withdraw")
     public ResponseEntity<OperationDtoResponse> withdraw(@RequestBody FinanceOperationDto dto) {
         return ResponseEntity.status(201).body(bankService.makePayment(dto));
     }
-
 
     @PreAuthorize("""
               @accountSecurity.isOwnsBothAccounts(

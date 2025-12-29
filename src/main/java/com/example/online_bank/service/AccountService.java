@@ -54,6 +54,7 @@ public class AccountService {
                 .holder(user)
                 .accountNumber(generateAccountNumber(currencyCode))
                 .currencyCode(currencyCode)
+                .isBlocked(false)
                 .build();
         accountRepository.save(account);
         return accountMapper.toDtoResponse(account);
