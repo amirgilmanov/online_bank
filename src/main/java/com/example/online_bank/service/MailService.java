@@ -1,5 +1,6 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.exception.SendEmailException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -42,7 +43,7 @@ public class MailService {
 
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            throw new RuntimeException(e);
+            throw new SendEmailException(e);
         }
     }
 }

@@ -103,4 +103,9 @@ public class AdviceController {
     public ResponseEntity<String> handleAccessDeniedException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), FORBIDDEN);
     }
+
+    @ExceptionHandler(SendEmailException.class)
+    public ResponseEntity<String> handleSendEmailException(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), INTERNAL_SERVER_ERROR);
+    }
 }

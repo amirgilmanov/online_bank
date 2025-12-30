@@ -1,7 +1,6 @@
 package com.example.online_bank.controller;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
-import com.example.online_bank.domain.dto.RegistrationDtoResponse;
 import com.example.online_bank.service.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,12 +34,14 @@ public class RegistrationController {
     @ApiResponse(responseCode = "201",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
     )
-    public ResponseEntity<RegistrationDtoResponse> signUp(@RequestBody RegistrationDto registrationDto) {
-        return ResponseEntity.status(CREATED).body(registrationService.signUp(registrationDto));
+    public ResponseEntity<String> signUp(@RequestBody RegistrationDto registrationDto) {
+        registrationService.signUp(registrationDto);
+        return ResponseEntity.status(CREATED).build();
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<RegistrationDtoResponse> signUpAdmin(@RequestBody RegistrationDto registrationDto) {
-        return ResponseEntity.status(CREATED).body(registrationService.adminSignUp(registrationDto));
+    public ResponseEntity<String> signUpAdmin(@RequestBody RegistrationDto registrationDto) {
+        registrationService.adminSignUp(registrationDto);
+        return ResponseEntity.status(CREATED).build();
     }
 }
