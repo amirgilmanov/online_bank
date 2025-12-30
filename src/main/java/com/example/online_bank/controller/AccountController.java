@@ -90,8 +90,7 @@ public class AccountController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешно получен счёт пользователя"),
-            //TODO 26.03.2025 проверить правильность http запроса
-            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     })
     @Operation(summary = "Просмотреть все счета пользователя")
     @GetMapping(value = "/find-all-by-holder")

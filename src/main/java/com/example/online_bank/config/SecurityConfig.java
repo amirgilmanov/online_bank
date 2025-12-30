@@ -38,7 +38,6 @@ public class SecurityConfig {
                                         "/api/sign-up",
                                         "api/sign-up/admin",
                                         "/api/verify/email",
-                                        "/test/pure",
                                         "api/token/get-access-token"
                                 )
                                 .permitAll()
@@ -46,6 +45,10 @@ public class SecurityConfig {
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/v3/api-docs/**"
+                                ).permitAll()
+                                .requestMatchers(
+                                        "/test/pure",
+                                        "/test/send-email"
                                 ).permitAll()
                                 .anyRequest()
                                 .authenticated()

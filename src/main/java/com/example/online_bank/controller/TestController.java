@@ -1,18 +1,18 @@
 package com.example.online_bank.controller;
 
+import com.example.online_bank.service.NotificationService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/test")
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class TestController {
+    private final NotificationService notificationService;
     @GetMapping
     public ResponseEntity<String> test() {
         return ResponseEntity.status(201).body("test");
@@ -22,5 +22,10 @@ public class TestController {
     public void pureJava(HttpServletResponse response) throws IOException {
         response.getWriter().write("PURE-JAVA-WORKS");
         response.getWriter().flush();
+    }
+
+    @PostMapping("/send-email")
+    public void sendEmail(@RequestParam String email) {
+        notificationService.sendOtpCode(email, "HELLO WORLD");
     }
 }

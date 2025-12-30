@@ -26,7 +26,6 @@ spring:
     password: ${DB_PASSWORD}
     hikari:
       allow-pool-suspension: true
-
     driverClassName: org.postgresql.Driver
 
   mail:
@@ -44,6 +43,8 @@ spring:
             required: true
 
 logging:
+  file:
+    name: src/main/resources/application_logs.txt
   level:
     org:
       hibernate:
@@ -51,6 +52,10 @@ logging:
         orm:
           jdbc:
             bind: TRACE
+  logback:
+    rolling policy:
+      max-history: 30
+      max-file-size: 10MB
 
 jwt:
   lifetime: 15m
@@ -59,8 +64,3 @@ jwt:
   issuer: "com.example"
   secret-file-name: ${JWT_SECRET_FILE_NAME}
   refresh-token-life-time: 30d
-
-
-
-
-
