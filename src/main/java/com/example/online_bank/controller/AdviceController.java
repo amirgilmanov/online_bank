@@ -5,8 +5,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -107,5 +111,16 @@ public class AdviceController {
     @ExceptionHandler(SendEmailException.class)
     public ResponseEntity<String> handleSendEmailException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getFieldErrors().forEach(error -> {
+            String objectName = error.getField();
+            String message = error.getDefaultMessage();
+            errors.put(objectName, message);
+        });
+        return new ResponseEntity<>(errors, BAD_REQUEST);
     }
 }

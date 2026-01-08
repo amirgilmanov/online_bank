@@ -1,6 +1,8 @@
 package com.example.online_bank.domain.dto;
 
 import com.example.online_bank.enums.CurrencyCode;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
@@ -12,8 +14,11 @@ import java.math.BigDecimal;
  * @param rate           Количество котируемой валюты по отношению к базовой
  */
 public record CreateExchangeRateDto(
+        @NotNull
         CurrencyCode baseCurrency,
+        @NotNull
         CurrencyCode targetCurrency,
+        @Positive(message = "Цена котируемой валюты должна быть больше нуля")
         BigDecimal rate
 ) {
 }

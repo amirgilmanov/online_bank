@@ -34,33 +34,24 @@ public class JwtRequestToken extends AbstractAuthenticationToken {
         this.principal = principal;
     }
 
-    /**
-     * @return
-     */
+
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return super.getAuthorities();
     }
 
-    /**
-     * @return
-     */
+
     @Override
     public Object getCredentials() {
         return "";
     }
 
-    /**
-     * @return
-     */
+
     @Override
     public Object getPrincipal() {
         return this.principal;
     }
 
-    /**
-     * @return
-     */
     @Override
     public boolean isAuthenticated() {
         return super.isAuthenticated();

@@ -32,8 +32,6 @@ public class MailService {
             throw new NullPointerException("fromTo is null");
         }
 
-        log.info("From: {}", fromTo);
-        log.info("Отправка сообщения пользователю: {}", to);
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setTo(to);

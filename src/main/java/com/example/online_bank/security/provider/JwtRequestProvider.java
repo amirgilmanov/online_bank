@@ -50,7 +50,6 @@ public class JwtRequestProvider implements AuthenticationProvider {
 
     /**
      * @param authentication поддерживаемый тип authentication
-     * @return поддерживает ли типа или нет
      */
     @Override
     public boolean supports(Class<?> authentication) {

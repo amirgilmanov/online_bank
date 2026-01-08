@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,11 +21,11 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class CurrencyController {
     private final CurrencyService currencyService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     @Operation(summary = "Создать обменный курс")
     @ApiResponse(responseCode = "201", content = @Content(mediaType = "text/plain"))
-    public ResponseEntity<RateResponseDto> createExchangeRate(@RequestBody CreateExchangeRateDto dtoRequest) {
+    public ResponseEntity<RateResponseDto> createExchangeRate(@RequestBody @Valid CreateExchangeRateDto dtoRequest) {
         return ResponseEntity.status(CREATED).body(currencyService.create(
                 dtoRequest.baseCurrency(),
                 dtoRequest.targetCurrency(),
@@ -41,6 +42,6 @@ public class CurrencyController {
     @GetMapping("/find-rate")
     @Operation(summary = "Найти курс")
     public ConvertCurrencyResponse findRate(@RequestBody RateRequestDto dto) {
-        return currencyService.findRate(dto.from(), dto.to());
+        return currencyService.findRate(dto);
     }
 }

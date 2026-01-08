@@ -13,7 +13,6 @@ import com.example.online_bank.service.impl.EmailNotificationServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.online_bank.util.CodeGeneratorUtil.generateOtp;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @RequiredArgsConstructor
@@ -66,10 +65,10 @@ class VerifiedCodeServiceTestIT {
         assertDoesNotThrow(() -> verifiedCodeRepository.findVerifiedCodeByVerifiedCode(otpCodeEntity.getVerifiedCode())
                 .orElseThrow(EntityNotFoundException::new));
 
-        Assertions.assertNotNull(otpCodeEntity.getVerifiedCode());
-        Assertions.assertFalse(otpCodeEntity.getIsVerified());
-        Assertions.assertNotNull(otpCodeEntity.getCreatedAt());
-        Assertions.assertTrue(otpCodeEntity.getExpiresAt().isAfter(otpCodeEntity.getCreatedAt()));
+        assertNotNull(otpCodeEntity.getVerifiedCode());
+        assertFalse(otpCodeEntity.getIsVerified());
+        assertNotNull(otpCodeEntity.getCreatedAt());
+        assertTrue(otpCodeEntity.getExpiresAt().isAfter(otpCodeEntity.getCreatedAt()));
     }
 
     @Test
@@ -78,7 +77,7 @@ class VerifiedCodeServiceTestIT {
     void successfulRemoveExpiredOtpCode() {
         verifiedCodeService.clearOldCodes();
         List<VerifiedCode> allOtp = verifiedCodeRepository.findAll();
-        Assertions.assertTrue(allOtp.isEmpty());
+        assertTrue(allOtp.isEmpty());
     }
 
     @Test
@@ -99,7 +98,7 @@ class VerifiedCodeServiceTestIT {
         verifiedCodeService.save(otpCodeEntity);
         verifiedCodeService.cleanVerifiedCodes(userMock.getId());
         //act
-        Assertions.assertTrue(verifiedCodeRepository.findAllByExpiresAtBeforeAndUser_Id(now, userMock.getId()).isEmpty());
+        assertTrue(verifiedCodeRepository.findAllByExpiresAtBeforeAndUser_Id(now, userMock.getId()).isEmpty());
     }
 
     @Test
@@ -123,6 +122,6 @@ class VerifiedCodeServiceTestIT {
         VerifiedCode verifiedCode = assertDoesNotThrow(() -> verifiedCodeRepository.findVerifiedCodeByVerifiedCode("7777")
                 .orElseThrow(EntityNotFoundException::new));
         log.debug(verifiedCode.toString());
-        Assertions.assertTrue(verifiedCode.getIsVerified());
+        assertTrue(verifiedCode.getIsVerified());
     }
 }

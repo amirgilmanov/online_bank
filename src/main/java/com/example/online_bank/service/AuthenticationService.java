@@ -53,6 +53,7 @@ public class AuthenticationService {
 
             return new AuthenticationResponseDto(Map.of("accessToken", accessToken, "refreshToken", refreshToken, "idToken", idToken));
         } catch (VerificationOtpException e) {
+            //FIXME не отправлять сообщение ошибки
             log.error(e.getMessage());
             throw new BadCredentialsException(e.getMessage());
         }

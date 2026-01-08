@@ -38,13 +38,17 @@ public class SecurityConfig {
                                         "/api/sign-up",
                                         "api/sign-up/admin",
                                         "/api/verify/email",
-                                        "api/token/get-access-token"
+                                        "/api/token/get-access-token"
                                 )
                                 .permitAll()
                                 .requestMatchers(
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/v3/api-docs/**"
+                                ).permitAll()
+                                .requestMatchers(
+                                        "api/currency/find-rate",
+                                        "api/currency/convert"
                                 ).permitAll()
                                 .requestMatchers(
                                         "/test/pure",
