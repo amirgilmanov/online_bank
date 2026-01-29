@@ -3,7 +3,9 @@ package com.example.online_bank.service;
 import com.example.online_bank.domain.dto.BuyCurrencyDto;
 import com.example.online_bank.domain.dto.FinanceOperationDto;
 import com.example.online_bank.domain.dto.OperationDtoResponse;
+import com.example.online_bank.domain.entity.UserCategoryStats;
 import com.example.online_bank.enums.CurrencyCode;
+import com.example.online_bank.enums.PartnerCategory;
 import com.example.online_bank.mapper.OperationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class BankService {
     private final OperationService operationService;
     private final OperationMapper operationMapper;
     private final ValidateCurrencyService validateCurrencyService;
+    private final UserCategoryStatsService userCategoryStatsService;
 
     /**
      * Делать платеж:
@@ -73,6 +76,7 @@ public class BankService {
                 dto.accountNumber(), dto.amount()
         );
 
+        //TODO перевести на ивенты
         return operationMapper.toDepositOperationDto(operationService.createOperation(
                 LocalDateTime.now(),
                 DEPOSIT,
@@ -81,6 +85,22 @@ public class BankService {
                 dto.accountNumber(),
                 dto.selectedCurrencyCode())
         );
+    }
+
+    @Transactional
+    public OperationDtoResponse payServices(FinanceOperationDto dto, PartnerCategory payCategory) {
+        CurrencyCode accountCurrencyCode = accountService.findCurrencyCode(dto.accountNumber());
+
+        BigDecimal finalAmount = validateCurrencyService.processTransaction(
+                accountCurrencyCode,
+                dto.selectedCurrencyCode(),
+                accountService::depositMoney,
+                dto.accountNumber(), dto.amount()
+        );
+
+
+
+
     }
 
     /**

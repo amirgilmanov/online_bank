@@ -9,7 +9,7 @@ public record SenderInfo(
         @Schema(description = "Фамилия отправителя", example = "Гильманов")
         String surname,
 
-        @Schema(description = "Отчество отправителя", example = "Отчествович")
+        @Schema(description = "Отчество отправителя", example = "Азатович")
         String patronymic,
 
         @Schema(description = "Номер счета отправителя", example = "810000001")

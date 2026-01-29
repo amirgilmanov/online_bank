@@ -3,6 +3,7 @@ package com.example.online_bank.service;
 import com.example.online_bank.domain.dto.RegistrationDto;
 import com.example.online_bank.domain.event.UserRegisterEvent;
 import com.example.online_bank.mapper.UserMapper;
+import com.example.online_bank.service.processor.RegistrationProcessor;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

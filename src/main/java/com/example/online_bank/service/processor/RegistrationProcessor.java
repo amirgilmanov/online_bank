@@ -1,4 +1,4 @@
-package com.example.online_bank.service;
+package com.example.online_bank.service.processor;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
 import com.example.online_bank.domain.event.UserRegisterEvent;
@@ -6,6 +6,9 @@ import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
 import com.example.online_bank.exception.EntityAlreadyExistsException;
 import com.example.online_bank.mapper.UserMapper;
+import com.example.online_bank.service.RoleService;
+import com.example.online_bank.service.UserService;
+import com.example.online_bank.service.VerifiedCodeService;
 import com.example.online_bank.util.CodeGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

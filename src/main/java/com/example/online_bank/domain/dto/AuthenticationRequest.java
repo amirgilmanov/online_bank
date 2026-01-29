@@ -15,6 +15,8 @@ public record AuthenticationRequest(
         String email,
         @Schema(description = "Пин-код", example = "1753")
         @NotBlank(message = "Код не может быть пустым")
-        String code
+        String code,
+        String deviceName,
+        String userAgent
 ) {
 }

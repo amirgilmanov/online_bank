@@ -76,6 +76,14 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user",orphanRemoval = true, fetch = LAZY)
+    private List<TrustedDevice> trustedDevice;
+
+    @OneToMany(mappedBy = "user", fetch = LAZY)
+    private List<TokenFamily> tokenFamilies;
+
+    @OneToMany(mappedBy = "user", fetch = LAZY)
+    private List<UserCategoryStats>  userCategoryStats;
 }

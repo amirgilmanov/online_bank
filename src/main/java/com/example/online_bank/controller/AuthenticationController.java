@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/verify")
+@RequestMapping("/api/first-auth-verify")
 @RequiredArgsConstructor
 @Tag(name = "Контроллер аутентификации")
 public class AuthenticationController {

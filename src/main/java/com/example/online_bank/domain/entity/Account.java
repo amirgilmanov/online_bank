@@ -45,4 +45,7 @@ public class Account {
     @JoinColumn(name = "holder_id", referencedColumnName = "id")
     @ToString.Exclude
     private User holder;
+
+    @OneToOne(mappedBy = "account")
+    private BankPartner bankPartner;
 }

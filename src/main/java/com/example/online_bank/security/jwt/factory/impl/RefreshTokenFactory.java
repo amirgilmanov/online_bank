@@ -21,13 +21,7 @@ public class RefreshTokenFactory implements TokenFactory {
     private final JwtConfig config;
     private final JwtService jwtService;
 
-    /**
-     * @param userContainer - Информация о пользователе
-     * @return Refresh токен
-     */
-    //TODO реализовать в будущем с помощью redis таблицу с удаленными/заблокированными токенами
-    @Override
-    public String createToken(TokenType type, UserContainer userContainer) {
+    public Map<String, Object> createRefreshToken(TokenType type, UserContainer userContainer) {
         log.info("Create refresh token");
 
         Date issuedDate = new Date();
@@ -53,9 +47,41 @@ public class RefreshTokenFactory implements TokenFactory {
                 .claims(claims)
                 .issuedAt(issuedDate)
                 .compact();
+        return Map.of("token", token, "expiredAt", expiredAt, "createdAt", issuedDate);
+    }
 
-        log.info("refresh token created: {}", token);
-        return token;
+    /**
+     * @param userContainer - Информация о пользователе
+     * @return Refresh токен
+     */
+    //TODO реализовать в будущем с помощью redis таблицу с удаленными/заблокированными токенами
+    @Override
+    public String createToken(TokenType type, UserContainer userContainer) {
+        log.info("Create refresh token");
+
+        Date issuedDate = new Date();
+        Date notBeforeDate = Date.from(Instant.now());
+        Date expiredAt = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
+
+        String subject = userContainer.uuid();
+
+        Map<String, Object> claims = jwtService.createClaims();
+        claims.put("token_type", type);
+
+        String id = jwtService.createUuid();
+
+        return Jwts.builder()
+                .subject(subject)
+                .issuer(config.getIssuer())
+                .id(id)
+                .notBefore(notBeforeDate)
+                .expiration(expiredAt)
+                .signWith(config.getKey())
+                .audience().add(config.getAudience())
+                .and()
+                .claims(claims)
+                .issuedAt(issuedDate)
+                .compact();
     }
 
     /**

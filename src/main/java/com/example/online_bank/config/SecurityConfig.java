@@ -22,6 +22,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
+//    Реализация фильтра для настройки конечных точек протокола
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -37,7 +38,7 @@ public class SecurityConfig {
                                         "/api/code/update/otp",
                                         "/api/sign-up",
                                         "api/sign-up/admin",
-                                        "/api/verify/email",
+                                        "/api/first-auth-verify",
                                         "/api/token/get-access-token"
                                 )
                                 .permitAll()
@@ -54,6 +55,10 @@ public class SecurityConfig {
                                         "/test/pure",
                                         "/test/send-email"
                                 ).permitAll()
+                                .requestMatchers(
+                                        "/api/bank-partner"
+                                )
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )

@@ -31,3 +31,17 @@ databaseChangeLog:
       file: db/changelog/23072025_827_add_column_verified_code.xml
   - include:
       file: db/changelog/23072025_831_alter_column_verified_code.xml
+  - include:
+      file: db/changelog/20260801_853_create_trusted_device.xml
+  - include:
+      file: db/changelog/20260801_111_add_column_trusted_device.xml
+  - include:
+      file: db/changelog/20260114_1253_create_table_token_family.xml
+  - include:
+      file: db/changelog/20260113_1544_create_refresh_token.xml
+  - include:
+      file: db/changelog/20260124_1322_add_column_refresh_token.xml
+  - include:
+      file: db/changelog/20260128_20_19_create_bank_pather.xml
+  - include:
+      file: db/changelog/20260128_2134_create_user_category_stat.xml
