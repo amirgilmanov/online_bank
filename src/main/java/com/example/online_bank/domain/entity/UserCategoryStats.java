@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 @AllArgsConstructor
+@Builder
 public class UserCategoryStats {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

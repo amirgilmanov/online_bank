@@ -1,6 +1,7 @@
 package com.example.online_bank.repository;
 
 import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByAccountNumberAndHolder_Uuid(String accountNumber, UUID holderUuid);
 
     boolean existsByAccountNumber(String accountNumber);
+
+    Optional<User> findHolderByAccountNumber(String accountNumber);
 }

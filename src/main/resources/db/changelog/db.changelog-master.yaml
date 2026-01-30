@@ -45,3 +45,7 @@ databaseChangeLog:
       file: db/changelog/20260128_20_19_create_bank_pather.xml
   - include:
       file: db/changelog/20260128_2134_create_user_category_stat.xml
+  - include:
+      file: db/changelog/20260130_1748_create_quest.xml
+  - include:
+      file: db/changelog/20260130_1846_create_user_quest.xml
