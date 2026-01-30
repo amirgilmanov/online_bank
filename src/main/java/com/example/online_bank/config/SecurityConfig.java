@@ -38,7 +38,7 @@ public class SecurityConfig {
                                         "/api/code/update/otp",
                                         "/api/sign-up",
                                         "api/sign-up/admin",
-                                        "/api/first-auth-verify",
+                                        "/api/first-auth-verify/**",
                                         "/api/token/get-access-token"
                                 )
                                 .permitAll()

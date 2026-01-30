@@ -6,6 +6,7 @@ import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.enums.PartnerCategory;
 import com.example.online_bank.repository.AccountRepository;
 import com.example.online_bank.repository.BankPartnerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,12 @@ public class BankPartnerService {
     private final AccountRepository accountRepository;
     private final BankPartnerRepository bankPartnerRepository;
 
-    public void create(String name, PartnerCategory category){
+    public void create(String name, PartnerCategory category) {
         Account partnerAccount = Account.builder()
                 .balance(BigDecimal.ZERO)
                 .accountNumber(generateAccountNumber(CurrencyCode.RUB))
                 .isBlocked(false)
+                .currencyCode(CurrencyCode.RUB)
                 .build();
 
         accountRepository.save(partnerAccount);
@@ -36,6 +38,17 @@ public class BankPartnerService {
         bankPartnerRepository.save(bankPartner);
         partnerAccount.setBankPartner(bankPartner);
         accountRepository.save(partnerAccount);
+    }
+
+    //FIXME захардкодил
+    public CurrencyCode getAccountCurrencyCode() {
+        return CurrencyCode.RUB;
+    }
+
+    public String getAccountNumber(String partnerName) {
+        return bankPartnerRepository.findAccountNumberByPartnerName(partnerName).orElseThrow(
+                () -> new EntityNotFoundException("Партнер банка не найден")
+        );
     }
 
 
