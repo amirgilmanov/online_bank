@@ -64,9 +64,11 @@ public class User {
     @Column
     private Boolean isVerified;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "holder", cascade = ALL, orphanRemoval = true, fetch = LAZY)
     private List<Account> accounts;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", fetch = LAZY)
     private List<VerifiedCode> verifiedCode;
 
@@ -78,15 +80,19 @@ public class User {
     )
     private List<Role> roles;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user",orphanRemoval = true, fetch = LAZY)
     private List<TrustedDevice> trustedDevice;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", fetch = LAZY)
     private List<TokenFamily> tokenFamilies;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user", fetch = LAZY)
     private List<UserCategoryStats>  userCategoryStats;
 
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserQuest> userQuest;
 }

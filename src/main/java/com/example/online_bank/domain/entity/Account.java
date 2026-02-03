@@ -47,5 +47,6 @@ public class Account {
     private User holder;
 
     @OneToOne(mappedBy = "account")
+    @ToString.Exclude
     private BankPartner bankPartner;
 }

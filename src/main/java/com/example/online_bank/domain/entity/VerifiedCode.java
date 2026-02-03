@@ -37,6 +37,5 @@ public class VerifiedCode {
 
     @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ToString.Exclude
     private User user;
 }

@@ -26,6 +26,7 @@ public class Quest {
     private Integer pointReward;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "quest")
+    @ToString.Exclude
     private List<UserQuest> userQuest;
 
 }

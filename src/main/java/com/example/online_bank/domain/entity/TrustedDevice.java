@@ -34,5 +34,6 @@ public class TrustedDevice {
     private User user;
 
     @OneToMany(mappedBy = "trustedDevice")
+    @ToString.Exclude
     private List<TokenFamily> tokenFamilies;
 }

@@ -25,6 +25,7 @@ public class TokenFamily {
     private TrustedDevice trustedDevice;
 
     @OneToMany(mappedBy = "family")
+    @ToString.Exclude
     private List<RefreshToken> refreshTokens;
 
     @ManyToOne
