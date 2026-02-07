@@ -30,4 +30,7 @@ public class UserQuest {
 
     @Column()
     private Boolean isComplete;
+
+    @Column()
+    private Integer userProgress;
 }

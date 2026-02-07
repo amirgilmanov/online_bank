@@ -56,6 +56,9 @@ public class SecurityConfig {
                                         "/test/send-email"
                                 ).permitAll()
                                 .requestMatchers(
+                                       "api/quest"
+                                ).permitAll()
+                                .requestMatchers(
                                         "/api/bank-partner"
                                 )
                                 .permitAll()

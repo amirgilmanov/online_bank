@@ -46,7 +46,12 @@ public class PayService {
                 () -> new EntityNotFoundException("User not found")
         );
 
-        UpdateUserStatEvent updateUserStatEvent = new UpdateUserStatEvent(user, payDtoRequest.category(), payDtoRequest.serviceRequestAmount(), LocalDate.now());
+        UpdateUserStatEvent updateUserStatEvent = new UpdateUserStatEvent(
+                user,
+                payDtoRequest.category(),
+                payDtoRequest.serviceRequestAmount(),
+                LocalDate.now()
+        );
         applicationEventPublisher.publishEvent(updateUserStatEvent);
         return senderOperationResponse;
     }

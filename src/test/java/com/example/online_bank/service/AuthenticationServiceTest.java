@@ -9,6 +9,7 @@ import com.example.online_bank.mapper.UserMapper;
 import com.example.online_bank.repository.UserRepository;
 import com.example.online_bank.repository.VerifiedCodeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,10 +44,16 @@ class AuthenticationServiceTest {
     UserRepository userRepository;
     @Mock
     VerifiedCodeRepository verifiedCodeRepository;
+    private AuthenticationRequest authRq;
 
+    @BeforeEach
+    void setUp() {
+        authRq = new AuthenticationRequest(
+                "testEmail@.com", "1234", "iphone 15", "chrome"
+        );
+    }
     @Test
     void failAuthenticationBy_EmailNotFound() {
-        AuthenticationRequest authRq = new AuthenticationRequest("testEmail@.com", "1234");
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> authenticationService.signIn(authRq));
@@ -54,7 +61,6 @@ class AuthenticationServiceTest {
 
     @Test
     void failAuthenticationBy_NotVerifiedCode() throws VerificationOtpException {
-        AuthenticationRequest authRqDto = new AuthenticationRequest("testEmail@.com", "1234");
 
         User userMock = User.builder()
                 .isVerified(false)
@@ -62,15 +68,15 @@ class AuthenticationServiceTest {
                 .email("testEmail@.com")
                 .build();
 
-        when(userService.findByEmail(authRqDto.email())).thenReturn(Optional.of(userMock));
+        when(userService.findByEmail(authRq.email())).thenReturn(Optional.of(userMock));
 
         doThrow(VerificationOtpException.class)
                 .when(verifiedCodeService)
-                .validateCode(userMock, authRqDto.code(), EMAIL);
+                .validateCode(userMock, authRq.code(), EMAIL);
 
         doThrow(VerificationOtpException.class)
                 .when(userService)
-                .verifyEmailCode(userMock, authRqDto.code());
+                .verifyEmailCode(userMock, authRq.code());
 
         UserContainer userContainer = new UserContainer("random", "test", List.of("ROLE_USER"));
 
@@ -80,7 +86,7 @@ class AuthenticationServiceTest {
 
         assertThrows(
                 BadCredentialsException.class,
-                () -> authenticationService.signIn(authRqDto)
+                () -> authenticationService.signIn(authRq)
         );
         assertFalse(userMock.getIsVerified());
     }
@@ -88,14 +94,13 @@ class AuthenticationServiceTest {
     @Test
     @DisplayName("Ошибка верификации по почте: почта уже подтверждена")
     void failVerifyEmailCode_EmailAlreadyVerified() {
-        AuthenticationRequest dto = new AuthenticationRequest("testEmail@.com", "1234");
+
         Long userId = 1L;
-        User user = User.builder().id(userId).build();
         User userMock = User.builder().id(userId).isVerified(true).build();
-        when(userService.findByEmail(dto.email())).thenReturn(Optional.of(userMock));
+        when(userService.findByEmail(authRq.email())).thenReturn(Optional.of(userMock));
 
         assertThrows(
                 EntityAlreadyVerifiedException.class,
-                () -> authenticationService.signIn(dto));
+                () -> authenticationService.signIn(authRq));
     }
 }

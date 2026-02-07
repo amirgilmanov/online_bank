@@ -6,25 +6,42 @@ import com.example.online_bank.repository.UserCategoryStatsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
+
 @Service
 @RequiredArgsConstructor
 public class UserCategoryStatsService {
     private final UserCategoryStatsRepository userCategoryStatsRepository;
 
-    public void create(UpdateUserStatEvent event){
-        UserCategoryStats userCategoryStats = userCategoryStatsRepository.findByUserAndCategoryAndSpendPeriod(
+    public UserCategoryStats updateUserStat(UpdateUserStatEvent event){
+        Month month = event.operationDate().getMonth();
+        YearMonth yearMonth = YearMonth.of(event.operationDate().getYear(), event.operationDate().getMonthValue());
+
+        LocalDate startDate = LocalDate.of(event.operationDate().getYear(), month, 1);
+        LocalDate endDate = LocalDate.of(event.operationDate().getYear(), month, yearMonth.lengthOfMonth());
+
+        UserCategoryStats userCategoryStats = userCategoryStatsRepository.findUserAndCategoryAndSpendPeriodBetween(
                 event.user(),
                 event.partnerCategory(),
-                event.operationDate()
-        ).orElseGet(() -> UserCategoryStats.builder()
-                .category(event.partnerCategory())
-                .user(event.user())
-                .spendPeriod(event.operationDate())
-                .user(event.user())
-                .build()
+                startDate,
+                endDate
+        ).orElseGet(() ->
+                UserCategoryStats.builder()
+                        .category(event.partnerCategory())
+                        .user(event.user())
+                        .spendPeriod(endDate)
+                        .user(event.user())
+                        .countSpendInMonth(0)
+                        .totalSpend(event.spendAmount())
+                        .build()
         );
+
+        userCategoryStats.setTotalSpend(userCategoryStats.getTotalSpend().add(event.spendAmount()));
         userCategoryStats.setCountSpendInMonth(userCategoryStats.getCountSpendInMonth() + 1);
         userCategoryStatsRepository.save(userCategoryStats);
+        return  userCategoryStats;
     }
 
 }

@@ -29,4 +29,7 @@ public class Quest {
     @ToString.Exclude
     private List<UserQuest> userQuest;
 
+    @Column
+    private Integer progress;
+
 }

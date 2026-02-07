@@ -49,3 +49,7 @@ databaseChangeLog:
       file: db/changelog/20260130_1748_create_quest.xml
   - include:
       file: db/changelog/20260130_1846_create_user_quest.xml
+  - include:
+      file: db/changelog/20260207_1447_add_column_quest.xml
+  - include:
+      file: db/changelog/20260207_1448_add_column_user_quest.xml
