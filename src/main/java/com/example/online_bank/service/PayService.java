@@ -30,9 +30,10 @@ public class PayService {
 
         //снимаем деньги со счета отправителя
         String description = createDescription(payDtoRequest);
+        String userAccountNumber = payDtoRequest.senderInfo().accountNumberFrom();
         OperationDtoResponse senderOperationResponse = bankService.makePayment(
                 new FinanceOperationDto(
-                        payDtoRequest.senderInfo().accountNumberFrom(),
+                        userAccountNumber,
                         payDtoRequest.serviceRequestAmount(),
                         description,
                         partnerAccountCurrencyCode)
@@ -50,7 +51,8 @@ public class PayService {
                 user,
                 payDtoRequest.category(),
                 payDtoRequest.serviceRequestAmount(),
-                LocalDate.now()
+                LocalDate.now(),
+                userAccountNumber
         );
         applicationEventPublisher.publishEvent(updateUserStatEvent);
         return senderOperationResponse;

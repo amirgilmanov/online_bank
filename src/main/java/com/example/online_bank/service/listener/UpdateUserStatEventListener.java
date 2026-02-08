@@ -9,6 +9,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
@@ -17,13 +19,15 @@ public class UpdateUserStatEventListener {
     private final ApplicationEventPublisher applicationEventPublisher;
     @EventListener
     @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void updateUserStat(UpdateUserStatEvent event) {
         UserCategoryStats userCategoryStats = userCategoryStatsService.updateUserStat(event);
         UpdateUserQuestEvent updateUserQuestEvent = new UpdateUserQuestEvent(
                 userCategoryStats.getCountSpendInMonth(),
                 userCategoryStats.getCategory(),
                 userCategoryStats.getUser(),
-                userCategoryStats.getSpendPeriod()
+                userCategoryStats.getSpendPeriod(),
+                event.userAccount()
         );
         applicationEventPublisher.publishEvent(updateUserQuestEvent);
     }

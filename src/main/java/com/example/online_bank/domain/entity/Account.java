@@ -49,4 +49,8 @@ public class Account {
     @OneToOne(mappedBy = "account")
     @ToString.Exclude
     private BankPartner bankPartner;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private BonusAccount bonusAccount;
 }

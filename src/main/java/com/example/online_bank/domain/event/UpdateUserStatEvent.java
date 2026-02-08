@@ -10,7 +10,8 @@ public record UpdateUserStatEvent(
         User user,
         PartnerCategory partnerCategory,
         BigDecimal spendAmount,
-        LocalDate operationDate
+        LocalDate operationDate,
+        String userAccount
 
 ) {
 }

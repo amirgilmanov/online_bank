@@ -3,6 +3,7 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.AccountDtoResponse;
 import com.example.online_bank.domain.entity.Account;
+import com.example.online_bank.domain.entity.BonusAccount;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.exception.EmptyDataException;
@@ -56,6 +57,12 @@ public class AccountService {
                 .currencyCode(currencyCode)
                 .isBlocked(false)
                 .build();
+        account.setBonusAccount(
+                BonusAccount.builder()
+                        .account(account)
+                        .points(BigDecimal.ZERO)
+                        .build());
+
         accountRepository.save(account);
         return accountMapper.toDtoResponse(account);
     }

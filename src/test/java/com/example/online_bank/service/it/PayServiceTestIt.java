@@ -1,7 +1,6 @@
 package com.example.online_bank.service.it;
 
 import com.example.online_bank.OnlineBankApplication;
-import com.example.online_bank.domain.entity.Quest;
 import com.example.online_bank.repository.UserRepository;
 import com.example.online_bank.service.BankPartnerService;
 import com.example.online_bank.service.PayService;
@@ -30,7 +29,8 @@ class PayServiceTestIt {
 
     @Test
     void successPay(){
-        Quest.builder()
-                .
+       // Quest.builder()
+        //.
+
     }
 }

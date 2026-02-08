@@ -9,6 +9,7 @@ public record UpdateUserQuestEvent(
         Integer userProgress,
         PartnerCategory category,
         User user,
-        LocalDate spendPeriod
+        LocalDate spendPeriod,
+        String userAccountNumber
 ) {
 }

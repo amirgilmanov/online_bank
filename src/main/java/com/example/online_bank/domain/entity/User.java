@@ -73,6 +73,7 @@ public class User {
     private List<VerifiedCode> verifiedCode;
 
     @ManyToMany()
+    @ToString.Exclude
     @JoinTable(
             name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
