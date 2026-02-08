@@ -73,7 +73,7 @@ class UserCategoryStatsServiceTest {
                 .user(event.user())
                 .countSpendInMonth(1)
                 .build();
-        Mockito.when(userCategoryStatsRepository.findUserAndCategoryAndSpendPeriodBetween(
+        Mockito.when(userCategoryStatsRepository.findByUserAndCategoryAndSpendPeriodBetween(
                         Mockito.any(User.class),
                         eq(event.partnerCategory()),
                         eq(start),

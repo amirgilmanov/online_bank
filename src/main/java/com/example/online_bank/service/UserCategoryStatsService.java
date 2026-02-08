@@ -22,7 +22,7 @@ public class UserCategoryStatsService {
         LocalDate startDate = LocalDate.of(event.operationDate().getYear(), month, 1);
         LocalDate endDate = LocalDate.of(event.operationDate().getYear(), month, yearMonth.lengthOfMonth());
 
-        UserCategoryStats userCategoryStats = userCategoryStatsRepository.findUserAndCategoryAndSpendPeriodBetween(
+        UserCategoryStats userCategoryStats = userCategoryStatsRepository.findByUserAndCategoryAndSpendPeriodBetween(
                 event.user(),
                 event.partnerCategory(),
                 startDate,

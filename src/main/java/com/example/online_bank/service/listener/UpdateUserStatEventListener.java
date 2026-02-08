@@ -19,7 +19,12 @@ public class UpdateUserStatEventListener {
     @Async
     public void updateUserStat(UpdateUserStatEvent event) {
         UserCategoryStats userCategoryStats = userCategoryStatsService.updateUserStat(event);
-        UpdateUserQuestEvent updateUserQuestEvent = new UpdateUserQuestEvent(userCategoryStats.getTotalSpend(), userCategoryStats.getCountSpendInMonth(), userCategoryStats.getCategory(), userCategoryStats.getUser());
+        UpdateUserQuestEvent updateUserQuestEvent = new UpdateUserQuestEvent(
+                userCategoryStats.getCountSpendInMonth(),
+                userCategoryStats.getCategory(),
+                userCategoryStats.getUser(),
+                userCategoryStats.getSpendPeriod()
+        );
         applicationEventPublisher.publishEvent(updateUserQuestEvent);
     }
 }

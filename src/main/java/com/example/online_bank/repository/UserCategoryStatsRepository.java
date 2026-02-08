@@ -11,6 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface UserCategoryStatsRepository extends JpaRepository<UserCategoryStats, Long> {
-    Optional<UserCategoryStats> findByUserAndCategoryAndSpendPeriod(User user, PartnerCategory category, LocalDate date);
-    Optional<UserCategoryStats> findUserAndCategoryAndSpendPeriodBetween(User user, PartnerCategory category, LocalDate start, LocalDate end);
+    Optional<UserCategoryStats> findByUserAndCategoryAndSpendPeriodBetween(User user, PartnerCategory category, LocalDate start, LocalDate end);
 }
