@@ -54,7 +54,6 @@ public class OperationService {
             @NonNull String description,
             @NonNull String accountNumber,
             @NonNull CurrencyCode currencyCode) {
-        log.info("Создание операции");
         Account accountNumberEntity = accountService.findByAccountNumber(accountNumber);
         System.out.println(accountNumberEntity);
         log.info("{}", accountNumberEntity);

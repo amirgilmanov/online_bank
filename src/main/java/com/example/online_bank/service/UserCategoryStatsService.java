@@ -18,7 +18,6 @@ public class UserCategoryStatsService {
     public UserCategoryStats updateUserStat(UpdateUserStatEvent event){
         Month month = event.operationDate().getMonth();
         YearMonth yearMonth = YearMonth.of(event.operationDate().getYear(), event.operationDate().getMonthValue());
-
         LocalDate startDate = LocalDate.of(event.operationDate().getYear(), month, 1);
         LocalDate endDate = LocalDate.of(event.operationDate().getYear(), month, yearMonth.lengthOfMonth());
 
@@ -31,7 +30,7 @@ public class UserCategoryStatsService {
                 UserCategoryStats.builder()
                         .category(event.partnerCategory())
                         .user(event.user())
-                        .spendPeriod(endDate)
+                        .spendPeriod(event.operationDate())
                         .user(event.user())
                         .countSpendInMonth(0)
                         .totalSpend(event.spendAmount())

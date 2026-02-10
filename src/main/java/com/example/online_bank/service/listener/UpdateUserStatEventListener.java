@@ -5,23 +5,24 @@ import com.example.online_bank.domain.event.UpdateUserQuestEvent;
 import com.example.online_bank.domain.event.UpdateUserStatEvent;
 import com.example.online_bank.service.UserCategoryStatsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class UpdateUserStatEventListener {
     private final UserCategoryStatsService userCategoryStatsService;
     private final ApplicationEventPublisher applicationEventPublisher;
-    @EventListener
+
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void updateUserStat(UpdateUserStatEvent event) {
         UserCategoryStats userCategoryStats = userCategoryStatsService.updateUserStat(event);
+        //TODO отправлять нормально статистику для изменения статистики у квеста
         UpdateUserQuestEvent updateUserQuestEvent = new UpdateUserQuestEvent(
                 userCategoryStats.getCountSpendInMonth(),
                 userCategoryStats.getCategory(),
@@ -30,5 +31,6 @@ public class UpdateUserStatEventListener {
                 event.userAccount()
         );
         applicationEventPublisher.publishEvent(updateUserQuestEvent);
+        log.info("Отправляю ивент UserQuest");
     }
 }

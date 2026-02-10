@@ -30,6 +30,7 @@ public class QuestService {
     private final UserQuestRepository userQuestRepository;
     private final QuestMapper questMapper;
 
+    @Scheduled(cron = "0 0 0 1 * *")
     public Quest create(PartnerCategory category) {
         int randomPoint = generateRandomPoint();
         LocalDate expDate = createExpDate();

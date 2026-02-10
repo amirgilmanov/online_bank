@@ -16,7 +16,8 @@ spring:
 
   jpa:
     hibernate:
-      show-sql: true
+
+      show-sql: false
       ddl-auto: validate
     defer-datasource-initialization: false
 
@@ -36,9 +37,9 @@ spring:
 
     properties:
       mail:
-        smtp:
+        SMTP:
           auth: true
-          starttls:
+          STARTTLS:
             enable: true
             required: true
 
@@ -51,11 +52,11 @@ logging:
         SQL: DEBUG
         orm:
           jdbc:
-            bind: TRACE
+            bind: INFO
   logback:
     rolling policy:
       max-history: 30
-      max-file-size: 10MB
+      max-file-size: 5MB
 
 jwt:
   lifetime: 15m

@@ -28,6 +28,10 @@ public class PayService {
     public OperationDtoResponse pay(PayDtoRequest payDtoRequest, UUID userUuid) {
         CurrencyCode partnerAccountCurrencyCode = bankPartnerService.getAccountCurrencyCode();
 
+        User user = userRepository.findByUuid(userUuid).orElseThrow(
+                () -> new EntityNotFoundException("User not found")
+        );
+
         //снимаем деньги со счета отправителя
         String description = createDescription(payDtoRequest);
         String userAccountNumber = payDtoRequest.senderInfo().accountNumberFrom();
@@ -39,22 +43,20 @@ public class PayService {
                         partnerAccountCurrencyCode)
         );
 
+        if (senderOperationResponse != null) {
+            UpdateUserStatEvent updateUserStatEvent = new UpdateUserStatEvent(
+                    user,
+                    payDtoRequest.category(),
+                    payDtoRequest.serviceRequestAmount(),
+                    LocalDate.now(),
+                    userAccountNumber
+            );
+            applicationEventPublisher.publishEvent(updateUserStatEvent);
+        }
+
         //пополняем счет партнера/сервиса
         FinanceOperationDto serviceDto = createRecipientDto(payDtoRequest, partnerAccountCurrencyCode, description);
         bankService.makeDeposit(serviceDto);
-
-        User user = userRepository.findByUuid(userUuid).orElseThrow(
-                () -> new EntityNotFoundException("User not found")
-        );
-
-        UpdateUserStatEvent updateUserStatEvent = new UpdateUserStatEvent(
-                user,
-                payDtoRequest.category(),
-                payDtoRequest.serviceRequestAmount(),
-                LocalDate.now(),
-                userAccountNumber
-        );
-        applicationEventPublisher.publishEvent(updateUserStatEvent);
         return senderOperationResponse;
     }
 

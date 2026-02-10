@@ -6,6 +6,7 @@ import com.example.online_bank.domain.dto.OperationDtoResponse;
 import com.example.online_bank.enums.CurrencyCode;
 import com.example.online_bank.mapper.OperationMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ public class BankService {
     private final OperationMapper operationMapper;
     private final ValidateCurrencyService validateCurrencyService;
     private final UserCategoryStatsService userCategoryStatsService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * Делать платеж:
@@ -84,8 +86,6 @@ public class BankService {
                 dto.selectedCurrencyCode())
         );
     }
-
-
 
     /**
      * Покупка валюты. Производит списание суммы со счета {@code dto.baseTargetAccount},
