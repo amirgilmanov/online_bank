@@ -35,7 +35,9 @@ public class AuthenticationService {
     private final VerifiedCodeService verifiedCodeService;
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtService jwtService;
+    private final TrustedDeviceService trustedDeviceService;
+    private final RefreshTokenService refreshTokenService;
+    private final TokenFamilyService tokenFamilyService;
 
     @Transactional
     public AuthenticationResponseDto signIn(AuthenticationRequest dtoRequest) {
@@ -85,14 +87,15 @@ public class AuthenticationService {
                     .createdAt(LocalDateTime.now())
                     .user(user)
                     .build();
+            trustedDeviceService.save(trustedDevice);
 
             TokenFamily tokenFamily = TokenFamily.builder()
                     .isBlocked(false)
                     .trustedDevice(trustedDevice)
                     .user(user)
                     .build();
-
-            RefreshToken.builder()
+            tokenFamilyService.save(tokenFamily);
+            RefreshToken refreshToken = RefreshToken.builder()
                     .tokenHash(bCryptPasswordEncoder.encode(token))
                     .expiresAt(expiredAt)
                     .createdAt(createdAt)
@@ -100,6 +103,7 @@ public class AuthenticationService {
                     .status(TokenStatus.CREATED)
                     .family(tokenFamily)
                     .build();
+            refreshTokenService.save(refreshToken);
 
             return new AuthenticationResponseDto(
                     Map.of(

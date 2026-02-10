@@ -79,8 +79,6 @@ public class VerifiedCodeService {
 
     @Transactional
     public String regenerateOtp(RegenerateOtpDto dto) {
-        log.info("Regenerate otp starting with args: {}", dto.email());
-
         String newOtp = CodeGeneratorUtil.generateOtp();
         LocalDateTime newExpDate = createExpirationDate(200);
         verifiedCodeRepository.updateVerifiedCodeByUser_Email(dto.email(), newOtp, newExpDate);

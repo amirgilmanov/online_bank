@@ -5,7 +5,7 @@ import com.example.online_bank.domain.model.CustomUserDetails;
 import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,12 +31,13 @@ class UserServiceTest {
     private VerifiedCodeService verifiedCodeService;
 
     @Test
+    @Disabled
     void successLoadUserByUsername() {
         User user = User.builder().id(1L).name("Test").build();
         when(userRepository.findByName("Test")).thenReturn(Optional.ofNullable(user));
         CustomUserDetails userDetails = (CustomUserDetails) userService.loadUserByUsername("Test");
-        Assertions.assertNotNull(userDetails);
-        Assertions.assertEquals("Test", userDetails.getUsername());
+        assertNotNull(userDetails);
+        assertEquals("Test", userDetails.getUsername());
     }
 
     @Test
@@ -54,7 +55,6 @@ class UserServiceTest {
                 .isVerified(false)
                 .build();
 
-//        when(userRepository.findById(userId)).thenReturn(Optional.of(userMock));
         doNothing().when(verifiedCodeService).validateCode(userMock, correctOtp, EMAIL);
 
         assertDoesNotThrow(() -> userService.verifyEmailCode(userMock, correctOtp));

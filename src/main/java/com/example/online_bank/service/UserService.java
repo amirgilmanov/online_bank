@@ -1,11 +1,11 @@
 package com.example.online_bank.service;
 
 import com.example.online_bank.domain.entity.User;
-import com.example.online_bank.domain.model.CustomUserDetails;
 import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,10 +25,11 @@ public class UserService implements UserDetailsService {
     private final VerifiedCodeService verifiedCodeService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с именем %s не найден".formatted(username)));
-        return new CustomUserDetails(user);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с именем %s не найден".formatted(email)));
+        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPasswordHash(), user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName())).toList());
     }
 
     /**
