@@ -1,7 +1,7 @@
 package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
-import com.example.online_bank.domain.event.UserRegisterEvent;
+import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.mapper.UserMapper;
 import com.example.online_bank.service.processor.RegistrationProcessor;
 import jakarta.transaction.Transactional;
@@ -20,13 +20,13 @@ public class RegistrationService {
 
     @Transactional
     public void signUp(RegistrationDto registrationDto) {
-        UserRegisterEvent event = registrationProcessor.register(registrationDto, userMapper::toUser);
+        SendOtpEvent event = registrationProcessor.register(registrationDto, userMapper::toUser);
         applicationEventPublisher.publishEvent(event);
     }
 
     @Transactional
     public void adminSignUp(RegistrationDto registrationDto) {
-        UserRegisterEvent event = registrationProcessor.register(registrationDto, userMapper::toUserAdmin);
+        SendOtpEvent event = registrationProcessor.register(registrationDto, userMapper::toUserAdmin);
         applicationEventPublisher.publishEvent(event);
     }
 }

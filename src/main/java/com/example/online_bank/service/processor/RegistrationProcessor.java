@@ -1,7 +1,7 @@
 package com.example.online_bank.service.processor;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
-import com.example.online_bank.domain.event.UserRegisterEvent;
+import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
 import com.example.online_bank.exception.EntityAlreadyExistsException;
@@ -30,7 +30,7 @@ public class RegistrationProcessor {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserRegisterEvent register(
+    public SendOtpEvent register(
             RegistrationDto registrationDto,
             TriFunction<RegistrationDto, RoleService, BCryptPasswordEncoder, User> mapper) {
 

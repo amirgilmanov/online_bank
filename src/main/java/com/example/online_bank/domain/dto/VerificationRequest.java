@@ -8,8 +8,10 @@ import jakarta.validation.constraints.NotBlank;
  *
  * @param email Электронная почта
  * @param code  Код подтверждения
+ * @param deviceName имя устройства
+ * @param userAgent средство откуда использовано
  */
-public record AuthenticationRequest(
+public record VerificationRequest(
         @Schema(description = "Почта", example = "example@gmail.com")
         @NotBlank(message = "Email не может быть пустым")
         String email,

@@ -1,6 +1,6 @@
 package com.example.online_bank.service;
 
-import com.example.online_bank.domain.dto.AuthenticationRequest;
+import com.example.online_bank.domain.dto.VerificationRequest;
 import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.exception.EntityAlreadyVerifiedException;
@@ -44,11 +44,11 @@ class AuthenticationServiceTest {
     UserRepository userRepository;
     @Mock
     VerifiedCodeRepository verifiedCodeRepository;
-    private AuthenticationRequest authRq;
+    private VerificationRequest authRq;
 
     @BeforeEach
     void setUp() {
-        authRq = new AuthenticationRequest(
+        authRq = new VerificationRequest(
                 "testEmail@.com", "1234", "iphone 15", "chrome"
         );
     }
@@ -56,7 +56,7 @@ class AuthenticationServiceTest {
     void failAuthenticationBy_EmailNotFound() {
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> authenticationService.signIn(authRq));
+        assertThrows(EntityNotFoundException.class, () -> authenticationService.firstLogIn(authRq));
     }
 
     @Test
@@ -86,7 +86,7 @@ class AuthenticationServiceTest {
 
         assertThrows(
                 BadCredentialsException.class,
-                () -> authenticationService.signIn(authRq)
+                () -> authenticationService.firstLogIn(authRq)
         );
         assertFalse(userMock.getIsVerified());
     }
@@ -101,6 +101,6 @@ class AuthenticationServiceTest {
 
         assertThrows(
                 EntityAlreadyVerifiedException.class,
-                () -> authenticationService.signIn(authRq));
+                () -> authenticationService.firstLogIn(authRq));
     }
 }

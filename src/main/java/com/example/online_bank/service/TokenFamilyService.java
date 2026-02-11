@@ -2,7 +2,6 @@ package com.example.online_bank.service;
 
 import com.example.online_bank.domain.entity.TokenFamily;
 import com.example.online_bank.repository.TokenFamilyRepository;
-import com.example.online_bank.repository.TrustedDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,5 +11,10 @@ public class TokenFamilyService {
     private final TokenFamilyRepository tokenFamilyRepository;
     public void save(TokenFamily tokenFamily) {
         tokenFamilyRepository.save(tokenFamily);
+    }
+
+    public void blockFamily(TokenFamily family) {
+        family.setIsBlocked(true);
+        tokenFamilyRepository.save(family);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.online_bank.mapper;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
-import com.example.online_bank.domain.event.UserRegisterEvent;
+import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.domain.entity.Role;
 import com.example.online_bank.domain.entity.User;
@@ -108,9 +108,9 @@ public class UserMapperTest {
     @DisplayName("Успешное конвертирование в registrationDtoResponse")
     void successfulMapToRegistrationDtoResponse() {
         String code = "1234";
-        UserRegisterEvent userRegisterEvent = userMapper.toRegistrationDtoResponse(registrationDto, code);
+        SendOtpEvent sendOtpEvent = userMapper.toRegistrationDtoResponse(registrationDto, code);
 
-        assertEquals(code, userRegisterEvent.code());
-        assertEquals("testEmail@.com", userRegisterEvent.email());
+        assertEquals(code, sendOtpEvent.code());
+        assertEquals("testEmail@.com", sendOtpEvent.email());
     }
 }

@@ -1,7 +1,7 @@
 package com.example.online_bank.mapper;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
-import com.example.online_bank.domain.event.UserRegisterEvent;
+import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.domain.dto.UserContainer;
 import com.example.online_bank.domain.entity.Role;
 import com.example.online_bank.domain.entity.User;
@@ -20,7 +20,7 @@ public interface UserMapper {
 
     @Mapping(target = "email", source = "dto.email")
     @Mapping(target = "code", source = "code")
-    UserRegisterEvent toRegistrationDtoResponse(RegistrationDto dto, String code);
+    SendOtpEvent toRegistrationDtoResponse(RegistrationDto dto, String code);
 
     //NoNeed - id, failedAttempts, isBlocked, blockedExpiredAt, accounts, verifiedCode
     @Mapping(target = "name", source = "user.name")
