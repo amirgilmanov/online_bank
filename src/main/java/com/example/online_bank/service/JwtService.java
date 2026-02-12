@@ -52,4 +52,6 @@ public interface JwtService {
      * @return uuid пользователя
      */
     String getSubject(Claims claims);
+
+    String getId(Claims claims);
 }

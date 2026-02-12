@@ -7,14 +7,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import static org.springframework.transaction.event.TransactionPhase.BEFORE_COMMIT;
-
 @Component
 @RequiredArgsConstructor
 public class SendOtpEventListener {
     private final NotificationService notificationService;
 
-    @TransactionalEventListener(phase = BEFORE_COMMIT)
+    @TransactionalEventListener
     @Async
     public void onSendOtpEventListener(SendOtpEvent event) {
         notificationService.sendOtpCode(event.email(), event.code());

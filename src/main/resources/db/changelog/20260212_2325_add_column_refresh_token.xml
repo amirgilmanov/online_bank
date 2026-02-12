@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260212_2325_add_column_refresh_token.xml" author="admin">
+        <addColumn tableName="refresh_token">
+            <column name="uuid_hash" type="varchar(64)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_refresh_token_uuid_hash"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

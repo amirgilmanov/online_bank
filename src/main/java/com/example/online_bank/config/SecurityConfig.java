@@ -42,7 +42,9 @@ public class SecurityConfig {
                                         "/api/sign-up",
                                         "api/sign-up/admin",
                                         "/api/first-auth-verify/**",
-                                        "/api/token/get-access-token"
+                                        "/api/token/get-access-token",
+                                        "/api/login",
+                                        "/api/silent"
                                 )
                                 .permitAll()
                                 .requestMatchers(

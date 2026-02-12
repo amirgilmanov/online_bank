@@ -10,6 +10,7 @@ import com.example.online_bank.exception.DeviceNotFoundException;
 import com.example.online_bank.exception.EntityAlreadyVerifiedException;
 import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.mapper.UserMapper;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,7 +39,7 @@ import static com.example.online_bank.util.CodeGeneratorUtil.generateOtp;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    public static final String SECURITY_MESSAGE = "Обнаружена попытка взлома. Подтвердите вход через электронное письмо. Если это были не вы проигнорируйте это письмо";
+    public static final String SECURITY_MESSAGE = "Обнаружена попытка взлома! Рекомендуем срочно сменить пароли";
     private final TokenService tokenService;
     private final UserService userService;
     private final VerifiedCodeService verifiedCodeService;
@@ -49,9 +51,17 @@ public class AuthenticationService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private static final String CREATED_AT = "created_at";
-    private static final String EXPIRED_AT = "expired_at";
+    private static final String CREATED_AT = "createdAt";
+    private static final String EXPIRED_AT = "expiredAt";
 
+    //Первый вход
+    //email
+    //→ OTP
+    //→ подтверждение OTP
+    //→ create TrustedDevice
+    //→ create TokenFamily
+    //→ create RefreshToken
+    //→ return access + refresh + deviceId
     @Transactional
     public AuthenticationResponseDto firstLogIn(VerificationRequest dtoRequest) {
         //5 создаем trusted_device
@@ -72,25 +82,11 @@ public class AuthenticationService {
             }
             //2 сверяем otp code
             userService.verifyEmailCode(user, dto.code());
-
-            //3. конвертируем в userContainer
-            UserContainer userContainer = userMapper.toUserContainer(user);
             log.info("Очистка старых кодов");
             verifiedCodeService.cleanVerifiedCodes(user.getId());
-
-            //создаем access и id
-            AuthenticationResponseDto tokens = createAccessAndIdTokens(userContainer);
-
             //создаем refresh
-            Map<String, Object> refreshAndDateMap = tokenService.getRefreshTokenWithDate(userContainer);
-            String refreshToken = (String) refreshAndDateMap.get("token");
-            LocalDateTime expiredAt = getTime(EXPIRED_AT, refreshAndDateMap);
-            LocalDateTime createdAt = getTime(CREATED_AT, refreshAndDateMap);
-
             TokenFamily tokenFamily = createFamilyAndTrustedDevice(dto.deviceName(), deviceId, user, dto.userAgent());
-            createRefreshTokenEntity(refreshToken, tokenFamily, expiredAt, createdAt);
-            putRefreshTokenToResponse(tokens, refreshToken);
-            return tokens;
+            return createTokenHelper(user, tokenFamily);
         } catch (VerificationOtpException e) {
             log.error(e.getMessage());
             throw new BadCredentialsException("Неверные учетные данные");
@@ -121,65 +117,53 @@ public class AuthenticationService {
     //   → create new refresh
     //   → return access + refresh
     @Transactional
-    public AuthenticationResponseDto silentLogin(String refreshToken, String deviceName, String userAgent, String deviceId) {
-        String encodedToken = bCryptPasswordEncoder.encode(refreshToken);
-        RefreshToken refreshTokenByTokenHash = refreshTokenService.findByTokenHash(encodedToken);
+    public AuthenticationResponseDto silentLogin(String refreshToken) {
+        RefreshToken tokenByUuidHash = parseToken(refreshToken);
         validateToken(refreshToken);
-        TokenFamily family = refreshTokenByTokenHash.getFamily();
+        TokenFamily family = tokenByUuidHash.getFamily();
         User user = family.getUser();
 
-        checkReuseDetection(refreshTokenByTokenHash, family);
+        checkReuseDetection(tokenByUuidHash, family);
         log.info("start revoke old  token");
-        refreshTokenService.revoke(refreshTokenByTokenHash);
-        UserContainer userContainer = userMapper.toUserContainer(user);
-
-        //4. Создаем токены
-        //создаем access и id
-        AuthenticationResponseDto tokens = createAccessAndIdTokens(userContainer);
-
-        //создаем refresh
-        Map<String, Object> refreshAndDateMap = tokenService.getRefreshTokenWithDate(userContainer);
-        String newRefreshToken = (String) refreshAndDateMap.get("token");
-        LocalDateTime expiredAt = getTime(EXPIRED_AT, refreshAndDateMap);
-        LocalDateTime createdAt = getTime(CREATED_AT, refreshAndDateMap);
-        RefreshToken newRefreshTokenEntity = createRefreshTokenEntity(newRefreshToken, family, expiredAt, createdAt);
-        refreshTokenService.save(newRefreshTokenEntity);
-
-        putRefreshTokenToResponse(tokens, refreshToken);
-        return tokens;
-        createTokenHelper(user, deviceName, userAgent, deviceId, family);
+        refreshTokenService.revoke(tokenByUuidHash);
+        return createTokenHelper(user, family);
     }
 
-    private AuthenticationResponseDto createTokenHelper(User user, String deviceName, String userAgent, String deviceId, TokenFamily tokenFamily) {
+    @Transactional
+    public void logout(String refreshToken) {
+        RefreshToken tokenByUuidHash = parseToken(refreshToken);
+        validateToken(refreshToken);
+        TokenFamily family = tokenByUuidHash.getFamily();
+
+        checkReuseDetection(tokenByUuidHash, family);
+        revokeTokenAndBlockFamily(family, tokenByUuidHash);
+    }
+
+    private RefreshToken parseToken(String token) {
+        String uuid = getUuid(token);
+        return refreshTokenService.findByUUidHash(uuid);
+    }
+
+    private AuthenticationResponseDto createTokenHelper(User user, TokenFamily tokenFamily) {
         //Если пароль правильный, то создать новую семью с переданным устройством и refresh токен
         //3. конвертируем в userContainer
         UserContainer userContainer = userMapper.toUserContainer(user);
 
         //создаем access и id
         AuthenticationResponseDto tokens = createAccessAndIdTokens(userContainer);
-
+        log.info("tokens {}", tokens);
         //создаем refresh
         Map<String, Object> refreshAndDateMap = tokenService.getRefreshTokenWithDate(userContainer);
+
         String refreshToken = (String) refreshAndDateMap.get("token");
         LocalDateTime expiredAt = getTime(EXPIRED_AT, refreshAndDateMap);
         LocalDateTime createdAt = getTime(CREATED_AT, refreshAndDateMap);
 
-       // TokenFamily tokenFamily = createFamilyAndTrustedDevice(deviceName, deviceId, user, userAgent);
+        // TokenFamily tokenFamily = createFamilyAndTrustedDevice(deviceName, deviceId, user, userAgent);
         createRefreshTokenEntity(refreshToken, tokenFamily, expiredAt, createdAt);
         putRefreshTokenToResponse(tokens, refreshToken);
+        log.info("tokens {}", tokens);
         return tokens;
-
-    }
-
-    @Transactional
-    public void logout(String refreshToken) {
-        String encodedToken = bCryptPasswordEncoder.encode(refreshToken);
-        RefreshToken refreshTokenByTokenHash = refreshTokenService.findByTokenHash(encodedToken);
-        validateToken(refreshToken);
-        TokenFamily family = refreshTokenByTokenHash.getFamily();
-
-        checkReuseDetection(refreshTokenByTokenHash, family);
-        revokeTokenAndBlockFamily(family, refreshTokenByTokenHash);
     }
 
     private void validateToken(String refreshToken) {
@@ -198,7 +182,7 @@ public class AuthenticationService {
     }
 
     private void checkReuseDetection(RefreshToken refreshTokenByTokenHash, TokenFamily family) {
-        if (refreshTokenByTokenHash.getStatus().equals(REVOKED) && family.getIsBlocked()) {
+        if (refreshTokenByTokenHash.getStatus().equals(REVOKED)) {
             log.error("Reuse detected");
             tokenFamilyService.blockFamily(family);
             refreshTokenService.revokeAllByFamily(family);
@@ -230,7 +214,7 @@ public class AuthenticationService {
             verifiedCodeService.save(verifiedCode);
             SendOtpEvent event = new SendOtpEvent(email, code);
             applicationEventPublisher.publishEvent(event);
-            //верно ли завершать этот блок с исключением? и в адвайсе прокинуть http код 401 с сообщением проверить почтовый ящик для подтверждения
+            //верно ли завершать этот блок с исключением? и в advice прокинуть http код 401 с сообщением проверить почтовый ящик для подтверждения
             throw new DeviceNotFoundException("Подтвердите вход с помощью проверочного кода");
         } else {
             //если пароль не совпал, то выкидываем ошибку
@@ -240,9 +224,9 @@ public class AuthenticationService {
                 throw new BadCredentialsException("Логин или пароль не совпадает");
             }
         }
-        return createTokenHelper(user, deviceId, deviceName, userAgent);
+        TokenFamily tokenFamily = createFamilyAndTrustedDevice(deviceName, deviceId, user, userAgent);
+        return createTokenHelper(user, tokenFamily);
     }
-
 
 
     private void putRefreshTokenToResponse(AuthenticationResponseDto tokens, String refreshToken) {
@@ -253,8 +237,10 @@ public class AuthenticationService {
         log.info("Создание токенов");
         String accessToken = tokenService.getAccessToken(userContainer);
         String idToken = tokenService.getIdToken(userContainer);
-
-        return new AuthenticationResponseDto(Map.of("accessToken", accessToken, "idToken", idToken));
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("idToken", idToken);
+        return new AuthenticationResponseDto(tokens);
     }
 
     private TokenFamily createFamilyAndTrustedDevice(
@@ -282,22 +268,40 @@ public class AuthenticationService {
         return tokenFamily;
     }
 
-    public RefreshToken createRefreshTokenEntity(
+    public void createRefreshTokenEntity(
             String token,
             TokenFamily tokenFamily,
             LocalDateTime expiredAt,
             LocalDateTime createdAt
     ) {
-        RefreshToken refreshToken = RefreshToken.builder()
-                .tokenHash(bCryptPasswordEncoder.encode(token))
-                .expiresAt(expiredAt)
-                .createdAt(createdAt)
-                .revokedAt(null)
-                .status(CREATED)
-                .family(tokenFamily)
-                .build();
-        refreshTokenService.save(refreshToken);
-        return refreshToken;
+        try {
+            String tokenUuid = getUuid(token);
+
+            RefreshToken refreshToken = RefreshToken.builder()
+                    //fixme пока не хэшируется
+                    .tokenHash(bCryptPasswordEncoder.encode(token))
+                    .expiresAt(expiredAt)
+                    .revokedAt(null)
+                    .createdAt(createdAt)
+                    .status(CREATED)
+                    .uuidHash(tokenUuid)
+                    .family(tokenFamily)
+                    .build();
+            refreshTokenService.save(refreshToken);
+        } catch (JwtException e) {
+            log.error(e.getMessage());
+            throw new BadCredentialsException(e.getMessage());
+        }
+    }
+
+    private String getUuid(String token) {
+        try {
+            Claims payload = jwtService.getPayload(token);
+            return jwtService.getId(payload);
+        } catch (JwtException e) {
+            log.error(e.getMessage());
+            throw new BadCredentialsException(e.getMessage());
+        }
     }
 
     private LocalDateTime getTime(String timeType, Map<String, Object> map) {

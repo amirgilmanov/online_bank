@@ -26,9 +26,8 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-
-    public RefreshToken findByTokenHash(String encodedToken) {
-        return refreshTokenRepository.findRefreshTokenByTokenHash(encodedToken).orElseThrow(()-> new EntityNotFoundException("RefreshToken not found"));
+    public RefreshToken findByUUidHash(String hashUuid){
+        return refreshTokenRepository.findByUuidHash(hashUuid).orElseThrow(EntityNotFoundException::new);
     }
 
     public void revokeAllByFamily(TokenFamily family) {

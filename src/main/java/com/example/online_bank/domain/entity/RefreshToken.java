@@ -36,6 +36,9 @@ public class RefreshToken {
     @Enumerated(STRING)
     private TokenStatus status;
 
+    @Column
+    private String uuidHash;
+
     @ManyToOne()
     @JoinColumn(name = "family_id")
     private TokenFamily family;

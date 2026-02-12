@@ -21,12 +21,21 @@ public class RegistrationService {
     @Transactional
     public void signUp(RegistrationDto registrationDto) {
         SendOtpEvent event = registrationProcessor.register(registrationDto, userMapper::toUser);
-        applicationEventPublisher.publishEvent(event);
+        publishEvent(event);
     }
 
     @Transactional
     public void adminSignUp(RegistrationDto registrationDto) {
         SendOtpEvent event = registrationProcessor.register(registrationDto, userMapper::toUserAdmin);
-        applicationEventPublisher.publishEvent(event);
+        publishEvent(event);
+    }
+
+    private void publishEvent(SendOtpEvent event) {
+        log.debug("Send OTP event {}", event);
+        try {
+            applicationEventPublisher.publishEvent(event);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

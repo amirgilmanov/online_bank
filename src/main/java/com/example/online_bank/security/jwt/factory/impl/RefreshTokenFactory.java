@@ -22,8 +22,6 @@ public class RefreshTokenFactory implements TokenFactory {
     private final JwtService jwtService;
 
     public Map<String, Object> createRefreshToken(TokenType type, UserContainer userContainer) {
-        log.info("Create refresh token");
-
         Date issuedDate = new Date();
         Date notBeforeDate = Date.from(Instant.now());
         Date expiredAt = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
@@ -47,7 +45,11 @@ public class RefreshTokenFactory implements TokenFactory {
                 .claims(claims)
                 .issuedAt(issuedDate)
                 .compact();
-        return Map.of("token", token, "expiredAt", expiredAt, "createdAt", issuedDate);
+
+
+        Map<String, Object> refreshTokenWithDate = Map.of("token", token, "expiredAt", expiredAt, "createdAt", issuedDate);
+        log.info("refreshTokenWithDate {}", refreshTokenWithDate);
+        return refreshTokenWithDate;
     }
 
     /**

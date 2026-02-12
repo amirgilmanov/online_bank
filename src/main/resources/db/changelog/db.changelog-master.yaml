@@ -55,3 +55,5 @@ databaseChangeLog:
       file: db/changelog/20260207_1448_add_column_user_quest.xml
   - include:
       file: db/changelog/20260208_1651_create_bonus_account.yaml
+  - include:
+      file: db/changelog/20260212_2325_add_column_refresh_token.xml

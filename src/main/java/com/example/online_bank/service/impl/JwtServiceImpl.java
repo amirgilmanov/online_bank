@@ -60,4 +60,13 @@ public class JwtServiceImpl implements JwtService {
     public String getSubject(Claims claims) {
         return claims.getSubject();
     }
+
+    /**
+     * @param claims
+     * @return
+     */
+    @Override
+    public String getId(Claims claims) {
+      return claims.getId();
+    }
 }

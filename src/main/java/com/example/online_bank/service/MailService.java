@@ -41,7 +41,7 @@ public class MailService {
 
             javaMailSender.send(simpleMailMessage);
         } catch (MailException e) {
-            throw new SendEmailException(e);
+            throw new SendEmailException("Ошибка при отправке почты " + e);
         }
     }
 }

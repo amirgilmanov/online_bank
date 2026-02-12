@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findRefreshTokenByTokenHash(String encodedToken);
-
     List<RefreshToken> findAllByFamily(TokenFamily family);
+
+    Optional<RefreshToken>  findByUuidHash(String uuidHash);
 }
