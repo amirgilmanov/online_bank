@@ -16,6 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -33,7 +38,7 @@ public class SecurityConfig {
             Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .authorizeHttpRequests(authRequestManager ->
                         authRequestManager
@@ -57,8 +62,8 @@ public class SecurityConfig {
                                         "api/currency/convert"
                                 ).permitAll()
                                 .requestMatchers(
-                                        "/test/pure",
-                                        "/test/send-email"
+                                        "api/test/pure",
+                                        "api/test/send-email"
                                 ).permitAll()
                                 .requestMatchers(
                                        "api/quest"
@@ -78,6 +83,28 @@ public class SecurityConfig {
                         exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, BasicAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Указываем разрешенные источники (твой фронтенд)
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+
+        // Разрешаем основные HTTP-методы
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        // Разрешаем заголовки (важно для JWT и Content-Type)
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+
+        // Если используешь куки или передаешь Authorization Header
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Применяем настройки ко всем путям
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

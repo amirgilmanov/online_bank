@@ -7,7 +7,6 @@ import com.example.online_bank.service.processor.RegistrationProcessor;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -16,26 +15,17 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
     private final UserMapper userMapper;
     private final RegistrationProcessor registrationProcessor;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPublisherService<SendOtpEvent> eventPublisherService;
 
     @Transactional
     public void signUp(RegistrationDto registrationDto) {
         SendOtpEvent event = registrationProcessor.register(registrationDto, userMapper::toUser);
-        publishEvent(event);
+        eventPublisherService.publishEvent(event);
     }
 
     @Transactional
     public void adminSignUp(RegistrationDto registrationDto) {
         SendOtpEvent event = registrationProcessor.register(registrationDto, userMapper::toUserAdmin);
-        publishEvent(event);
-    }
-
-    private void publishEvent(SendOtpEvent event) {
-        log.debug("Send OTP event {}", event);
-        try {
-            applicationEventPublisher.publishEvent(event);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
+        eventPublisherService.publishEvent(event);
     }
 }

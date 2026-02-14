@@ -3,6 +3,7 @@ package com.example.online_bank.service;
 import com.example.online_bank.domain.dto.RegenerateOtpDto;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
+import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.enums.VerifiedCodeType;
 import com.example.online_bank.exception.VerificationOtpException;
 import com.example.online_bank.repository.VerifiedCodeRepository;
@@ -23,6 +24,7 @@ import static java.lang.Boolean.FALSE;
 @RequiredArgsConstructor
 public class VerifiedCodeService {
     private final VerifiedCodeRepository verifiedCodeRepository;
+    private final EventPublisherService<SendOtpEvent> eventPublisherService;
 
     public void save(VerifiedCode verifiedCode) {
         verifiedCodeRepository.save(verifiedCode);
@@ -78,10 +80,10 @@ public class VerifiedCodeService {
     }
 
     @Transactional
-    public String regenerateOtp(RegenerateOtpDto dto) {
+    public void regenerateOtp(RegenerateOtpDto dto) {
         String newOtp = CodeGeneratorUtil.generateOtp();
         LocalDateTime newExpDate = createExpirationDate(200);
         verifiedCodeRepository.updateVerifiedCodeByUser_Email(dto.email(), newOtp, newExpDate);
-        return newOtp;
+        eventPublisherService.publishEvent(new SendOtpEvent(dto.email(), newOtp));
     }
 }
