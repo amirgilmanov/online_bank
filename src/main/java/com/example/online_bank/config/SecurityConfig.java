@@ -1,12 +1,13 @@
 package com.example.online_bank.config;
 
 import com.example.online_bank.security.filter.JwtRequestFilter;
+import com.example.online_bank.security.provider.JwtRequestProvider;
 import com.example.online_bank.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,7 +31,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-//    Реализация фильтра для настройки конечных точек протокола
+    //    Реализация фильтра для настройки конечных точек протокола
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -45,7 +46,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/code/update/otp",
                                         "/api/sign-up",
-                                        "api/sign-up/admin",
+                                        "/api/sign-up/admin",
                                         "/api/first-auth-verify/**",
                                         "/api/token/get-access-token",
                                         "/api/login",
@@ -58,15 +59,15 @@ public class SecurityConfig {
                                         "/v3/api-docs/**"
                                 ).permitAll()
                                 .requestMatchers(
-                                        "api/currency/find-rate",
-                                        "api/currency/convert"
+                                        "/api/currency/find-rate",
+                                        "/api/currency/convert"
                                 ).permitAll()
                                 .requestMatchers(
-                                        "api/test/pure",
-                                        "api/test/send-email"
+                                        "/api/test/pure",
+                                        "/api/test/send-email"
                                 ).permitAll()
                                 .requestMatchers(
-                                       "api/quest"
+                                        "/api/quest"
                                 ).permitAll()
                                 .requestMatchers(
                                         "/api/bank-partner"
@@ -120,7 +121,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager
+            (
+                    DaoAuthenticationProvider daoAuthenticationProvider,
+                    JwtRequestProvider jwtRequestProvider) {
+        return new ProviderManager(Arrays.asList(daoAuthenticationProvider, jwtRequestProvider));
     }
 }

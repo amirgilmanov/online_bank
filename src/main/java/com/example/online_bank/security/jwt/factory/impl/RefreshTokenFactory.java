@@ -23,7 +23,8 @@ public class RefreshTokenFactory implements TokenFactory {
 
     public Map<String, Object> createRefreshToken(TokenType type, UserContainer userContainer) {
         Date issuedDate = new Date();
-        Date notBeforeDate = Date.from(Instant.now());
+     //   Date notBeforeDate = Date.from(Instant.now());
+        Date notBeforeDate = issuedDate;
         Date expiredAt = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
 
         String subject = userContainer.uuid();

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("api/test")
+@RequestMapping("/api/test")
 @RequiredArgsConstructor
 public class TestController {
     private final NotificationService notificationService;

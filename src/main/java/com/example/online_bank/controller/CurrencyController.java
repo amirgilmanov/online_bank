@@ -33,13 +33,13 @@ public class CurrencyController {
         ));
     }
 
-    @GetMapping("/convert")
+    @PostMapping("/convert")
     @Operation(summary = "Конвертировать валюту")
     public ConvertCurrencyResponse convertCurrency(@RequestBody ConvertCurrencyDto dtoRequest) {
         return currencyService.convertCurrency(dtoRequest.baseCurrency(), dtoRequest.targetCurrency(), dtoRequest.amount());
     }
 
-    @GetMapping("/find-rate")
+    @PostMapping("/find-rate")
     @Operation(summary = "Найти курс")
     public ConvertCurrencyResponse findRate(@RequestBody RateRequestDto dto) {
         return currencyService.findRate(dto);

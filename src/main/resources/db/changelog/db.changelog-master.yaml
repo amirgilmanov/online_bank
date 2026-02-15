@@ -57,3 +57,5 @@ databaseChangeLog:
       file: db/changelog/20260208_1651_create_bonus_account.yaml
   - include:
       file: db/changelog/20260212_2325_add_column_refresh_token.xml
+  - include:
+      file: db/changelog/20260215_1919_alter_column_type_trusted_device.xml

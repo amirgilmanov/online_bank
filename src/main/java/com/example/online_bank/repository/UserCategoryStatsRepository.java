@@ -8,8 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserCategoryStatsRepository extends JpaRepository<UserCategoryStats, Long> {
     Optional<UserCategoryStats> findByUserAndCategoryAndSpendPeriodBetween(User user, PartnerCategory category, LocalDate start, LocalDate end);
+
+    Optional<UserCategoryStats> findByUser_Uuid(UUID userUuid);
 }

@@ -34,7 +34,8 @@ public class AccessTokenFactory implements TokenFactory {
 
         log.info("Создание дат");
         Date issuedDate = new Date();
-        Date notBeforeDate = new Date(issuedDate.getTime() + config.getNotBeforeTime().toMillis());
+        // Date notBeforeDate = new Date(issuedDate.getTime() + config.getNotBeforeTime().toMillis());
+        Date notBeforeDate = issuedDate;
         Date expiredDate = new Date(issuedDate.getTime() + config.getAccessTokenLifetime().toMillis());
 
         log.info("Получение uuid пользователя");

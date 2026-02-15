@@ -6,8 +6,12 @@ import com.example.online_bank.enums.PartnerCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserQuestRepository extends JpaRepository<UserQuest, Long> {
     Optional<UserQuest> findByUserAndQuest_CategoryAndQuest_DateOfExpiryIsAfter(User user, PartnerCategory category, LocalDate spendPeriod);
+
+    List<UserQuest> findAllByUser_Uuid(UUID userUuid);
 }

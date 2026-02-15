@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ public class IdTokenFactory implements TokenFactory {
         log.info("Creating IdToken");
 
         Date issuedDate = new Date();
-        Date notBeforeDate = Date.from(Instant.now());
+        Date notBeforeDate = issuedDate;
         Date expiredDate = new Date(issuedDate.getTime() + config.getRefreshAndIdTokenLifetime().toMillis());
 
         String subject = userContainer.uuid();

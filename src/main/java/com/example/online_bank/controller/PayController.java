@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/pay")
+@RequestMapping("/api/pay")
 @RequiredArgsConstructor
 public class PayController {
     private final PayService payService;

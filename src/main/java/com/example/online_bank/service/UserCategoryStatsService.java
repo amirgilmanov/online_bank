@@ -3,19 +3,21 @@ package com.example.online_bank.service;
 import com.example.online_bank.domain.entity.UserCategoryStats;
 import com.example.online_bank.domain.event.UpdateUserStatEvent;
 import com.example.online_bank.repository.UserCategoryStatsRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserCategoryStatsService {
     private final UserCategoryStatsRepository userCategoryStatsRepository;
 
-    public UserCategoryStats updateUserStat(UpdateUserStatEvent event){
+    public UserCategoryStats updateUserStat(UpdateUserStatEvent event) {
         Month month = event.operationDate().getMonth();
         YearMonth yearMonth = YearMonth.of(event.operationDate().getYear(), event.operationDate().getMonthValue());
         LocalDate startDate = LocalDate.of(event.operationDate().getYear(), month, 1);
@@ -40,7 +42,11 @@ public class UserCategoryStatsService {
         userCategoryStats.setTotalSpend(userCategoryStats.getTotalSpend().add(event.spendAmount()));
         userCategoryStats.setCountSpendInMonth(userCategoryStats.getCountSpendInMonth() + 1);
         userCategoryStatsRepository.save(userCategoryStats);
-        return  userCategoryStats;
+        return userCategoryStats;
     }
 
+    public UserCategoryStats findByUserUuid(UUID userUuid) {
+        return userCategoryStatsRepository.findByUser_Uuid(userUuid)
+                .orElseThrow(() -> new EntityNotFoundException("Статистика по данному пользователю не найдена"));
+    }
 }

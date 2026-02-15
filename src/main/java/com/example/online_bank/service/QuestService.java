@@ -1,8 +1,10 @@
 package com.example.online_bank.service;
 
 import com.example.online_bank.domain.dto.QuestResponseDto;
+import com.example.online_bank.domain.dto.UserQuestWithProgress;
 import com.example.online_bank.domain.entity.Quest;
 import com.example.online_bank.domain.entity.User;
+import com.example.online_bank.domain.entity.UserCategoryStats;
 import com.example.online_bank.domain.entity.UserQuest;
 import com.example.online_bank.enums.PartnerCategory;
 import com.example.online_bank.mapper.QuestMapper;
@@ -18,6 +20,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +32,7 @@ public class QuestService {
     private final UserRepository userRepository;
     private final UserQuestRepository userQuestRepository;
     private final QuestMapper questMapper;
+    private final UserCategoryStatsService userCategoryStatsService;
 
     public Quest create(PartnerCategory category) {
         int randomPoint = generateRandomPoint();
@@ -83,5 +87,29 @@ public class QuestService {
 
     private int generateProgress() {
         return random.nextInt(2, 6);
+    }
+
+    public List<UserQuestWithProgress> findAllByUserQuest(UUID userUuid) {
+        List<UserQuest> allUserQuests = userQuestRepository.findAllByUser_Uuid(userUuid);
+        return allUserQuests.stream().map(
+                        userQuest -> {
+                            Quest quest = userQuest.getQuest();
+                            UserCategoryStats userStats = userCategoryStatsService.findByUserUuid(userUuid);
+                            return new UserQuestWithProgress(
+                                    generateQuestName(quest),
+                                    quest.getCategory(),
+                                    quest.getDateOfExpiry(),
+                                    quest.getPointReward(),
+                                    quest.getProgress(),
+                                    userStats.getCountSpendInMonth(),
+                                    userQuest.getIsComplete()
+                            );
+                        }
+                )
+                .toList();
+    }
+
+    private String generateQuestName(Quest quest) {
+        return "Квест №".formatted(quest.getId());
     }
 }

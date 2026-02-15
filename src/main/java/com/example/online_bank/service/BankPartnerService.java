@@ -1,5 +1,6 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.domain.dto.BankPartnerDto;
 import com.example.online_bank.domain.entity.Account;
 import com.example.online_bank.domain.entity.BankPartner;
 import com.example.online_bank.enums.CurrencyCode;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.example.online_bank.util.CodeGeneratorUtil.generateAccountNumber;
 
@@ -52,4 +54,10 @@ public class BankPartnerService {
     }
 
 
+    public List<BankPartnerDto> getAll() {
+        //todo перекинуть на маппер
+        return bankPartnerRepository.findAll().stream()
+                .map(e -> new BankPartnerDto(e.getName(), e.getPartnerCategory()))
+                .toList();
+    }
 }

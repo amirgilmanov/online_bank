@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/bonus")
+@RequestMapping("/api/bonus")
 @RequiredArgsConstructor
 @Tag(name = "Контроллер финансовых операций")
 public class BonusAccountController {
