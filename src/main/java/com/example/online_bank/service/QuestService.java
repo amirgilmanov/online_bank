@@ -11,10 +11,12 @@ import com.example.online_bank.mapper.QuestMapper;
 import com.example.online_bank.repository.QuestRepository;
 import com.example.online_bank.repository.UserQuestRepository;
 import com.example.online_bank.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -33,6 +35,7 @@ public class QuestService {
     private final UserQuestRepository userQuestRepository;
     private final QuestMapper questMapper;
     private final UserCategoryStatsService userCategoryStatsService;
+    private final UserService userService;
 
     public Quest create(PartnerCategory category) {
         int randomPoint = generateRandomPoint();
@@ -75,12 +78,6 @@ public class QuestService {
                 .toList();
     }
 
-    private LocalDate createExpDate() {
-        YearMonth currentYearMonth = YearMonth.now();
-        int lastDayOfMonth = currentYearMonth.lengthOfMonth();
-        return LocalDate.of(currentYearMonth.getYear(), currentYearMonth.getMonth(), lastDayOfMonth);
-    }
-
     private int generateRandomPoint() {
         return random.nextInt(1, 11) * 50;
     }
@@ -90,26 +87,56 @@ public class QuestService {
     }
 
     public List<UserQuestWithProgress> findAllByUserQuest(UUID userUuid) {
+        User user = userService.findByUuid(userUuid).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
+        UserCategoryStats userStats = userCategoryStatsService.findByUserUuid(userUuid).orElseGet(
+                () -> UserCategoryStats
+                        .builder()
+                        .user(user)
+                        .totalSpend(BigDecimal.ZERO)
+                        .spendPeriod(null)
+                        .countSpendInMonth(0)
+                        .category(null)
+                        .build()
+        );
+        //если не нашел прогресса пользователя - то выдай, что прогресс на всех квестах, которые ему доступны равны 0
+        //все записи квестами - пользователей
         List<UserQuest> allUserQuests = userQuestRepository.findAllByUser_Uuid(userUuid);
         return allUserQuests.stream().map(
-                        userQuest -> {
-                            Quest quest = userQuest.getQuest();
-                            UserCategoryStats userStats = userCategoryStatsService.findByUserUuid(userUuid);
-                            return new UserQuestWithProgress(
-                                    generateQuestName(quest),
-                                    quest.getCategory(),
-                                    quest.getDateOfExpiry(),
-                                    quest.getPointReward(),
-                                    quest.getProgress(),
-                                    userStats.getCountSpendInMonth(),
-                                    userQuest.getIsComplete()
-                            );
-                        }
-                )
-                .toList();
+                userQuest -> {
+                    Quest quest = userQuest.getQuest();
+                    return createUserProgress(userQuest, quest, userStats.getCountSpendInMonth());
+                }
+        ).toList();
+    }
+
+    private UserQuestWithProgress createUserProgress(UserQuest userQuest, Quest quest, Integer countSpendInMonth) {
+        return new UserQuestWithProgress(
+                generateQuestName(quest),
+                quest.getCategory(),
+                quest.getDateOfExpiry(),
+                quest.getPointReward(),
+                quest.getProgress(),
+                countSpendInMonth,
+                userQuest.getIsComplete()
+        );
+    }
+
+    private List<Quest> findAllByDateOfExpiryIsAfter(LocalDate date) {
+        return questRepository.findAllByDateOfExpiryIsAfter(date);
     }
 
     private String generateQuestName(Quest quest) {
-        return "Квест №".formatted(quest.getId());
+        return "Квест № %s".formatted(quest.getId());
+    }
+
+    public List<Quest> findAllAvalaible(LocalDate now) {
+        //find all Quest where now before now.последнийДень
+        return questRepository.findAllByDateOfExpiryIsAfter(now);
+    }
+
+    private LocalDate createExpDate() {
+        YearMonth currentYearMonth = YearMonth.now();
+        int lastDayOfMonth = currentYearMonth.lengthOfMonth();
+        return LocalDate.of(currentYearMonth.getYear(), currentYearMonth.getMonth(), lastDayOfMonth);
     }
 }

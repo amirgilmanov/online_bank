@@ -28,7 +28,7 @@ public class QuestController {
         return ResponseEntity.ok(questService.createRandomQuest());
     }
 
-    @GetMapping("get-user")
+    @GetMapping("/get-user")
     public ResponseEntity<List<UserQuestWithProgress>> findAllUserQuest(@AuthenticationPrincipal JwtUserDetails userDetails){
        return ResponseEntity.ok( questService.findAllByUserQuest(UUID.fromString(userDetails.getUuid())));
     }

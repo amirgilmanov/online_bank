@@ -23,12 +23,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.online_bank.enums.TokenStatus.CREATED;
 import static com.example.online_bank.enums.TokenStatus.REVOKED;
@@ -43,11 +41,14 @@ public class AuthenticationService {
     private final TokenService tokenService;
     private final UserService userService;
     private final VerifiedCodeService verifiedCodeService;
-    private final UserMapper userMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TrustedDeviceService trustedDeviceService;
     private final RefreshTokenService refreshTokenService;
     private final TokenFamilyService tokenFamilyService;
+    private final UserCategoryStatsService userCategoryStatsService;
+    private final UserQuestService userQuestService;
+    private final QuestService questService;
+    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -69,6 +70,8 @@ public class AuthenticationService {
         return checkVerifyCode(dtoRequest, deviceId);
     }
 
+    //после верификации в любом случае инициализируем пользователя и статистику.
+    //и нового пользователя соединить со всеми квестами в текущем месяце.
     private AuthenticationResponseDto checkVerifyCode(VerificationRequest dto, String deviceId) {
         try {
             // 1. Находим пользователя по email
@@ -83,14 +86,31 @@ public class AuthenticationService {
             //2 сверяем otp code
             userService.verifyEmailCode(user, dto.code());
             log.info("Очистка старых кодов");
+
             verifiedCodeService.cleanVerifiedCodes(user.getId());
             //создаем refresh
             TokenFamily tokenFamily = createFamilyAndTrustedDevice(dto.deviceName(), deviceId, user, dto.userAgent());
+            //hack делаю на первое время
+            makeRelationBetweenUserAndQuest(user);
             return createTokenHelper(user, tokenFamily);
         } catch (VerificationOtpException e) {
             log.error(e.getMessage());
             throw new BadCredentialsException("Неверные учетные данные");
         }
+    }
+
+    private void makeRelationBetweenUserAndQuest(User user){
+        List<Quest> allAvalaible = questService.findAllAvalaible(LocalDate.now());
+        List<UserQuest> userQuests = allAvalaible.stream()
+                .map(q -> UserQuest.builder()
+                        .quest(q)
+                        .user(user)
+                        .isComplete(false)
+                        .userProgress(0)
+                        .build()
+                )
+                .toList();
+        userQuestService.saveAll(userQuests);
     }
 
     //🔹 Тихий вход (refresh rotation)

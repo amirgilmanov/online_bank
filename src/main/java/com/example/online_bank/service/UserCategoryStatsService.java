@@ -3,13 +3,13 @@ package com.example.online_bank.service;
 import com.example.online_bank.domain.entity.UserCategoryStats;
 import com.example.online_bank.domain.event.UpdateUserStatEvent;
 import com.example.online_bank.repository.UserCategoryStatsRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,14 +29,7 @@ public class UserCategoryStatsService {
                 startDate,
                 endDate
         ).orElseGet(() ->
-                UserCategoryStats.builder()
-                        .category(event.partnerCategory())
-                        .user(event.user())
-                        .spendPeriod(event.operationDate())
-                        .user(event.user())
-                        .countSpendInMonth(0)
-                        .totalSpend(event.spendAmount())
-                        .build()
+                create(event)
         );
 
         userCategoryStats.setTotalSpend(userCategoryStats.getTotalSpend().add(event.spendAmount()));
@@ -45,8 +38,20 @@ public class UserCategoryStatsService {
         return userCategoryStats;
     }
 
-    public UserCategoryStats findByUserUuid(UUID userUuid) {
-        return userCategoryStatsRepository.findByUser_Uuid(userUuid)
-                .orElseThrow(() -> new EntityNotFoundException("Статистика по данному пользователю не найдена"));
+    private UserCategoryStats create(UpdateUserStatEvent event) {
+        return UserCategoryStats.builder()
+                .category(event.partnerCategory())
+                .user(event.user())
+                .spendPeriod(event.operationDate())
+                .user(event.user())
+                .countSpendInMonth(0)
+                .totalSpend(event.spendAmount())
+                .build();
     }
+
+    public Optional<UserCategoryStats> findByUserUuid(UUID userUuid) {
+        return userCategoryStatsRepository.findByUser_Uuid(userUuid);
+    }
+
+
 }
