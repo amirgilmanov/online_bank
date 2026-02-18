@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,4 +16,6 @@ public interface UserCategoryStatsRepository extends JpaRepository<UserCategoryS
     Optional<UserCategoryStats> findByUserAndCategoryAndSpendPeriodBetween(User user, PartnerCategory category, LocalDate start, LocalDate end);
 
     Optional<UserCategoryStats> findByUser_Uuid(UUID userUuid);
+
+    List<UserCategoryStats> findAllByUser(User user);
 }

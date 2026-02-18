@@ -96,7 +96,7 @@ class VerifiedCodeServiceTestIT {
                 VerifiedCodeType.EMAIL);
 
         verifiedCodeService.save(otpCodeEntity);
-        verifiedCodeService.cleanVerifiedCodes(userMock.getId());
+        verifiedCodeService.cleanAllCodes(userMock.getId());
         //act
         assertTrue(verifiedCodeRepository.findAllByExpiresAtBeforeAndUser_Id(now, userMock.getId()).isEmpty());
     }

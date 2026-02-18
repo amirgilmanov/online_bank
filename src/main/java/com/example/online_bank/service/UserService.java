@@ -36,18 +36,14 @@ public class UserService implements UserDetailsService {
      * Устанавливает флаги для пользователя в случае успешной аутентификации
      */
     //Логика верификации
-    public void verifyEmailCode(User user, String code) throws VerificationOtpException {
-        verifiedCodeService.validateCode(user, code, EMAIL);
+    public void verifyEmailCode(User user, String code, boolean isAuthentificated) throws VerificationOtpException {
+        verifiedCodeService.validateCode(user, code, EMAIL, isAuthentificated);
         user.setIsVerified(true);
         userRepository.save(user);
     }
 
     public void save(User user) {
         userRepository.save(user);
-    }
-
-    Optional<User> findByUsername(String username) {
-        return userRepository.findByName(username);
     }
 
     public boolean existsByPhoneNumber(String number) {

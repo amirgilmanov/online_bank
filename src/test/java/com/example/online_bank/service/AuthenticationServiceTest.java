@@ -49,14 +49,14 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         authRq = new VerificationRequest(
-                "testEmail@.com", "1234", "iphone 15", "chrome"
+                "testEmail@.com", "1234", "iphone 15", "chrome", "qq"
         );
     }
     @Test
     void failAuthenticationBy_EmailNotFound() {
         when(userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> authenticationService.firstLogIn(authRq));
+        assertThrows(EntityNotFoundException.class, () -> authenticationService.firstVerification(authRq));
     }
 
     @Test
@@ -72,7 +72,7 @@ class AuthenticationServiceTest {
 
         doThrow(VerificationOtpException.class)
                 .when(verifiedCodeService)
-                .validateCode(userMock, authRq.code(), EMAIL);
+                .validateCode(userMock, authRq.code(), EMAIL, false);
 
         doThrow(VerificationOtpException.class)
                 .when(userService)
@@ -86,7 +86,7 @@ class AuthenticationServiceTest {
 
         assertThrows(
                 BadCredentialsException.class,
-                () -> authenticationService.firstLogIn(authRq)
+                () -> authenticationService.firstVerification(authRq)
         );
         assertFalse(userMock.getIsVerified());
     }
@@ -101,6 +101,6 @@ class AuthenticationServiceTest {
 
         assertThrows(
                 EntityAlreadyVerifiedException.class,
-                () -> authenticationService.firstLogIn(authRq));
+                () -> authenticationService.firstVerification(authRq));
     }
 }

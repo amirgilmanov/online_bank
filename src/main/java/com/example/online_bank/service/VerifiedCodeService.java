@@ -23,6 +23,7 @@ import static java.lang.Boolean.FALSE;
 @Service
 @RequiredArgsConstructor
 public class VerifiedCodeService {
+    public static final String RESEND_CODE_MESSAGE = "Повторная отправка кода";
     private final VerifiedCodeRepository verifiedCodeRepository;
     private final EventPublisherService<SendOtpEvent> eventPublisherService;
 
@@ -51,7 +52,7 @@ public class VerifiedCodeService {
         return LocalDateTime.now().plusSeconds(seconds);
     }
 
-    public void cleanVerifiedCodes(Long userId) {
+    public void cleanAllCodes(Long userId) {
         verifiedCodeRepository.deleteAllByIsVerifiedTrueAndUser_id(userId);
     }
 
@@ -66,24 +67,34 @@ public class VerifiedCodeService {
     /**
      * Ищет код. Если найден, меняет флаг на аутентифицированного
      */
-    public void validateCode(User user, String code, VerifiedCodeType type) throws VerificationOtpException {
+    public void validateCode(User user, String code, VerifiedCodeType type, boolean isAuthenticated) throws VerificationOtpException {
         LocalDateTime now = LocalDateTime.now();
+        if (!isAuthenticated) {
+            VerifiedCode verifiedCode = verifiedCodeRepository
+                    .findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsFalseAndExpiresAtAfter(
+                            code, user.getId(), type, now)
+                    .orElseThrow(() ->
+                            new VerificationOtpException("Ошибка верификации. Запросите новый код"));
+            log.info("Otp код был найден и будет верифицирован {}", verifiedCode);
+            verifiedCode.setIsVerified(true);
+            verifiedCodeRepository.save(verifiedCode);
+        }
 
-        VerifiedCode verifiedCode = verifiedCodeRepository
-                .findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsFalseAndExpiresAtAfter(
-                        code, user.getId(), type, now)
-                .orElseThrow(() ->
-                        new VerificationOtpException("Ошибка верификации. Запросите новый код"));
-        log.info("Otp код был найден и будет верифицирован {}", verifiedCode);
-        verifiedCode.setIsVerified(true);
-        verifiedCodeRepository.save(verifiedCode);
+        if (isAuthenticated) {
+            VerifiedCode verifiedCode = verifiedCodeRepository.findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsTrueAndExpiresAtAfter(code, user.getId(), type, now).orElseThrow(() ->
+                    new VerificationOtpException("Ошибка верификации. Запросите новый код"));
+            log.info("Otp код был найден и будет верифицирован {}", verifiedCode);
+        }
+
     }
 
     @Transactional
     public void regenerateOtp(RegenerateOtpDto dto) {
+        log.info("Обновление отп");
         String newOtp = CodeGeneratorUtil.generateOtp();
         LocalDateTime newExpDate = createExpirationDate(200);
         verifiedCodeRepository.updateVerifiedCodeByUser_Email(dto.email(), newOtp, newExpDate);
-        eventPublisherService.publishEvent(new SendOtpEvent(dto.email(), newOtp));
+        log.info("Публикация отп");
+        eventPublisherService.publishEvent(new SendOtpEvent(dto.email(), newOtp, RESEND_CODE_MESSAGE));
     }
 }

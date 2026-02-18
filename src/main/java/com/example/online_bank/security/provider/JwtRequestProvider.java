@@ -2,7 +2,7 @@ package com.example.online_bank.security.provider;
 
 import com.example.online_bank.domain.model.JwtUserDetails;
 import com.example.online_bank.security.token.JwtRequestToken;
-import com.example.online_bank.service.impl.JwtServiceImpl;
+import com.example.online_bank.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtRequestProvider implements AuthenticationProvider {
-    private final JwtServiceImpl jwtService;
+    private final JwtService jwtService;
 
     /**
      * Получаем информацию о пользователе.

@@ -1,5 +1,6 @@
 package com.example.online_bank.controller;
 
+import com.example.online_bank.domain.dto.EmptyDeviceResponseDto;
 import com.example.online_bank.exception.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
@@ -122,5 +123,23 @@ public class AdviceController {
             errors.put(objectName, message);
         });
         return new ResponseEntity<>(errors, BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DeviceNotFoundException.class)
+    public ResponseEntity<String> handleDeviceNotFoundException(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), FORBIDDEN);
+    }
+
+    @ExceptionHandler(DeviceIdIsBlankException.class)
+    public ResponseEntity<EmptyDeviceResponseDto> handleDeviceIdIsBlankException(DeviceIdIsBlankException e) {
+        return ResponseEntity.status(FORBIDDEN).body(new EmptyDeviceResponseDto(e.getDeviceId(), e.getMessage()));
+    }
+
+    @ExceptionHandler(UserAgentNotEqualException.class)
+    public ResponseEntity<Map<String, String>> handleUserAgentNotEqualException(UserAgentNotEqualException e) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", e.getMessage());
+        response.put("action", "VERIFY_REQUIRED");
+        return ResponseEntity.status(FORBIDDEN).body(response);
     }
 }

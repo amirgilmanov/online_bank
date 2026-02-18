@@ -16,15 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +32,7 @@ public class QuestService {
     private final UserRepository userRepository;
     private final UserQuestRepository userQuestRepository;
     private final QuestMapper questMapper;
-    private final UserCategoryStatsService userCategoryStatsService;
+    private final UserCategoryStatsService userStatsService;
     private final UserService userService;
 
     public Quest create(PartnerCategory category) {
@@ -88,26 +86,23 @@ public class QuestService {
 
     public List<UserQuestWithProgress> findAllByUserQuest(UUID userUuid) {
         User user = userService.findByUuid(userUuid).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
-        UserCategoryStats userStats = userCategoryStatsService.findByUserUuid(userUuid).orElseGet(
-                () -> UserCategoryStats
-                        .builder()
-                        .user(user)
-                        .totalSpend(BigDecimal.ZERO)
-                        .spendPeriod(null)
-                        .countSpendInMonth(0)
-                        .category(null)
-                        .build()
-        );
+        List<UserCategoryStats> allStats = userStatsService.findAllByUser(user);
+        Map<PartnerCategory, Integer> categoryPointsByStat = allStats.stream()
+                .collect(toMap(UserCategoryStats::getCategory, UserCategoryStats::getCountSpendInMonth));
+
         //если не нашел прогресса пользователя - то выдай, что прогресс на всех квестах, которые ему доступны равны 0
         //все записи квестами - пользователей
         List<UserQuest> allUserQuests = userQuestRepository.findAllByUser_Uuid(userUuid);
+
         return allUserQuests.stream().map(
                 userQuest -> {
                     Quest quest = userQuest.getQuest();
-                    return createUserProgress(userQuest, quest, userStats.getCountSpendInMonth());
+                    Integer userProgress = categoryPointsByStat.getOrDefault(quest.getCategory(), 0);
+                    return createUserProgress(userQuest, quest, userProgress);
                 }
         ).toList();
     }
+
 
     private UserQuestWithProgress createUserProgress(UserQuest userQuest, Quest quest, Integer countSpendInMonth) {
         return new UserQuestWithProgress(
@@ -119,10 +114,6 @@ public class QuestService {
                 countSpendInMonth,
                 userQuest.getIsComplete()
         );
-    }
-
-    private List<Quest> findAllByDateOfExpiryIsAfter(LocalDate date) {
-        return questRepository.findAllByDateOfExpiryIsAfter(date);
     }
 
     private String generateQuestName(Quest quest) {

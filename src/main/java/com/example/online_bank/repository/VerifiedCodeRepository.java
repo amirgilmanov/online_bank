@@ -35,7 +35,17 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
      * IsAfter - позже
      */
     Optional<VerifiedCode> findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsFalseAndExpiresAtAfter(
-            String code, Long userId, VerifiedCodeType type, LocalDateTime currentTime);
+            String code,
+            Long userId,
+            VerifiedCodeType type,
+            LocalDateTime currentTime
+    );
+
+    Optional<VerifiedCode> findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsTrueAndExpiresAtAfter(
+            String code, Long id,
+            VerifiedCodeType type,
+            LocalDateTime now
+    );
 
     /**
      * Найти все коды, где время истечения раньше времени в параметре
@@ -64,4 +74,5 @@ public interface VerifiedCodeRepository extends JpaRepository<VerifiedCode, Long
             @Param("otp") String otp,
             @Param("newExpDate") LocalDateTime newExpDate
     );
+
 }

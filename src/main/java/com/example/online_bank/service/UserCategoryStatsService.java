@@ -1,5 +1,6 @@
 package com.example.online_bank.service;
 
+import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.UserCategoryStats;
 import com.example.online_bank.domain.event.UpdateUserStatEvent;
 import com.example.online_bank.repository.UserCategoryStatsRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,4 +56,7 @@ public class UserCategoryStatsService {
     }
 
 
+    public List<UserCategoryStats> findAllByUser(User user) {
+        return userCategoryStatsRepository.findAllByUser(user);
+    }
 }

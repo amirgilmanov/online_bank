@@ -19,6 +19,7 @@ public record VerificationRequest(
         @NotBlank(message = "Код не может быть пустым")
         String code,
         String deviceName,
-        String userAgent
+        String userAgent,
+        String deviceId
 ) {
 }

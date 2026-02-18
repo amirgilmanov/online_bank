@@ -26,28 +26,43 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     /**
-     * Верификация пользователя по электронной почте
+     * Верификация для нового пользователя по электронной почте,
      *
      * @return возвращает токен пользователя
      */
-    @PostMapping("/first-auth-verify/email")
+    @PostMapping("/first-auth-verify/first/email")
     @Operation(summary = "Верификация")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
     )
-    public ResponseEntity<AuthenticationResponseDto> authentication(@RequestBody VerificationRequest dtoRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED.value()).body(authenticationService.firstLogIn(dtoRequest));
+    public ResponseEntity<AuthenticationResponseDto> firstVerification(@RequestBody VerificationRequest dtoRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED.value())
+                .body(authenticationService.firstVerification(dtoRequest));
+    }
+
+    /**
+     * Верификация для существующего пользователя по электронной почте,
+     *
+     * @return возвращает токен пользователя
+     */
+    @PostMapping("/first-auth-verify/default/email")
+    @Operation(summary = "Верификация")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
+    )
+    public ResponseEntity<AuthenticationResponseDto> defaultVerification(@RequestBody VerificationRequest dtoRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED.value())
+                .body(authenticationService.defaultVerification(dtoRequest));
     }
 
     @PostMapping("/silent")
     public ResponseEntity<AuthenticationResponseDto> silentLogin(@RequestBody RefreshTokenRequestDto dto) {
-        return ResponseEntity.status(200).body(authenticationService.silentLogin(dto.token()));
+        return ResponseEntity.status(200).body(authenticationService.silentLogin(dto.token(), dto.deviceId()));
     }
 
     //если входим со старого/нового устройства и пароль с почтой верный, то добавляем устройство в семью токенов
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDto> login(@RequestBody LoginRequestDto dto) {
-        authenticationService.login(dto.email(), dto.password(), dto.deviceId(), dto.deviceName(), dto.userAgent());
         return ResponseEntity.status(200).body(authenticationService.login(
                 dto.email(),
                 dto.password(),
@@ -59,7 +74,7 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody RefreshTokenRequestDto dto) {
-        authenticationService.logout(dto.token());
+        authenticationService.logout(dto.token(), dto.deviceId());
         return ResponseEntity.ok().build();
     }
 }
