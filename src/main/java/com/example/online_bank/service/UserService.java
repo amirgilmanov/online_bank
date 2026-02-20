@@ -36,8 +36,8 @@ public class UserService implements UserDetailsService {
      * Устанавливает флаги для пользователя в случае успешной аутентификации
      */
     //Логика верификации
-    public void verifyEmailCode(User user, String code, boolean isAuthentificated) throws VerificationOtpException {
-        verifiedCodeService.validateCode(user, code, EMAIL, isAuthentificated);
+    public void verifyEmailCode(User user, String code, boolean isVerified) throws VerificationOtpException {
+        verifiedCodeService.validateCode(user, code, EMAIL, isVerified);
         user.setIsVerified(true);
         userRepository.save(user);
     }
@@ -65,5 +65,9 @@ public class UserService implements UserDetailsService {
     @Transactional()
     public void deleteByPhoneNumber(String number) {
         userRepository.deleteByPhoneNumber(number);
+    }
+
+    public void truncateAll() {
+        userRepository.deleteAllCascade();
     }
 }

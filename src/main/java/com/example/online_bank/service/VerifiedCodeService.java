@@ -74,12 +74,12 @@ public class VerifiedCodeService {
                     .findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsFalseAndExpiresAtAfter(
                             code, user.getId(), type, now)
                     .orElseThrow(() ->
-                            new VerificationOtpException("Ошибка верификации. Запросите новый код"));
+                            new VerificationOtpException("Ошибка верификации. Запросите новый код. Первая верификация"));
             log.info("Otp код был найден и будет верифицирован {}", verifiedCode);
             verifiedCode.setIsVerified(true);
             verifiedCodeRepository.save(verifiedCode);
         }
-
+//fixme нужно переотправлять код
         if (isAuthenticated) {
             VerifiedCode verifiedCode = verifiedCodeRepository.findByVerifiedCodeAndUser_IdAndCodeTypeAndIsVerifiedIsTrueAndExpiresAtAfter(code, user.getId(), type, now).orElseThrow(() ->
                     new VerificationOtpException("Ошибка верификации. Запросите новый код"));

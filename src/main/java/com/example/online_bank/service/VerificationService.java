@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VerificationService {
     private final UserService userService;
-    private final VerifiedCodeService verifiedCodeService;
     private final DeviceService deviceService;
     private final TokenFamilyService tokenFamilyService;
     private final UserQuestService userQuestService;
@@ -26,14 +25,14 @@ public class VerificationService {
      * //После верификации в любом случае инициализируем пользователя и статистику.
      * //и нового пользователя соединить со всеми квестами в текущем месяце.
      */
-    public AuthenticationResponseDto checkVerifyCode(VerificationRequest dto, boolean isFirst) {
+    public AuthenticationResponseDto checkVerifyCode(VerificationRequest dto, boolean isVerified) {
         try {
             // 1. Находим пользователя по email
             User user = userService.findByEmail(dto.email())
                     .orElseThrow(EntityNotFoundException::new);
 
             //2 сверяем otp code
-            userService.verifyEmailCode(user, dto.code(), true);
+            userService.verifyEmailCode(user, dto.code(), isVerified);
             //  log.info("Очистка старых кодов");
 
            // verifiedCodeService.cleanAllCodes(user.getId());
@@ -43,7 +42,7 @@ public class VerificationService {
             //создаем refresh
             TokenFamily tokenFamily = tokenFamilyService.createFamilyAndTrustedDevice(dto.deviceName(), checkedDeviceId, user, dto.userAgent());
 
-            if (isFirst) {
+            if (isVerified) {
                 //hack делаю на первое время
                 userQuestService.makeRelationBetweenUserAndQuest(user);
             }

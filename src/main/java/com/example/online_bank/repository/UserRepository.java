@@ -1,6 +1,7 @@
 package com.example.online_bank.repository;
 
 import com.example.online_bank.domain.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -31,4 +32,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.isVerified = true ")
     List<User> findAllIsVerified();
+
+    @Modifying
+    @Query(nativeQuery = true, value = """
+            truncate table user_bank cascade;
+            """)
+    @Transactional
+    void deleteAllCascade();
 }

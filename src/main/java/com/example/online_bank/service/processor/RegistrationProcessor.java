@@ -1,9 +1,9 @@
 package com.example.online_bank.service.processor;
 
 import com.example.online_bank.domain.dto.RegistrationDto;
-import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.domain.entity.User;
 import com.example.online_bank.domain.entity.VerifiedCode;
+import com.example.online_bank.domain.event.SendOtpEvent;
 import com.example.online_bank.exception.EntityAlreadyExistsException;
 import com.example.online_bank.mapper.UserMapper;
 import com.example.online_bank.service.RoleService;
@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.example.online_bank.enums.VerifiedCodeType.EMAIL;
 

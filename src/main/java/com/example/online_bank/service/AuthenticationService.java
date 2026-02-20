@@ -49,12 +49,17 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationResponseDto firstVerification(VerificationRequest dtoRequest) {
         //5 создаем trusted_device_id
-        return verificationService.checkVerifyCode(dtoRequest, true);
+        return verificationService.checkVerifyCode(dtoRequest, checkIsVerify(dtoRequest));
     }
 
     @Transactional
     public AuthenticationResponseDto defaultVerification(VerificationRequest dtoRequest) {
-        return verificationService.checkVerifyCode(dtoRequest, false);
+
+        return verificationService.checkVerifyCode(dtoRequest, checkIsVerify(dtoRequest));
+    }
+
+    private boolean checkIsVerify(VerificationRequest dtoRequest) {
+        return userService.findByEmail(dtoRequest.email()).orElseThrow(EntityNotFoundException::new).getIsVerified();
     }
 
     //Тихий вход (refresh rotation)
@@ -107,7 +112,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void logout(String refreshToken,  String deviceId) {
+    public void logout(String refreshToken, String deviceId) {
         RefreshToken tokenByUuidHash = refreshTokenService.parseToken(refreshToken);
         jwtService.validateToken(refreshToken);
         TokenFamily family = tokenByUuidHash.getFamily();

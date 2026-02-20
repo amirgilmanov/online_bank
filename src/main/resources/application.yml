@@ -66,3 +66,6 @@ jwt:
 app:
   cors:
     allowed-origins: ${CORS_URL}
+
+resend:
+  api-key: ${RESEND_API_KEY}
