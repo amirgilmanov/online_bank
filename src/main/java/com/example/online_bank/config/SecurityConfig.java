@@ -44,7 +44,7 @@ public class SecurityConfig {
             Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(dirtyCorsConfigurationSource()))
 
                 .authorizeHttpRequests(authRequestManager ->
                         authRequestManager
@@ -107,28 +107,28 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    @Profile("!dirty-config")
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        // Указываем разрешенные источники
-        configuration.setAllowedOrigins(List.of(corsUrl));
-
-        // Разрешаем основные HTTP-методы
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-
-        // Разрешаем заголовки (важно для JWT и Content-Type)
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
-
-        // Если используешь куки или передаешь Authorization Header
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Применяем настройки ко всем путям
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    //@Profile("!dirty-config")
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        // Указываем разрешенные источники
+//        configuration.setAllowedOrigins(List.of(corsUrl));
+//
+//        // Разрешаем основные HTTP-методы
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+//
+//        // Разрешаем заголовки (важно для JWT и Content-Type)
+//        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+//
+//        // Если используешь куки или передаешь Authorization Header
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        // Применяем настройки ко всем путям
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, UserService userService) {
