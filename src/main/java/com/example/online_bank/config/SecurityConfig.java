@@ -34,7 +34,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig {
 
     @Value("${app.cors.allowed-origins}")
-    private List<String> corsUrls;
+    private String corsUrl;
     //    Реализация фильтра для настройки конечных точек протокола
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -95,7 +95,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Указываем разрешенные источники
-        configuration.setAllowedOrigins(corsUrls);
+        configuration.setAllowedOrigins(List.of(corsUrl));
 
         // Разрешаем основные HTTP-методы
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
