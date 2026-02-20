@@ -36,6 +36,7 @@ public class SecurityConfig {
 
     @Value("${app.cors.allowed-origins}")
     private String corsUrl;
+
     //    Реализация фильтра для настройки конечных точек протокола
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -98,8 +99,9 @@ public class SecurityConfig {
 
         // РЕЖИМ "ПУСКАТЬ ВСЕХ":
         configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedOrigins(List.of(corsUrl, "https://online-bank-hyper-revolution-computer-systems-8zcoa3c4f.vercel.app/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*", corsUrl));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // Для JWT/Cookies
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
