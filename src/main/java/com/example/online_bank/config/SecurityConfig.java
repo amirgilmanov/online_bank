@@ -99,7 +99,7 @@ public class SecurityConfig {
         // РЕЖИМ "ПУСКАТЬ ВСЕХ":
         configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*", corsUrl));
         configuration.setAllowCredentials(true); // Для JWT/Cookies
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
