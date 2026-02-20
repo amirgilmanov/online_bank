@@ -59,3 +59,7 @@ databaseChangeLog:
       file: db/changelog/20260212_2325_add_column_refresh_token.xml
   - include:
       file: db/changelog/20260215_1919_alter_column_type_trusted_device.xml
+  - include:
+      file: db/changelog/20260220_1333_add_column_balance.xml
+  - include:
+      file: db/changelog/20260219_1503_batch_data.xml

@@ -5,22 +5,18 @@ default-bank:
       prefix-url: "http://localhost:8080"
 server:
   port: 8081
-
 spring:
   main:
     allow-bean-definition-overriding: true
-
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
-
   jpa:
     hibernate:
 
       show-sql: false
       ddl-auto: validate
     defer-datasource-initialization: false
-
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -28,7 +24,6 @@ spring:
     hikari:
       allow-pool-suspension: true
     driverClassName: org.postgresql.Driver
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -41,7 +36,6 @@ spring:
           starttls:
             enable: true
             required: true
-
 logging:
   file:
     name: src/main/resources/application_logs.txt

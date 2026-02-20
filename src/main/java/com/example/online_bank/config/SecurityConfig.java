@@ -3,6 +3,7 @@ package com.example.online_bank.config;
 import com.example.online_bank.security.filter.JwtRequestFilter;
 import com.example.online_bank.security.provider.JwtRequestProvider;
 import com.example.online_bank.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -31,6 +33,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
+    @Value("${app.cors.allowed-origins}")
+    private List<String> corsUrls;
     //    Реализация фильтра для настройки конечных точек протокола
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -90,8 +94,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Указываем разрешенные источники (твой фронтенд)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // Указываем разрешенные источники
+        configuration.setAllowedOrigins(corsUrls);
 
         // Разрешаем основные HTTP-методы
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

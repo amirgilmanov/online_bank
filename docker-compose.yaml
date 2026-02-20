@@ -1,0 +1,36 @@
+services:
+  db:
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    image: postgres:16-alpine
+    container_name: online_bank_db
+    env_file:
+      - .env.docker
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: online_bank
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    container_name: online_bank_app
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - APP_CORS_ALLOWED_ORIGINS=${CORS_URL}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/online_bank
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_MAIL_USERNAME=${MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${MAIL_PASSWORD}
+      - JWT_SECRET-FILE-NAME=${JWT_SECRET_FILE_NAME}
+    env_file:
+      - .env.docker
+    depends_on:
+      - db
+
+volumes:
+  pg_data:
