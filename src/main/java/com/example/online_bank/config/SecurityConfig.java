@@ -101,7 +101,11 @@ public class SecurityConfig {
 
         // РЕЖИМ "ПУСКАТЬ ВСЕХ":
        // configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedOrigins(List.of(url));
+        configuration.setAllowedOrigins(List.of(
+                "https://online-bank-hyper-revolution-comput.vercel.app/",
+                "https://online-bank-hyper-revolution-git-cf49f5-amirgilmanovs-projects.vercel.app/",
+                "https://online-bank-hyper-revolution-computer-systems-iillnjp9z.vercel.app/", "*"
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // Для JWT/Cookies
