@@ -41,6 +41,10 @@ logging:
     name: src/main/resources/application_logs.txt
   level:
     org:
+      springframework:
+        security: DEBUG
+        web:
+          cors: DEBUG
       hibernate:
         SQL: DEBUG
         orm:

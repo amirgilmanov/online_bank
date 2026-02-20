@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -75,6 +76,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/quest"
                                 ).permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(
                                         "/api/bank-partner"
                                 )
@@ -82,6 +84,7 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .authenticated()
                 )
+
 
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(STATELESS))
@@ -98,7 +101,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // РЕЖИМ "ПУСКАТЬ ВСЕХ":
-        configuration.setAllowedOriginPatterns(List.of("*"));
+       // configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedOrigins(List.of(corsUrl, "https://online-bank-hyper-revolution-computer-systems-8zcoa3c4f.vercel.app/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
